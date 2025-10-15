@@ -3,11 +3,13 @@
 public class EnemyBullet : MonoBehaviour
 {
     public int damage = 10;
-    public float lifeTime = 5f; // Tự động biến mất sau 5 giây
+    public float lifeTime = 5f;
+
+    [Header("Knockback Settings")]
+    public float knockbackForce = 5f; // Có thể điều chỉnh trong Inspector
 
     private void Start()
     {
-        // Tự động destroy sau một khoảng thời gian
         Destroy(gameObject, lifeTime);
     }
 
@@ -17,17 +19,23 @@ public class EnemyBullet : MonoBehaviour
         PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
+            // Gây damage
             playerHealth.TakeDamage(damage);
-            Destroy(gameObject); // Destroy bullet sau khi hit
+
+            // Gây knockback
+            PlayerKnockback playerKnockback = collision.GetComponent<PlayerKnockback>();
+            if (playerKnockback != null)
+            {
+                // Tính hướng từ bullet đến player
+                Vector2 knockbackDirection = (collision.transform.position - transform.position).normalized;
+                playerKnockback.ApplyKnockback(knockbackDirection, knockbackForce);
+            }
+
+            Destroy(gameObject);
             return;
         }
 
-        // Nếu chạm tường hoặc obstacle thì cũng destroy
-        //if (collision.CompareTag("Wall") || collision.CompareTag("Obstacle"))
-        //{
-        //    Destroy(gameObject);
-        //}
-
+        // Nếu chạm tường thì destroy
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
             Destroy(gameObject);

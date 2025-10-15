@@ -63,6 +63,7 @@
     <Compile Include="Assets\Script\SceneTransitionManager.cs" />
     <Compile Include="Assets\Script\Sword\ActiveWeapon.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyHealth.cs" />
+    <Compile Include="Assets\Script\Player\PlayerKnockback.cs" />
     <Compile Include="Assets\Script\Player\HealthBarUI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyKnockback.cs" />
     <Compile Include="Assets\Script\Skills\MeteorBullet.cs" />

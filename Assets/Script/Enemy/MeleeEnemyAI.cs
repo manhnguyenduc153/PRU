@@ -29,6 +29,8 @@ public class MeleeEnemyAI : MonoBehaviour
     public float freezeDurationTime;
     private float freezeDuration;
 
+    public float knockbackForce = 8f;
+
     private void Start()
     {
         seeker = GetComponent<Seeker>();
@@ -183,6 +185,34 @@ public class MeleeEnemyAI : MonoBehaviour
         Debug.LogWarning("=== ANIMATION EVENT WORKING! ===");
     }
 
+    //public void MeleeAttackHit()
+    //{
+    //    Debug.LogWarning("=== MeleeAttackHit CALLED! ===");
+
+    //    if (player == null) return;
+
+    //    float distance = Vector2.Distance(transform.position, player.position);
+    //    Debug.Log($"Distance to player: {distance}, Attack range: {attackRange}");
+
+    //    if (distance <= attackRange)
+    //    {
+    //        var playerHealth = player.GetComponent<PlayerHealth>();
+    //        if (playerHealth != null)
+    //        {
+    //            playerHealth.TakeDamage(10);
+    //            Debug.Log("Damage dealt to player!");
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("PlayerHealth component not found!");
+    //        }
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("Player too far to deal damage!");
+    //    }
+    //}
+
     public void MeleeAttackHit()
     {
         Debug.LogWarning("=== MeleeAttackHit CALLED! ===");
@@ -194,20 +224,22 @@ public class MeleeEnemyAI : MonoBehaviour
 
         if (distance <= attackRange)
         {
+            // Gây damage
             var playerHealth = player.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(10);
                 Debug.Log("Damage dealt to player!");
             }
-            else
+
+            // THÊM KNOCKBACK
+            var playerKnockback = player.GetComponent<PlayerKnockback>();
+            if (playerKnockback != null)
             {
-                Debug.LogError("PlayerHealth component not found!");
+                Vector2 knockbackDirection = (player.position - transform.position).normalized;
+                playerKnockback.ApplyKnockback(knockbackDirection, knockbackForce); // 8f là lực knockback
+                Debug.Log("Knockback applied to player!");
             }
-        }
-        else
-        {
-            Debug.Log("Player too far to deal damage!");
         }
     }
 
