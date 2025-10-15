@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
 
-public class MeleeEnemyAI : MonoBehaviour
+public class MeleeEnemyAINormal : MonoBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 2f;
@@ -14,9 +14,6 @@ public class MeleeEnemyAI : MonoBehaviour
 
     [Header("Attack Settings")]
     public float attackCooldown = 2f;
-    public GameObject slashPrefab;
-    public Transform slashSpawnPoint;
-    public float slashOffsetDistance = 1.5f;
     private float attackTimer;
     private bool isAttacking = false;
 
@@ -152,34 +149,9 @@ public class MeleeEnemyAI : MonoBehaviour
     IEnumerator ResetAttackState()
     {
         yield return new WaitForSeconds(0.3f);
-        SpawnSlashEffect();
+        MeleeAttackHit();
         yield return new WaitForSeconds(0.3f);
         isAttacking = false;
-    }
-
-    void SpawnSlashEffect()
-    {
-        if (slashPrefab == null || player == null) return;
-
-        Vector2 directionToPlayer = (player.position - transform.position).normalized;
-
-        Vector3 spawnPosition;
-        if (slashSpawnPoint != null)
-        {
-            spawnPosition = slashSpawnPoint.position;
-        }
-        else
-        {
-            spawnPosition = transform.position + (Vector3)directionToPlayer * slashOffsetDistance;
-        }
-
-        GameObject slash = Instantiate(slashPrefab, spawnPosition, Quaternion.identity);
-
-        EnemySlashEffect slashEffect = slash.GetComponent<EnemySlashEffect>();
-        if (slashEffect != null)
-        {
-            slashEffect.Initialize(directionToPlayer, characterSR.transform.localScale.x < 0, knockbackForce);
-        }
     }
 
     public void FreezeEnemy()
@@ -194,6 +166,29 @@ public class MeleeEnemyAI : MonoBehaviour
 
     public void TestAnimationEvent() { }
 
+    public void MeleeAttackHit()
+    {
+        if (player == null) return;
+
+        float distance = Vector2.Distance(transform.position, player.position);
+
+        if (distance <= attackRange)
+        {
+            var playerHealth = player.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(10);
+            }
+
+            var playerKnockback = player.GetComponent<PlayerKnockback>();
+            if (playerKnockback != null)
+            {
+                Vector2 knockbackDirection = (player.position - transform.position).normalized;
+                playerKnockback.ApplyKnockback(knockbackDirection, knockbackForce);
+            }
+        }
+    }
+
     public void MeleeAttackComplete()
     {
         isAttacking = false;
@@ -203,11 +198,5 @@ public class MeleeEnemyAI : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-
-        if (slashSpawnPoint != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(slashSpawnPoint.position, 0.3f);
-        }
     }
 }

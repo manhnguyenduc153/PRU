@@ -38,7 +38,7 @@ public class EnemyHealth : MonoBehaviour
 
         if (knockbackScript != null && attacker != null)
         {
-            animator.SetTrigger("Attacked");
+            //animator.SetTrigger("Attacked");
             knockbackScript.ApplyKnockback(attacker);
         }
 

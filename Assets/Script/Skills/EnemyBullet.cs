@@ -2,6 +2,7 @@
 
 public class EnemyBullet : MonoBehaviour
 {
+    [Header("Bullet Settings")]
     public int damage = 10;
     public float lifeTime = 5f;
 
@@ -12,7 +13,11 @@ public class EnemyBullet : MonoBehaviour
     public bool autoRotate = true; // Tự động xoay theo hướng bay
 
     [Header("Hit Behavior")]
-    public bool destroyOnHitPlayer = true; // Có biến mất khi va chạm Player hay không
+    public bool destroyOnHitPlayer = true; // Đạn có biến mất khi chạm Player hay không
+    public bool explodeOnHitPlayer = true; // Có phát nổ khi chạm Player hay không
+
+    [Header("Explosion Effect")]
+    public GameObject explosionEffectPrefab; // Prefab hiệu ứng nổ
 
     private Rigidbody2D rb;
 
@@ -37,8 +42,10 @@ public class EnemyBullet : MonoBehaviour
         PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
+            // Gây sát thương
             playerHealth.TakeDamage(damage);
 
+            // Knockback nếu có
             PlayerKnockback playerKnockback = collision.GetComponent<PlayerKnockback>();
             if (playerKnockback != null)
             {
@@ -46,7 +53,13 @@ public class EnemyBullet : MonoBehaviour
                 playerKnockback.ApplyKnockback(knockbackDirection, knockbackForce);
             }
 
-            // Chỉ phá hủy nếu được bật trong Inspector
+            // Hiệu ứng phát nổ (tuỳ loại bullet)
+            if (explodeOnHitPlayer && explosionEffectPrefab != null)
+            {
+                Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
+            }
+
+            // Tuỳ chọn: có biến mất sau khi chạm hay không
             if (destroyOnHitPlayer)
             {
                 Destroy(gameObject);
@@ -55,9 +68,13 @@ public class EnemyBullet : MonoBehaviour
             return;
         }
 
-        // Nếu chạm tường, luôn phá hủy
+        // Nếu chạm tường thì luôn phá hủy
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
+            if (explosionEffectPrefab != null)
+            {
+                Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
+            }
             Destroy(gameObject);
         }
     }
