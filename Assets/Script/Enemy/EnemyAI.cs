@@ -31,14 +31,15 @@ public class EnemyAI : MonoBehaviour
     public int wavesCount = 3; // Số đợt sóng
     public float delayBetweenWaves = 0.3f; // Delay giữa các đợt
 
-    [Header("Ultimate - Meteor Rain")]
-    public GameObject meteorBullet;
-    public float meteorFallSpeed = 10f;
+    [Header("Ultimate - Lightning Strike")]
+    public GameObject lightningBolt; // Prefab cột sét
+    public GameObject warningIndicator; // Prefab vùng cảnh báo màu đỏ
     public float ultimateCooldown = 15f;
     public float ultimateChance = 10f; // 10%
-    public int meteorCount = 12; // Số meteor rơi
-    public float meteorSpawnHeight = 8f; // Độ cao spawn meteor
-    public float meteorSpawnRadius = 5f; // Bán kính spawn xung quanh player
+    public int lightningCount = 8; // Số cột sét
+    public float lightningSpawnRadius = 5f; // Bán kính spawn xung quanh player
+    public float warningDuration = 0.5f; // Thời gian hiển thị cảnh báo trước khi sét đánh
+    public float delayBetweenLightning = 0.15f; // Delay giữa mỗi cột sét
 
     private float normalAttackTimer;
     private float waveAttackTimer;
@@ -146,50 +147,58 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // Chiêu 3: Ultimate - Meteor Rain
+    // Chiêu 3: Ultimate - Lightning Strike
     void UseUltimateSkill()
     {
-        if (meteorBullet == null) return;
-        StartCoroutine(MeteorRainCoroutine());
+        if (lightningBolt == null) return;
+        StartCoroutine(LightningStrikeCoroutine());
     }
 
-    IEnumerator MeteorRainCoroutine()
+    IEnumerator LightningStrikeCoroutine()
     {
         Vector3 playerPos = GetPlayerPosition();
+        List<Vector3> strikePositions = new List<Vector3>();
+        List<GameObject> warnings = new List<GameObject>();
 
-        for (int i = 0; i < meteorCount; i++)
+        // Tạo vị trí và hiển thị cảnh báo cho tất cả các cột sét
+        for (int i = 0; i < lightningCount; i++)
         {
-            // Vị trí ngẫu nhiên xung quanh player (target)
-            Vector2 randomOffset = Random.insideUnitCircle * meteorSpawnRadius;
-            Vector3 targetPos = new Vector3(
+            // Vị trí ngẫu nhiên xung quanh player
+            Vector2 randomOffset = Random.insideUnitCircle * lightningSpawnRadius;
+            Vector3 strikePos = new Vector3(
                 playerPos.x + randomOffset.x,
                 playerPos.y + randomOffset.y,
                 playerPos.z
             );
+            strikePositions.Add(strikePos);
 
-            // Spawn meteor ở trên cao
-            Vector3 spawnPos = new Vector3(
-                targetPos.x,
-                targetPos.y + meteorSpawnHeight,
-                targetPos.z
-            );
-
-            // Spawn meteor
-            var meteorTmp = Instantiate(meteorBullet, spawnPos, Quaternion.identity);
-            Rigidbody2D meteorRb = meteorTmp.GetComponent<Rigidbody2D>();
-
-            // Set target position cho meteor
-            MeteorBullet meteorScript = meteorTmp.GetComponent<MeteorBullet>();
-            if (meteorScript != null)
+            // Tạo vùng cảnh báo màu đỏ nếu có prefab
+            if (warningIndicator != null)
             {
-                meteorScript.SetTargetPosition(targetPos);
+                GameObject warning = Instantiate(warningIndicator, strikePos, Quaternion.identity);
+                warnings.Add(warning);
             }
 
-            // Rơi thẳng xuống
-            meteorRb.velocity = Vector2.down * meteorFallSpeed;
+            yield return new WaitForSeconds(delayBetweenLightning);
+        }
 
-            // Delay nhỏ giữa các meteor
-            yield return new WaitForSeconds(0.1f);
+        // Chờ một chút để người chơi thấy cảnh báo
+        yield return new WaitForSeconds(warningDuration);
+
+        // Xóa tất cả cảnh báo và triệu hồi sét
+        for (int i = 0; i < strikePositions.Count; i++)
+        {
+            // Xóa cảnh báo
+            if (i < warnings.Count && warnings[i] != null)
+            {
+                Destroy(warnings[i]);
+            }
+
+            // Triệu hồi cột sét tại vị trí
+            Instantiate(lightningBolt, strikePositions[i], Quaternion.identity);
+
+            // Delay nhỏ giữa các cột sét để tạo hiệu ứng
+            yield return new WaitForSeconds(0.05f);
         }
     }
 
