@@ -50,6 +50,20 @@ public class MeleeEnemyAINormal : MonoBehaviour
         {
             attackTimer -= Time.deltaTime;
         }
+
+        // 🔹 Luôn nhìn về phía player
+        if (player != null)
+        {
+            float xDiff = player.position.x - transform.position.x;
+            if (Mathf.Abs(xDiff) > 0.1f) // tránh flip khi rất gần
+            {
+                characterSR.transform.localScale = new Vector3(
+                    xDiff < 0 ? -1 : 1,
+                    1,
+                    1
+                );
+            }
+        }
     }
 
     private void CalculatePath()
@@ -121,15 +135,6 @@ public class MeleeEnemyAINormal : MonoBehaviour
             float distance = Vector2.Distance(rb.position, targetPos);
             if (distance < nextWaypointDistance)
                 currentWP++;
-
-            if (direction.x != 0)
-            {
-                characterSR.transform.localScale = new Vector3(
-                    direction.x < 0 ? -1 : 1,
-                    1,
-                    1
-                );
-            }
 
             yield return null;
         }

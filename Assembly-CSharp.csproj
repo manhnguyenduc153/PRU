@@ -78,6 +78,7 @@
     <Compile Include="Assets\Script\Enemy\EnemySlashEffect.cs" />
     <Compile Include="Assets\Script\Player\PlayerSpawnManager.cs" />
     <Compile Include="Assets\Script\SelfDestroy.cs" />
+    <Compile Include="Assets\Script\SpawnZone.cs" />
     <Compile Include="Assets\Script\Sword\Sword.cs" />
     <Compile Include="Assets\Script\Enemy\MeleeEnemyAI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyAI.cs" />
