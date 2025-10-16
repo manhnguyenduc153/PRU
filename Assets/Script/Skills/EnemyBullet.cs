@@ -2,34 +2,79 @@
 
 public class EnemyBullet : MonoBehaviour
 {
+    [Header("Bullet Settings")]
     public int damage = 10;
-    public float lifeTime = 5f; // Tự động biến mất sau 5 giây
+    public float lifeTime = 5f;
+
+    [Header("Knockback Settings")]
+    public float knockbackForce = 5f;
+
+    [Header("Rotation Settings")]
+    public bool autoRotate = true; // Tự động xoay theo hướng bay
+
+    [Header("Hit Behavior")]
+    public bool destroyOnHitPlayer = true; // Đạn có biến mất khi chạm Player hay không
+    public bool explodeOnHitPlayer = true; // Có phát nổ khi chạm Player hay không
+
+    [Header("Explosion Effect")]
+    public GameObject explosionEffectPrefab; // Prefab hiệu ứng nổ
+
+    private Rigidbody2D rb;
 
     private void Start()
     {
-        // Tự động destroy sau một khoảng thời gian
+        rb = GetComponent<Rigidbody2D>();
         Destroy(gameObject, lifeTime);
+    }
+
+    private void Update()
+    {
+        // Tự động xoay bullet theo hướng velocity
+        if (autoRotate && rb != null && rb.velocity != Vector2.zero)
+        {
+            float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0, 0, angle);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Kiểm tra xem có phải player không
         PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
+            // Gây sát thương
             playerHealth.TakeDamage(damage);
-            Destroy(gameObject); // Destroy bullet sau khi hit
+
+            // Knockback nếu có
+            PlayerKnockback playerKnockback = collision.GetComponent<PlayerKnockback>();
+            if (playerKnockback != null)
+            {
+                Vector2 knockbackDirection = (collision.transform.position - transform.position).normalized;
+                playerKnockback.ApplyKnockback(knockbackDirection, knockbackForce);
+            }
+
+            // Hiệu ứng phát nổ (tuỳ loại bullet)
+            if (explodeOnHitPlayer && explosionEffectPrefab != null)
+            {
+                Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
+            }
+
+            // Tuỳ chọn: có biến mất sau khi chạm hay không
+            if (destroyOnHitPlayer)
+            {
+                Destroy(gameObject);
+            }
+
             return;
         }
 
-        // Nếu chạm tường hoặc obstacle thì cũng destroy
-        //if (collision.CompareTag("Wall") || collision.CompareTag("Obstacle"))
-        //{
-        //    Destroy(gameObject);
-        //}
-
+        // Nếu chạm tường thì luôn phá hủy
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
+            if (explosionEffectPrefab != null)
+            {
+                Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
+            }
             Destroy(gameObject);
         }
     }
