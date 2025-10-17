@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 833951513587517810}
   - component: {fileID: 1840711933051058747}
   - component: {fileID: 4181712892428574866}
+  - component: {fileID: -5104147504675126032}
   m_Layer: 0
   m_Name: Dark bullet
   m_TagString: Untagged
@@ -166,6 +167,9 @@ MonoBehaviour:
   lifeTime: 5
   knockbackForce: 5
   autoRotate: 1
+  destroyOnHitPlayer: 1
+  explodeOnHitPlayer: 1
+  explosionEffectPrefab: {fileID: 0}
 --- !u!95 &4181712892428574866
 Animator:
   serializedVersion: 5
@@ -187,3 +191,16 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-5104147504675126032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9042451354514355422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba393a9c1e8560e4f864fc3c993e6a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyAfter: 1.5

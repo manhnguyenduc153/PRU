@@ -14,9 +14,26 @@ public class EnemyAI : MonoBehaviour
     Path path;
     Seeker seeker;
     Rigidbody2D rb;
+    Animator animator;
     Coroutine moveCoroutine;
 
+    // ✅ THÊM: Melee Attack Settings
+    [Header("Melee Attack")]
+    public bool hasMeleeAttack = true; // Bật/tắt melee
+    public float meleeAttackRange = 2f;
+    public float meleeAttackCooldown = 2f;
+    public GameObject slashPrefab;
+    public Transform slashSpawnPoint;
+    public float slashOffsetDistance = 1.5f;
+    public float knockbackForce = 8f;
+    public float meleeAttackChance = 100f; // 100% khi đủ gần
+    private float meleeAttackTimer;
+    private bool isAttacking = false;
+
     // Skill System
+    [Header("Detection Range")]
+    public float detectionRange = 15f; // Phạm vi phát hiện player để tấn công
+
     [Header("Normal Attack")]
     public GameObject normalBullet;
     public float normalBulletSpeed = 8f;
@@ -49,16 +66,27 @@ public class EnemyAI : MonoBehaviour
     public float freezeDurationTime;
     float freezeDuration;
 
+    // ✅ Lưu scale ban đầu
+    private Vector3 originalScale;
+
     private void Start()
     {
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         freezeDuration = 0;
+
+        // ✅ Lưu scale ban đầu của characterSR
+        if (characterSR != null)
+        {
+            originalScale = characterSR.transform.localScale;
+        }
 
         // Khởi tạo cooldown timer
         normalAttackTimer = normalAttackCooldown;
         waveAttackTimer = waveAttackCooldown;
         ultimateTimer = ultimateCooldown;
+        meleeAttackTimer = 0f;
 
         InvokeRepeating("CalculatePath", 0f, repeatTimeUpdatePath);
     }
@@ -69,9 +97,125 @@ public class EnemyAI : MonoBehaviour
         normalAttackTimer -= Time.deltaTime;
         waveAttackTimer -= Time.deltaTime;
         ultimateTimer -= Time.deltaTime;
+        meleeAttackTimer -= Time.deltaTime;
 
-        // Chọn skill để sử dụng dựa trên priority và cooldown
-        TryUseSkill();
+        // ✅ Luôn flip theo hướng player
+        FacePlayer();
+
+        // ✅ Kiểm tra khoảng cách để dùng melee hoặc ranged
+        float distanceToPlayer = Vector2.Distance(transform.position, GetPlayerPosition());
+
+        // Chỉ tấn công khi player trong phạm vi phát hiện
+        if (distanceToPlayer > detectionRange)
+            return;
+
+        // Nếu đủ gần thì ưu tiên melee, nếu không thì dùng skill tầm xa
+        if (hasMeleeAttack && distanceToPlayer <= meleeAttackRange && !isAttacking)
+        {
+            TryUseMeleeAttack();
+        }
+        else if (!isAttacking) // Chỉ dùng skill tầm xa khi không đang melee
+        {
+            TryUseSkill();
+        }
+    }
+
+    // ✅ Hàm flip hướng nhìn player
+    void FacePlayer()
+    {
+        if (characterSR == null) return;
+
+        Vector3 playerPos = GetPlayerPosition();
+        float dirX = playerPos.x - transform.position.x;
+
+        if (Mathf.Abs(dirX) > 0.05f)
+        {
+            // ✅ Chỉ flip trục X, giữ nguyên Y và Z
+            float newScaleX = dirX < 0 ? -Mathf.Abs(originalScale.x) : Mathf.Abs(originalScale.x);
+            characterSR.transform.localScale = new Vector3(newScaleX, originalScale.y, originalScale.z);
+        }
+    }
+
+    // ✅ THÊM: Thử tấn công cận chiến
+    void TryUseMeleeAttack()
+    {
+        if (meleeAttackTimer > 0 || isAttacking) return;
+
+        float randomValue = Random.Range(0f, 100f);
+        if (randomValue < meleeAttackChance)
+        {
+            UseMeleeAttack();
+            meleeAttackTimer = meleeAttackCooldown;
+        }
+    }
+
+    // ✅ THÊM: Tấn công cận chiến
+    void UseMeleeAttack()
+    {
+        isAttacking = true;
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Attack");
+        }
+
+        StartCoroutine(MeleeAttackCoroutine());
+    }
+
+    // ✅ THÊM: Coroutine xử lý melee attack
+    IEnumerator MeleeAttackCoroutine()
+    {
+        // Dừng di chuyển trong lúc tấn công
+        if (moveCoroutine != null)
+        {
+            StopCoroutine(moveCoroutine);
+        }
+
+        yield return new WaitForSeconds(0.3f); // Delay trước khi spawn slash
+        SpawnSlashEffect();
+
+        yield return new WaitForSeconds(0.3f); // Delay sau khi spawn slash
+        isAttacking = false;
+
+        // Tiếp tục di chuyển
+        if (path != null)
+        {
+            MoveToTarget();
+        }
+    }
+
+    // ✅ THÊM: Tạo hiệu ứng chém
+    void SpawnSlashEffect()
+    {
+        if (slashPrefab == null) return;
+
+        Vector3 playerPos = GetPlayerPosition();
+        Vector2 directionToPlayer = (playerPos - transform.position).normalized;
+
+        Vector3 spawnPosition;
+        if (slashSpawnPoint != null)
+        {
+            spawnPosition = slashSpawnPoint.position;
+        }
+        else
+        {
+            spawnPosition = transform.position + (Vector3)directionToPlayer * slashOffsetDistance;
+        }
+
+        GameObject slash = Instantiate(slashPrefab, spawnPosition, Quaternion.identity);
+
+        // Nếu slash effect có script EnemySlashEffect
+        EnemySlashEffect slashEffect = slash.GetComponent<EnemySlashEffect>();
+        if (slashEffect != null)
+        {
+            slashEffect.Initialize(directionToPlayer, characterSR.transform.localScale.x < 0, knockbackForce);
+        }
+    }
+
+    // ✅ THÊM: Animation Event callback (nếu dùng animation event)
+    public void MeleeAttackComplete()
+    {
+        isAttacking = false;
     }
 
     void TryUseSkill()
@@ -107,6 +251,12 @@ public class EnemyAI : MonoBehaviour
     {
         if (normalBullet == null) return;
 
+        // ✅ Trigger animation
+        if (animator != null)
+        {
+            animator.SetTrigger("Attack");
+        }
+
         var bulletTmp = Instantiate(normalBullet, transform.position, Quaternion.identity);
         Rigidbody2D bulletRb = bulletTmp.GetComponent<Rigidbody2D>();
 
@@ -120,6 +270,13 @@ public class EnemyAI : MonoBehaviour
     void UseWaveSkill()
     {
         if (waveBullet == null) return;
+
+        // ✅ Trigger animation
+        if (animator != null)
+        {
+            animator.SetTrigger("Attack");
+        }
+
         StartCoroutine(WaveAttackCoroutine());
     }
 
@@ -151,6 +308,13 @@ public class EnemyAI : MonoBehaviour
     void UseUltimateSkill()
     {
         if (lightningBolt == null) return;
+
+        // ✅ Trigger animation
+        if (animator != null)
+        {
+            animator.SetTrigger("Attack");
+        }
+
         StartCoroutine(LightningStrikeCoroutine());
     }
 
@@ -255,6 +419,12 @@ public class EnemyAI : MonoBehaviour
         int currentWP = 0;
         while (currentWP < path.vectorPath.Count)
         {
+            // ✅ Dừng di chuyển khi đang tấn công
+            while (isAttacking)
+            {
+                yield return null;
+            }
+
             while (freezeDuration > 0)
             {
                 freezeDuration -= Time.deltaTime;
@@ -269,15 +439,28 @@ public class EnemyAI : MonoBehaviour
             if (distance < nextWayPointDistance)
                 currentWP++;
 
-            if (force.x != 0)
-            {
-                if (force.x < 0)
-                    characterSR.transform.localScale = new Vector3(-1, 1, 1);
-                else
-                    characterSR.transform.localScale = new Vector3(1, 1, 1);
-            }
+            // ✅ Không cần flip ở đây vì đã có FacePlayer() trong Update()
 
             yield return null;
+        }
+    }
+
+    // ✅ Gizmos để debug
+    private void OnDrawGizmosSelected()
+    {
+        // Vẽ detection range (màu xanh dương)
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
+
+        // Vẽ melee attack range (màu đỏ)
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, meleeAttackRange);
+
+        // Vẽ slash spawn point (màu vàng)
+        if (slashSpawnPoint != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(slashSpawnPoint.position, 0.3f);
         }
     }
 }
