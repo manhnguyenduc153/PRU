@@ -34,6 +34,11 @@ public class MeleeEnemyAI : MonoBehaviour
 
     public float knockbackForce = 8f;
 
+    [Header("Pathfinding Fix")]
+    public float maxPathDistance = 100f; // Giới hạn khoảng cách tìm đường
+    public bool waitForGraphScan = true; // Đợi graph scan xong
+    private bool isInitialized = false;
+
     private void Start()
     {
         seeker = GetComponent<Seeker>();
@@ -44,6 +49,48 @@ public class MeleeEnemyAI : MonoBehaviour
         freezeDuration = 0;
         attackTimer = 0f;
 
+        // Đợi graph sẵn sàng trước khi bắt đầu
+        StartCoroutine(InitializePathfinding());
+    }
+
+    private IEnumerator InitializePathfinding()
+    {
+        // Đợi graph được scan
+        if (waitForGraphScan && AstarPath.active != null)
+        {
+            while (AstarPath.active.isScanning)
+            {
+                yield return null;
+            }
+
+            // Đợi thêm 1 frame để đảm bảo
+            yield return new WaitForEndOfFrame();
+        }
+
+        // Kiểm tra xem vị trí hiện tại có hợp lệ không
+        if (AstarPath.active != null)
+        {
+            NNInfo nearestNode = AstarPath.active.GetNearest(transform.position);
+            if (nearestNode.node != null)
+            {
+                // Snap enemy về vị trí gần nhất trên graph nếu cần
+                Vector3 nearestPoint = (Vector3)nearestNode.position;
+                float distanceToNode = Vector3.Distance(transform.position, nearestPoint);
+
+                if (distanceToNode > 2f) // Nếu quá xa node gần nhất
+                {
+                    Debug.LogWarning($"Enemy spawned too far from navmesh. Moving from {transform.position} to {nearestPoint}");
+                    transform.position = nearestPoint;
+                }
+            }
+            else
+            {
+                Debug.LogError("No valid pathfinding node found near enemy spawn position!");
+                yield break;
+            }
+        }
+
+        isInitialized = true;
         InvokeRepeating(nameof(CalculatePath), 0f, repeatTimeUpdatePath);
     }
 
@@ -53,24 +100,57 @@ public class MeleeEnemyAI : MonoBehaviour
         {
             attackTimer -= Time.deltaTime;
         }
+
+        // ✅ Thêm phần này: luôn nhìn về phía player
+        FacePlayer();
+    }
+
+    // ✅ Hàm mới để luôn nhìn player
+    private void FacePlayer()
+    {
+        if (player == null || characterSR == null) return;
+
+        float dirX = player.position.x - transform.position.x;
+        if (Mathf.Abs(dirX) > 0.05f)
+        {
+            characterSR.transform.localScale = new Vector3(
+                dirX < 0 ? -1 : 1,
+                1,
+                1
+            );
+        }
     }
 
     private void CalculatePath()
     {
-        if (player == null) return;
+        if (!isInitialized || player == null) return;
+
+        // Kiểm tra khoảng cách trước khi tìm đường
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        if (distanceToPlayer > maxPathDistance)
+        {
+            Debug.LogWarning($"Player too far away: {distanceToPlayer}. Max distance: {maxPathDistance}");
+            return;
+        }
+
         if (seeker.IsDone())
+        {
             seeker.StartPath(rb.position, player.position, OnPathCompleted);
+        }
     }
 
     private void OnPathCompleted(Path p)
     {
-        if (!p.error)
+        if (p.error)
         {
-            path = p;
-            if (moveCoroutine != null)
-                StopCoroutine(moveCoroutine);
-            moveCoroutine = StartCoroutine(MoveToPlayerCoroutine());
+            Debug.LogWarning($"Path error: {p.errorLog}");
+            return;
         }
+
+        path = p;
+        if (moveCoroutine != null)
+            StopCoroutine(moveCoroutine);
+        moveCoroutine = StartCoroutine(MoveToPlayerCoroutine());
     }
 
     IEnumerator MoveToPlayerCoroutine()
@@ -125,15 +205,7 @@ public class MeleeEnemyAI : MonoBehaviour
             if (distance < nextWaypointDistance)
                 currentWP++;
 
-            if (direction.x != 0)
-            {
-                characterSR.transform.localScale = new Vector3(
-                    direction.x < 0 ? -1 : 1,
-                    1,
-                    1
-                );
-            }
-
+            // ❌ Không cần flip hướng ở đây nữa vì đã có FacePlayer()
             yield return null;
         }
     }
@@ -199,6 +271,16 @@ public class MeleeEnemyAI : MonoBehaviour
         isAttacking = false;
     }
 
+    // Gọi hàm này khi spawn enemy bằng script
+    public void ForceRecalculatePath()
+    {
+        if (isInitialized)
+        {
+            CancelInvoke(nameof(CalculatePath));
+            InvokeRepeating(nameof(CalculatePath), 0f, repeatTimeUpdatePath);
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -209,5 +291,9 @@ public class MeleeEnemyAI : MonoBehaviour
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(slashSpawnPoint.position, 0.3f);
         }
+
+        // Vẽ khoảng cách tìm đường tối đa
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, maxPathDistance);
     }
 }
