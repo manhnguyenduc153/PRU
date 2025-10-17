@@ -62,8 +62,10 @@
   <ItemGroup>
     <Compile Include="Assets\Script\SceneTransitionManager.cs" />
     <Compile Include="Assets\Script\Sword\ActiveWeapon.cs" />
+    <Compile Include="Assets\Script\Enemy\HybridEnemyAI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyHealth.cs" />
     <Compile Include="Assets\Script\Player\PlayerKnockback.cs" />
+    <Compile Include="Assets\Script\Enemy\EnemyRangeSkill.cs" />
     <Compile Include="Assets\Script\Player\HealthBarUI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyKnockback.cs" />
     <Compile Include="Assets\Script\Skills\MeteorBullet.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="Assets\Script\Skills\EnemyBullet.cs" />
     <Compile Include="Assets\Script\Sword\SlashAnim.cs" />
     <Compile Include="Assets\Script\Sword\DamageSource.cs" />
+    <Compile Include="Assets\Script\Enemy\NewHybridEnemyAI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemySlashEffect.cs" />
     <Compile Include="Assets\Script\Player\PlayerSpawnManager.cs" />
     <Compile Include="Assets\Script\SelfDestroy.cs" />

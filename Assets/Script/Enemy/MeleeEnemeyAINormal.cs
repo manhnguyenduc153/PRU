@@ -31,6 +31,9 @@ public class MeleeEnemyAINormal : MonoBehaviour
 
     public float knockbackForce = 8f;
 
+    // ✅ Lưu scale ban đầu
+    private Vector3 originalScale;
+
     private void Start()
     {
         seeker = GetComponent<Seeker>();
@@ -40,6 +43,12 @@ public class MeleeEnemyAINormal : MonoBehaviour
         player = FindObjectOfType<PlayerController>()?.transform;
         freezeDuration = 0;
         attackTimer = 0f;
+
+        // ✅ Lưu scale ban đầu của characterSR
+        if (characterSR != null)
+        {
+            originalScale = characterSR.transform.localScale;
+        }
 
         InvokeRepeating(nameof(CalculatePath), 0f, repeatTimeUpdatePath);
     }
@@ -51,17 +60,15 @@ public class MeleeEnemyAINormal : MonoBehaviour
             attackTimer -= Time.deltaTime;
         }
 
-        // 🔹 Luôn nhìn về phía player
-        if (player != null)
+        // ✅ Luôn nhìn về phía player (giữ nguyên scale ban đầu)
+        if (player != null && characterSR != null)
         {
             float xDiff = player.position.x - transform.position.x;
             if (Mathf.Abs(xDiff) > 0.1f) // tránh flip khi rất gần
             {
-                characterSR.transform.localScale = new Vector3(
-                    xDiff < 0 ? -1 : 1,
-                    1,
-                    1
-                );
+                // ✅ Chỉ flip trục X, giữ nguyên Y và Z
+                float newScaleX = xDiff < 0 ? -Mathf.Abs(originalScale.x) : Mathf.Abs(originalScale.x);
+                characterSR.transform.localScale = new Vector3(newScaleX, originalScale.y, originalScale.z);
             }
         }
     }
