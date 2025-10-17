@@ -5,9 +5,18 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] private int startingHealth = 3;
+    [SerializeField] private GameObject deathVFXPrefab;
+
     private int currentHealth;
     private EnemyKnockback knockbackScript;
     private Animator animator;
+    private Flash flash;
+
+
+    private void Awake()
+    {
+        flash = GetComponent<Flash>();
+    }
 
     private void Start()
     {
@@ -21,13 +30,20 @@ public class EnemyHealth : MonoBehaviour
         currentHealth -= damage;
         Debug.Log(currentHealth);
 
+        // Thêm dòng này để kích hoạt flash
+        if (flash != null)
+        {
+            StartCoroutine(flash.FlashRoutine());
+        }
+
         if (knockbackScript != null && attacker != null)
         {
-            animator.SetTrigger("Attacked");
+            //animator.SetTrigger("Attacked");
             knockbackScript.ApplyKnockback(attacker);
         }
 
-        DetectDeath();
+        // Xóa DetectDeath() ở đây vì nó đã được gọi trong FlashRoutine()
+        // DetectDeath();
     }
 
     public void TakeDamage(int damage, Vector2 knockbackDirection)
@@ -35,27 +51,35 @@ public class EnemyHealth : MonoBehaviour
         currentHealth -= damage;
         Debug.Log(currentHealth);
 
+        if (flash != null)
+        {
+            StartCoroutine(flash.FlashRoutine());
+        }
+
         if (knockbackScript != null)
         {
             knockbackScript.ApplyKnockback(knockbackDirection);
         }
-
-        DetectDeath();
     }
 
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
         Debug.Log(currentHealth);
-        DetectDeath();
+
+        if (flash != null)
+        {
+            StartCoroutine(flash.FlashRoutine());
+        }
     }
 
-    private void DetectDeath()
+    public void DetectDeath()
     {
         if (currentHealth <= 0)
         {
             //animator.SetTrigger("Death");
             //StartCoroutine(Die());
+            Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
     }
