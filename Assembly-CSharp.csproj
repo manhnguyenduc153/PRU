@@ -75,6 +75,7 @@
     <Compile Include="Assets\Script\Player\Player Controls.cs" />
     <Compile Include="Assets\Script\Enemy\Flash.cs" />
     <Compile Include="Assets\Script\Skills\EnemyBullet.cs" />
+    <Compile Include="Assets\Script\Enemy\EnemyRangeNormal.cs" />
     <Compile Include="Assets\Script\Sword\SlashAnim.cs" />
     <Compile Include="Assets\Script\Sword\DamageSource.cs" />
     <Compile Include="Assets\Script\Enemy\NewHybridEnemyAI.cs" />
