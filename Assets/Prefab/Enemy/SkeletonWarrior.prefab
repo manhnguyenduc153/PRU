@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 2642338368273028732}
   - component: {fileID: 2171112887778676843}
   - component: {fileID: 7224896670126930108}
+  - component: {fileID: 3511241873899010603}
   m_Layer: 0
   m_Name: SkeletonWarrior
   m_TagString: Untagged
@@ -290,6 +291,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whiteFlashMat: {fileID: 2100000, guid: 05487a7d7b484e24a880c2c0917e84e8, type: 2}
   restoreDefaultMatTime: 0.2
+--- !u!114 &3511241873899010603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135236015558776858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfeea3d563a69b8468837bde310459e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lootPrefabs: []
+  dropChance: 100
+  minDropCount: 1
+  maxDropCount: 3
+  dropForce: 3
+  dropRadius: 0.5
+  randomRotation: 1
 --- !u!1 &2151007729173618874
 GameObject:
   m_ObjectHideFlags: 0
