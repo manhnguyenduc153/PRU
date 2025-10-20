@@ -167,7 +167,7 @@ MonoBehaviour:
   lifeTime: 5
   knockbackForce: 5
   autoRotate: 1
-  destroyOnHitPlayer: 1
+  destroyOnHitPlayer: 0
   explodeOnHitPlayer: 1
   explosionEffectPrefab: {fileID: 0}
 --- !u!95 &4181712892428574866

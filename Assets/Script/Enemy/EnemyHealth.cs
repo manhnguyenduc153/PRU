@@ -1,6 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using System.Collections;
 
 public class EnemyHealth : MonoBehaviour
 {
@@ -11,11 +12,12 @@ public class EnemyHealth : MonoBehaviour
     private EnemyKnockback knockbackScript;
     private Animator animator;
     private Flash flash;
-
+    private LootDropper lootDropper;
 
     private void Awake()
     {
         flash = GetComponent<Flash>();
+        lootDropper = GetComponent<LootDropper>();
     }
 
     private void Start()
@@ -30,7 +32,6 @@ public class EnemyHealth : MonoBehaviour
         currentHealth -= damage;
         Debug.Log(currentHealth);
 
-        // Thêm dòng này để kích hoạt flash
         if (flash != null)
         {
             StartCoroutine(flash.FlashRoutine());
@@ -38,12 +39,8 @@ public class EnemyHealth : MonoBehaviour
 
         if (knockbackScript != null && attacker != null)
         {
-            //animator.SetTrigger("Attacked");
             knockbackScript.ApplyKnockback(attacker);
         }
-
-        // Xóa DetectDeath() ở đây vì nó đã được gọi trong FlashRoutine()
-        // DetectDeath();
     }
 
     public void TakeDamage(int damage, Vector2 knockbackDirection)
@@ -77,27 +74,33 @@ public class EnemyHealth : MonoBehaviour
     {
         if (currentHealth <= 0)
         {
-            //animator.SetTrigger("Death");
-            //StartCoroutine(Die());
-            Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
+            // Drop loot
+            if (lootDropper != null)
+            {
+                lootDropper.DropLoot();
+            }
+
+            // VFX
+            if (deathVFXPrefab != null)
+            {
+                Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
+            }
+
             Destroy(gameObject);
         }
     }
 
     private IEnumerator Die()
     {
-        // Vô hiệu hóa movement và collider
         GetComponent<Collider2D>().enabled = false;
 
-        // Tắt script movement nếu có
         var movement = GetComponent<MonoBehaviour>();
         if (movement != null)
         {
             movement.enabled = false;
         }
 
-        // Đợi animation Death chạy xong
-        yield return new WaitForSeconds(1f); // Điều chỉnh theo độ dài animation Death
+        yield return new WaitForSeconds(1f);
 
         Destroy(gameObject);
     }
