@@ -84,6 +84,7 @@
     <Compile Include="Assets\Script\Item\PotionItem.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyRangeNormal.cs" />
     <Compile Include="Assets\Script\Sword\SlashAnim.cs" />
+    <Compile Include="Assets\Script\Buff\BuffUIManager.cs" />
     <Compile Include="Assets\Script\Sword\DamageSource.cs" />
     <Compile Include="Assets\Script\Item\Coin.cs" />
     <Compile Include="Assets\Script\Chest\Chest.cs" />

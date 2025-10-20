@@ -6,28 +6,39 @@ public class BuffManager : MonoBehaviour
 {
     public static BuffManager Instance { get; private set; }
 
+    private const int MAX_BUFF_LEVEL = 5;
+    private const float BASE_PROC_INCREASE = 0.05f; // Tăng 5% proc chance mỗi level
+
     // Buff 1: Slash on hit
-    public bool hasSlashBuff = false;
-    [SerializeField] private float slashProcChance = 0.3f; // 30% chance
+    [SerializeField] private int slashLevel = 0;
+    [SerializeField] private float slashBaseProcChance = 0.3f;
     [SerializeField] private GameObject slashPrefab;
     [SerializeField] private float slashSpeed = 10f;
 
     // Buff 2: Lightning strike
-    public bool hasLightningBuff = false;
-    [SerializeField] private float lightningProcChance = 0.25f; // 25% chance
+    [SerializeField] private int lightningLevel = 0;
+    [SerializeField] private float lightningBaseProcChance = 0.25f;
     [SerializeField] private GameObject lightningWarningPrefab;
     [SerializeField] private GameObject lightningStrikePrefab;
     [SerializeField] private float lightningRadius = 3f;
     [SerializeField] private float warningDuration = 0.5f;
-    [SerializeField] private int lightningDamage = 2;
+    [SerializeField] private int lightningBaseDamage = 2;
     [SerializeField] private float lightningSpawnHeight = 3f;
 
     // Buff 3: Triple shot
-    public bool hasTripleShotBuff = false;
-    [SerializeField] private float tripleShotProcChance = 0.3f; // 30% chance
+    [SerializeField] private int tripleShotLevel = 0;
+    [SerializeField] private float tripleShotBaseProcChance = 0.3f;
     [SerializeField] private GameObject tripleShotPrefab;
     [SerializeField] private float tripleShotSpeed = 8f;
-    [SerializeField] private float spreadAngle = 20f; // Góc giữa các projectile
+    [SerializeField] private float spreadAngle = 20f;
+
+    private void OnValidate()
+    {
+        // Clamp các giá trị level trong Unity Editor
+        slashLevel = Mathf.Clamp(slashLevel, 0, MAX_BUFF_LEVEL);
+        lightningLevel = Mathf.Clamp(lightningLevel, 0, MAX_BUFF_LEVEL);
+        tripleShotLevel = Mathf.Clamp(tripleShotLevel, 0, MAX_BUFF_LEVEL);
+    }
 
     private void Awake()
     {
@@ -44,26 +55,23 @@ public class BuffManager : MonoBehaviour
     // Gọi method này khi player tấn công trúng enemy
     public void OnEnemyHit(Transform enemyTransform, Transform attackSource)
     {
-        // Tạo danh sách các buff có thể kích hoạt
         List<System.Action> availableBuffs = new List<System.Action>();
 
-        // Thêm các buff đã unlock vào danh sách
-        if (hasSlashBuff && Random.value <= slashProcChance)
+        if (slashLevel > 0 && Random.value <= GetSlashProcChance())
         {
             availableBuffs.Add(() => TriggerSlashEffect(enemyTransform, attackSource));
         }
 
-        if (hasLightningBuff && Random.value <= lightningProcChance)
+        if (lightningLevel > 0 && Random.value <= GetLightningProcChance())
         {
             availableBuffs.Add(() => TriggerLightningEffect(enemyTransform));
         }
 
-        if (hasTripleShotBuff && Random.value <= tripleShotProcChance)
+        if (tripleShotLevel > 0 && Random.value <= GetTripleShotProcChance())
         {
             availableBuffs.Add(() => TriggerTripleShotEffect(attackSource));
         }
 
-        // Nếu có ít nhất 1 buff proc, chọn ngẫu nhiên 1 buff để kích hoạt
         if (availableBuffs.Count > 0)
         {
             int randomIndex = Random.Range(0, availableBuffs.Count);
@@ -71,125 +79,174 @@ public class BuffManager : MonoBehaviour
         }
     }
 
+    #region Proc Chance Calculations
+    private float GetSlashProcChance()
+    {
+        return Mathf.Min(slashBaseProcChance + (slashLevel - 1) * BASE_PROC_INCREASE, 0.99f);
+    }
+
+    private float GetLightningProcChance()
+    {
+        return Mathf.Min(lightningBaseProcChance + (lightningLevel - 1) * BASE_PROC_INCREASE, 0.99f);
+    }
+
+    private float GetTripleShotProcChance()
+    {
+        return Mathf.Min(tripleShotBaseProcChance + (tripleShotLevel - 1) * BASE_PROC_INCREASE, 0.99f);
+    }
+
+    private int GetLightningDamage()
+    {
+        return lightningBaseDamage + (lightningLevel - 1);
+    }
+    #endregion
+
+    #region Slash Effect
     private void TriggerSlashEffect(Transform enemyTransform, Transform attackSource)
     {
         if (slashPrefab == null) return;
 
-        // Tính direction từ player đến enemy
         Vector2 direction = (enemyTransform.position - attackSource.position).normalized;
+        int slashCount = slashLevel; // Level 1 = 1 slash, Level 5 = 5 slashes
 
-        // Spawn slash tại vị trí player
+        for (int i = 0; i < slashCount; i++)
+        {
+            // Tạo một chút độ trễ giữa các slash
+            StartCoroutine(SpawnSlashDelayed(direction, attackSource, i * 0.05f));
+        }
+    }
+
+    private IEnumerator SpawnSlashDelayed(Vector2 direction, Transform attackSource, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
         GameObject slash = Instantiate(slashPrefab, attackSource.position, Quaternion.identity);
-
-        // Tính góc rotation
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         slash.transform.rotation = Quaternion.Euler(0, 0, angle);
 
-        // Add velocity nếu slash có Rigidbody2D
         Rigidbody2D slashRb = slash.GetComponent<Rigidbody2D>();
         if (slashRb != null)
         {
             slashRb.velocity = direction * slashSpeed;
         }
 
-        // Destroy sau 2 giây
         Destroy(slash, 2f);
     }
+    #endregion
 
+    #region Lightning Effect
     private void TriggerLightningEffect(Transform enemyTransform)
     {
         if (lightningWarningPrefab == null || lightningStrikePrefab == null) return;
 
-        // Random vị trí xung quanh enemy
-        Vector2 randomOffset = Random.insideUnitCircle * lightningRadius;
-        Vector3 strikePosition = enemyTransform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
+        int strikeCount = lightningLevel; // Level 1 = 1 strike, Level 5 = 5 strikes
 
-        StartCoroutine(LightningStrikeSequence(strikePosition));
+        for (int i = 0; i < strikeCount; i++)
+        {
+            Vector2 randomOffset = Random.insideUnitCircle * lightningRadius;
+            Vector3 strikePosition = enemyTransform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
+            StartCoroutine(LightningStrikeSequence(strikePosition));
+        }
     }
 
     private IEnumerator LightningStrikeSequence(Vector3 position)
     {
-        // Hiện warning ở vị trí đất
         GameObject warning = Instantiate(lightningWarningPrefab, position, Quaternion.identity);
-
-        // Đợi warning duration
         yield return new WaitForSeconds(warningDuration);
-
-        // Destroy warning
         Destroy(warning);
 
-        // Tính vị trí spawn lightning cao hơn
         Vector3 lightningSpawnPos = position + new Vector3(0, lightningSpawnHeight, 0);
-
-        // Spawn lightning strike ở vị trí cao hơn
         GameObject lightning = Instantiate(lightningStrikePrefab, lightningSpawnPos, Quaternion.identity);
 
-        // Check va chạm với enemies trong vùng warning (vị trí đất)
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(position, 1f);
         foreach (Collider2D col in hitEnemies)
         {
             EnemyHealth enemyHealth = col.GetComponent<EnemyHealth>();
             if (enemyHealth != null)
             {
-                enemyHealth.TakeDamage(lightningDamage, lightning.transform);
+                enemyHealth.TakeDamage(GetLightningDamage(), lightning.transform);
             }
         }
 
-        // Destroy lightning sau 1 giây
         Destroy(lightning, 1f);
     }
+    #endregion
 
+    #region Triple Shot Effect
     private void TriggerTripleShotEffect(Transform attackSource)
     {
         if (tripleShotPrefab == null) return;
 
-        // Lấy hướng player đang nhìn (từ mouse position hoặc facing direction)
         Vector3 mousePos = Input.mousePosition;
         Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(attackSource.position);
         Vector2 direction = new Vector2(mousePos.x - playerScreenPoint.x, mousePos.y - playerScreenPoint.y).normalized;
-
-        // Tính góc chính
         float baseAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        // Bắn 3 projectile với góc khác nhau
-        for (int i = -1; i <= 1; i++)
-        {
-            float currentAngle = baseAngle + (i * spreadAngle);
-            float rad = currentAngle * Mathf.Deg2Rad;
+        // Level 1 = 3 projectiles
+        // Level 2 = 4 projectiles, Level 3 = 5 projectiles, etc.
+        int projectileCount = tripleShotLevel + 2;
 
+        for (int i = 0; i < projectileCount; i++)
+        {
+            int offset = i - tripleShotLevel;
+            float currentAngle = baseAngle + (offset * spreadAngle);
+            float rad = currentAngle * Mathf.Deg2Rad;
             Vector2 shootDirection = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
 
-            // Spawn projectile
             GameObject projectile = Instantiate(tripleShotPrefab, attackSource.position, Quaternion.Euler(0, 0, currentAngle));
-
-            // Add velocity
             Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
                 rb.velocity = shootDirection * tripleShotSpeed;
             }
 
-            // Destroy sau 3 giây
             Destroy(projectile, 3f);
         }
     }
+    #endregion
 
-    // Methods để thêm buff
+    #region Buff Management
     public void AddSlashBuff()
     {
-        hasSlashBuff = true;
-        Debug.Log("Slash Buff activated!");
+        if (slashLevel < MAX_BUFF_LEVEL)
+        {
+            slashLevel++;
+            Debug.Log($"Slash Buff Level: {slashLevel} (Proc Chance: {GetSlashProcChance():P0})");
+        }
+        else
+        {
+            Debug.Log("Slash Buff is already at max level!");
+        }
     }
 
     public void AddLightningBuff()
     {
-        hasLightningBuff = true;
-        Debug.Log("Lightning Buff activated!");
+        if (lightningLevel < MAX_BUFF_LEVEL)
+        {
+            lightningLevel++;
+            Debug.Log($"Lightning Buff Level: {lightningLevel} (Proc Chance: {GetLightningProcChance():P0})");
+        }
+        else
+        {
+            Debug.Log("Lightning Buff is already at max level!");
+        }
     }
 
     public void AddTripleShotBuff()
     {
-        hasTripleShotBuff = true;
-        Debug.Log("Triple Shot Buff activated!");
+        if (tripleShotLevel < MAX_BUFF_LEVEL)
+        {
+            tripleShotLevel++;
+            Debug.Log($"Triple Shot Buff Level: {tripleShotLevel} (Proc Chance: {GetTripleShotProcChance():P0})");
+        }
+        else
+        {
+            Debug.Log("Triple Shot Buff is already at max level!");
+        }
     }
+
+    public int GetSlashLevel() => slashLevel;
+    public int GetLightningLevel() => lightningLevel;
+    public int GetTripleShotLevel() => tripleShotLevel;
+    #endregion
 }
