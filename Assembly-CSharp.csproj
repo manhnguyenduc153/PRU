@@ -85,6 +85,7 @@
     <Compile Include="Assets\Script\Enemy\EnemyRangeNormal.cs" />
     <Compile Include="Assets\Script\Sword\SlashAnim.cs" />
     <Compile Include="Assets\Script\Buff\BuffUIManager.cs" />
+    <Compile Include="Assets\Script\Player\PlayerBullet.cs" />
     <Compile Include="Assets\Script\Sword\DamageSource.cs" />
     <Compile Include="Assets\Script\Item\Coin.cs" />
     <Compile Include="Assets\Script\Chest\Chest.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Assets\Script\Item\CoinManager.cs" />
     <Compile Include="Assets\Script\SpawnZone.cs" />
     <Compile Include="Assets\Script\Sword\Sword.cs" />
+    <Compile Include="Assets\Script\JumpWarningEffect.cs" />
     <Compile Include="Assets\Script\Enemy\MeleeEnemyAI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyAI.cs" />
     <Compile Include="Assets\Script\Player\PlayerHealth.cs" />

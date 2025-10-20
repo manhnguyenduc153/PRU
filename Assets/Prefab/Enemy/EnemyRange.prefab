@@ -137,6 +137,15 @@ MonoBehaviour:
   nextWayPointDistance: 2
   repeatTimeUpdatePath: 0.5
   characterSR: {fileID: 7596760806498443365}
+  hasMeleeAttack: 1
+  meleeAttackRange: 2
+  meleeAttackCooldown: 2
+  slashPrefab: {fileID: 0}
+  slashSpawnPoint: {fileID: 0}
+  slashOffsetDistance: 1.5
+  knockbackForce: 8
+  meleeAttackChance: 100
+  detectionRange: 15
   normalBullet: {fileID: 8006122400761347174, guid: 3196aaceb05aa124b9838283e904ad15, type: 3}
   normalBulletSpeed: 8
   normalAttackCooldown: 3
@@ -164,7 +173,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8128274762940960121}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0

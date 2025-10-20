@@ -258,8 +258,28 @@ MonoBehaviour:
   slashPrefab: {fileID: 6572878853451959887, guid: dede5b720f1fb494a9aeb0ea3bc7b503, type: 3}
   slashSpawnPoint: {fileID: 3113950020998823283}
   slashOffsetDistance: 1.5
+  enableJumpAttack: 1
+  jumpAttackRange: 8
+  jumpAttackMaxRange: 15
+  jumpAttackCooldown: 2
+  warningPrefab: {fileID: 6954165050603246389, guid: 297185006d9525c44a926a0a045e94e5, type: 3}
+  warningDuration: 1
+  jumpDuration: 0.5
+  jumpHeight: 5
+  jumpDamageRadius: 4
+  jumpDamage: 30
+  jumpKnockbackForce: 20
+  groundSlamPrefab: {fileID: 3366931233827926578, guid: dc30373fd57a92d47b7a390f4a8e74c9, type: 3}
+  groundSlamDuration: 0.5
   freezeDurationTime: 0
   knockbackForce: 8
+  maxPathDistance: 100
+  waitForGraphScan: 1
+  enableFireSkill: 1
+  fireballPrefab: {fileID: 0}
+  fireSpawnPoint: {fileID: 3113950020998823283}
+  fireCooldown: 5
+  fireProjectileSpeed: 8
 --- !u!50 &1367012826734319098
 Rigidbody2D:
   serializedVersion: 4
@@ -268,7 +288,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4512645381195066547}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0

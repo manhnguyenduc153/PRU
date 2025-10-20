@@ -150,7 +150,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2135236015558776858}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -303,13 +303,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfeea3d563a69b8468837bde310459e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lootPrefabs: []
-  dropChance: 100
-  minDropCount: 1
-  maxDropCount: 3
+  lootTable: []
+  guaranteedDrop: 0
   dropForce: 3
   dropRadius: 0.5
   randomRotation: 1
+  spawnDelay: 0.1
 --- !u!1 &2151007729173618874
 GameObject:
   m_ObjectHideFlags: 0

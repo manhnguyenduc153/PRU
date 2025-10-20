@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 1328461646, guid: 79a412c27b706e94bbbe6b60a955e8bd, type: 3}
-  m_Color: {r: 0.97735846, g: 0.97735846, b: 0.97735846, a: 1}
+  m_Color: {r: 0.20754719, g: 0.18757567, b: 0.18757567, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -168,8 +168,6 @@ MonoBehaviour:
   autoRotate: 1
   destroyOnHitPlayer: 0
   explodeOnHitPlayer: 1
-  pierceEnemies: 1
-  maxEnemyHits: -1
   explosionEffectPrefab: {fileID: 5589057897365792748, guid: 19eabe50c73e4b941a1135f4f5d943b2, type: 3}
 --- !u!95 &7261313173620139822
 Animator:

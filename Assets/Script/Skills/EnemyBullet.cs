@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 public class EnemyBullet : MonoBehaviour
 {
@@ -16,15 +15,11 @@ public class EnemyBullet : MonoBehaviour
     [Header("Hit Behavior")]
     public bool destroyOnHitPlayer = true; // Đạn có biến mất khi chạm Player hay không
     public bool explodeOnHitPlayer = true; // Có phát nổ khi chạm Player hay không
-    public bool pierceEnemies = true; // Có xuyên qua nhiều enemy hay không
-    public int maxEnemyHits = -1; // Số enemy tối đa có thể hit (-1 = không giới hạn)
 
     [Header("Explosion Effect")]
     public GameObject explosionEffectPrefab; // Prefab hiệu ứng nổ
 
     private Rigidbody2D rb;
-    private HashSet<GameObject> hitEnemies = new HashSet<GameObject>(); // Track các enemy đã hit
-    private int currentEnemyHits = 0;
 
     private void Start()
     {
@@ -44,11 +39,11 @@ public class EnemyBullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Xử lý va chạm với Player
+        // ✅ Chỉ xử lý khi va chạm với Player
         PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
-            // Gây sát thương
+            // Gây sát thương cho Player
             playerHealth.TakeDamage(damage);
 
             // Knockback nếu có
@@ -59,47 +54,22 @@ public class EnemyBullet : MonoBehaviour
                 playerKnockback.ApplyKnockback(knockbackDirection, knockbackForce);
             }
 
-            // Hiệu ứng phát nổ (tuỳ loại bullet)
+            // Hiệu ứng nổ
             if (explodeOnHitPlayer && explosionEffectPrefab != null)
             {
                 Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
             }
 
-            // Tuỳ chọn: có biến mất sau khi chạm hay không
+            // Biến mất sau khi chạm Player (nếu có)
             if (destroyOnHitPlayer)
             {
                 Destroy(gameObject);
             }
+
             return;
         }
 
-        // Xử lý va chạm với Enemy
-        EnemyHealth enemyHealth = collision.GetComponent<EnemyHealth>();
-        if (enemyHealth != null)
-        {
-            // Kiểm tra xem đã hit enemy này chưa (tránh hit 2 lần)
-            if (!hitEnemies.Contains(collision.gameObject))
-            {
-                hitEnemies.Add(collision.gameObject);
-                currentEnemyHits++;
-
-                // Gây sát thương cho enemy
-                enemyHealth.TakeDamage(damage, transform);
-
-                // Kiểm tra có phá hủy bullet sau khi hit đủ số enemy hay không
-                if (!pierceEnemies || (maxEnemyHits > 0 && currentEnemyHits >= maxEnemyHits))
-                {
-                    if (explosionEffectPrefab != null)
-                    {
-                        Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
-                    }
-                    Destroy(gameObject);
-                }
-            }
-            return;
-        }
-
-        // Nếu chạm tường thì luôn phá hủy
+        // ✅ Nếu chạm tường thì luôn phá hủy
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
             if (explosionEffectPrefab != null)
