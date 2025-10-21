@@ -1,107 +1,80 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Nếu dùng TextMeshPro
+using TMPro;
 
 public class HealthBarUI : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("Để trống, script sẽ tự động tìm PlayerHealth")]
-    public PlayerHealth playerHealth; // Tham chiếu đến script PlayerHealth
-    public Slider healthSlider; // Thanh máu (UI Slider)
-    public TextMeshProUGUI healthText; // Text hiển thị số (optional)
+    public Image healthBarFill; // HealthBar_Fill
+    public TextMeshProUGUI healthText; // Text hiển thị máu (Current/Max)
+    private PlayerHealth playerHealth; // Reference tới PlayerHealth script
 
-    [Header("Visual Settings")]
-    public Image fillImage; // Image bên trong Slider (để đổi màu)
-    public Color healthyColor = Color.green;
-    public Color damagedColor = Color.yellow;
-    public Color criticalColor = Color.red;
+    [Header("Animation Settings")]
+    public float smoothSpeed = 5f; // Tốc độ giảm dần (càng cao càng nhanh)
+    public bool useAnimation = true; // Bật/tắt hiệu ứng
 
-    [Header("Animation")]
-    public bool useSmooth = true; // Thanh máu giảm mượt
-    public float smoothSpeed = 5f;
+    private float targetFillAmount = 1f; // Giá trị mục tiêu
+    private float currentFillAmount = 1f; // Giá trị hiện tại
 
-    private float targetFillAmount;
-
-    void Start()
+    private void Start()
     {
-        // Tự động tìm PlayerHealth
+        // Tìm PlayerHealth component
+        playerHealth = FindObjectOfType<PlayerHealth>();
+
         if (playerHealth == null)
         {
-            // Thử tìm trên cùng GameObject trước
-            playerHealth = GetComponent<PlayerHealth>();
-
-            // Nếu không có, tìm trong toàn bộ scene
-            if (playerHealth == null)
-            {
-                playerHealth = FindObjectOfType<PlayerHealth>();
-            }
-
-            // Kiểm tra có tìm thấy không
-            if (playerHealth == null)
-            {
-                Debug.LogError("Không tìm thấy PlayerHealth trong scene!");
-                return;
-            }
-            else
-            {
-                Debug.Log($"Đã tìm thấy PlayerHealth trên: {playerHealth.gameObject.name}");
-            }
+            Debug.LogError("PlayerHealth script not found in scene!");
+            return;
         }
 
-        // Khởi tạo thanh máu đầy
+        if (healthBarFill == null)
+        {
+            healthBarFill = GetComponent<Image>();
+        }
+
+        // Khởi tạo health bar
         UpdateHealthBar();
     }
 
-    void Update()
+    private void Update()
     {
+        // Cập nhật health bar từ PlayerHealth
         UpdateHealthBar();
+
+        // Nếu bật animation thì dùng Lerp để giảm dần mượt mà
+        if (useAnimation)
+        {
+            currentFillAmount = Mathf.Lerp(currentFillAmount, targetFillAmount, Time.deltaTime * smoothSpeed);
+            healthBarFill.fillAmount = currentFillAmount;
+        }
+        else
+        {
+            // Nếu không dùng animation thì cập nhật trực tiếp
+            healthBarFill.fillAmount = targetFillAmount;
+        }
     }
 
-    void UpdateHealthBar()
+    private void UpdateHealthBar()
     {
         if (playerHealth == null) return;
 
-        // Tính tỷ lệ máu hiện tại
+        // Tính toán tỷ lệ HP hiện tại
         float currentHealth = playerHealth.GetCurrentHealth();
         float maxHealth = playerHealth.GetMaxHealth();
+
         targetFillAmount = currentHealth / maxHealth;
+        targetFillAmount = Mathf.Clamp01(targetFillAmount); // Đảm bảo giá trị từ 0 đến 1
 
-        // Cập nhật Slider
-        if (healthSlider != null)
-        {
-            if (useSmooth)
-            {
-                // Giảm máu mượt
-                healthSlider.value = Mathf.Lerp(healthSlider.value, targetFillAmount, Time.deltaTime * smoothSpeed);
-            }
-            else
-            {
-                // Giảm máu tức thì
-                healthSlider.value = targetFillAmount;
-            }
-        }
-
-        // Cập nhật Text (nếu có)
+        // Cập nhật text hiển thị máu
         if (healthText != null)
         {
-            healthText.text = $"{currentHealth}/{maxHealth}";
+            healthText.text = $"{(int)currentHealth}/{(int)maxHealth}";
         }
+    }
 
-        // Đổi màu thanh máu theo % HP
-        if (fillImage != null)
-        {
-            if (targetFillAmount > 0.5f)
-            {
-                fillImage.color = healthyColor;
-            }
-            else if (targetFillAmount > 0.25f)
-            {
-                fillImage.color = damagedColor;
-            }
-            else
-            {
-                fillImage.color = criticalColor;
-            }
-        }
+    // Hàm công khai để có thể gọi từ nơi khác nếu cần
+    public void RefreshHealthBar()
+    {
+        UpdateHealthBar();
     }
 }

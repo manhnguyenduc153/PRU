@@ -13,6 +13,12 @@ public class DamageSource : MonoBehaviour
             EnemyHealth enemyHealth = other.gameObject.GetComponent<EnemyHealth>();
 
             enemyHealth.TakeDamage(damageAmount, transform);
+
+            // THÊM DÒNG NÀY: Trigger buff effects khi hit enemy
+            if (BuffManager.Instance != null)
+            {
+                BuffManager.Instance.OnEnemyHit(other.transform, transform);
+            }
         }
     }
 }

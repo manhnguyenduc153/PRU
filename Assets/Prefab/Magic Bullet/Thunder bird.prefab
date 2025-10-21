@@ -166,6 +166,11 @@ MonoBehaviour:
   lifeTime: 5
   knockbackForce: 5
   autoRotate: 1
+  destroyOnHitPlayer: 0
+  explodeOnHitPlayer: 1
+  pierceEnemies: 1
+  maxEnemyHits: -1
+  explosionEffectPrefab: {fileID: 5589057897365792748, guid: 19eabe50c73e4b941a1135f4f5d943b2, type: 3}
 --- !u!95 &7397510834231568581
 Animator:
   serializedVersion: 5
