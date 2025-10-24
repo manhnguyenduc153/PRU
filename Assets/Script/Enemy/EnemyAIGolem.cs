@@ -235,7 +235,7 @@ public class EnemyAIGolem : MonoBehaviour
         prefabAttackTimer = prefabAttackCooldown;
 
         if (animator != null)
-            animator.SetTrigger("Lazer");
+            animator.SetTrigger("Laze");
 
         yield return new WaitForSeconds(0.3f);
 
@@ -269,7 +269,7 @@ public class EnemyAIGolem : MonoBehaviour
         extraPrefabTimer = extraPrefabCooldown;
 
         if (animator != null)
-            animator.SetTrigger("Lazer");
+            animator.SetTrigger("Laze");
 
         List<Vector2> spawnPositions = new List<Vector2>();
         List<GameObject> warnings = new List<GameObject>();
@@ -317,7 +317,7 @@ public class EnemyAIGolem : MonoBehaviour
         extraProjectileTimer = extraProjectileCooldown;
 
         if (animator != null)
-            animator.SetTrigger("Lazer");
+            animator.SetTrigger("Laze");
 
         int count = extraProjectileCount;
         float angleStep = 360f / count;

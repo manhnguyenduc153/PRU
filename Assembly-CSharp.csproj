@@ -79,6 +79,7 @@
     <Compile Include="Assets\Script\Player\ManaBarUI.cs" />
     <Compile Include="Assets\Script\Enemy\Flash.cs" />
     <Compile Include="Assets\Script\Buff\BuffPickup.cs" />
+    <Compile Include="Assets\Script\Enemy\EnemyAIMinotaur.cs" />
     <Compile Include="Assets\Script\Skills\EnemyBullet.cs" />
     <Compile Include="Assets\Script\Item\LootDropper.cs" />
     <Compile Include="Assets\Script\Item\PotionItem.cs" />
@@ -101,7 +102,6 @@
     <Compile Include="Assets\Script\Sword\Sword.cs" />
     <Compile Include="Assets\Script\JumpWarningEffect.cs" />
     <Compile Include="Assets\Script\Enemy\MeleeEnemyAI.cs" />
-    <Compile Include="Assets\Script\ChangeSpritesPivot.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyAI.cs" />
     <Compile Include="Assets\Script\Player\PlayerHealth.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyAIGolem.cs" />
