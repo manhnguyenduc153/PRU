@@ -82,6 +82,8 @@
     <Compile Include="Assets\Script\Skills\EnemyBullet.cs" />
     <Compile Include="Assets\Script\Item\LootDropper.cs" />
     <Compile Include="Assets\Script\Item\PotionItem.cs" />
+    <Compile Include="Assets\Script\Enemy\EnemyFinalBoss.cs" />
+    <Compile Include="Assets\Script\Enemy\DarkKing.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyRangeNormal.cs" />
     <Compile Include="Assets\Script\Sword\SlashAnim.cs" />
     <Compile Include="Assets\Script\Buff\BuffUIManager.cs" />
@@ -99,8 +101,10 @@
     <Compile Include="Assets\Script\Sword\Sword.cs" />
     <Compile Include="Assets\Script\JumpWarningEffect.cs" />
     <Compile Include="Assets\Script\Enemy\MeleeEnemyAI.cs" />
+    <Compile Include="Assets\Script\ChangeSpritesPivot.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyAI.cs" />
     <Compile Include="Assets\Script\Player\PlayerHealth.cs" />
+    <Compile Include="Assets\Script\Enemy\EnemyAIGolem.cs" />
     <Compile Include="Assets\Script\SpawnPoint.cs" />
   </ItemGroup>
   <ItemGroup>

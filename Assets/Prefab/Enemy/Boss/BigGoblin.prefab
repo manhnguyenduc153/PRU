@@ -258,10 +258,19 @@ MonoBehaviour:
   slashPrefab: {fileID: 6572878853451959887, guid: dede5b720f1fb494a9aeb0ea3bc7b503, type: 3}
   slashSpawnPoint: {fileID: 3113950020998823283}
   slashOffsetDistance: 1.5
+  enableProjectileAttack: 1
+  projectilePrefab: {fileID: 8006122400761347174, guid: e22df879dd0ad754dbe0dfeb1e9be02a, type: 3}
+  projectileSpawnPoint: {fileID: 3113950020998823283}
+  projectileRange: 6
+  projectileMaxRange: 12
+  projectileCooldown: 4
+  projectileSpeed: 13
+  projectileDamage: 15
+  projectileKnockbackForce: 5
   enableJumpAttack: 1
   jumpAttackRange: 8
   jumpAttackMaxRange: 15
-  jumpAttackCooldown: 2
+  jumpAttackCooldown: 10
   warningPrefab: {fileID: 6954165050603246389, guid: 297185006d9525c44a926a0a045e94e5, type: 3}
   warningDuration: 1
   jumpDuration: 0.5
@@ -275,11 +284,6 @@ MonoBehaviour:
   knockbackForce: 8
   maxPathDistance: 100
   waitForGraphScan: 1
-  enableFireSkill: 1
-  fireballPrefab: {fileID: 0}
-  fireSpawnPoint: {fileID: 3113950020998823283}
-  fireCooldown: 5
-  fireProjectileSpeed: 8
 --- !u!50 &1367012826734319098
 Rigidbody2D:
   serializedVersion: 4
@@ -402,7 +406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 3
+  startingHealth: 300
   deathVFXPrefab: {fileID: 224097407149449950, guid: 0ccbfcfa7f623804d998e24c3476deb6, type: 3}
 --- !u!114 &4613989634672233111
 MonoBehaviour:

@@ -332,7 +332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 3
+  startingHealth: 300
   deathVFXPrefab: {fileID: 224097407149449950, guid: 7f8174866ff8d1e40a27dd1db90d7c6d, type: 3}
 --- !u!114 &8039900936355508634
 MonoBehaviour:
@@ -415,19 +415,20 @@ MonoBehaviour:
   normalBullet: {fileID: 9042451354514355422, guid: 2a720c64155057a4f892f34092497fb4, type: 3}
   normalBulletSpeed: 11
   normalAttackCooldown: 3
-  normalAttackChance: 60
+  normalAttackChance: 10
   waveBullet: {fileID: 5445516162708954503, guid: 8f96ab42d669ca144b220afdb75a6137, type: 3}
   waveBulletSpeed: 6
   waveAttackCooldown: 8
-  waveAttackChance: 30
+  waveAttackChance: 10
   wavesCount: 3
   delayBetweenWaves: 0.3
-  lightningBolt: {fileID: 2564506387876294689, guid: 4a4d897e24bc2c8419fc5ef976a7e6bc, type: 3}
+  lightningBolt: {fileID: 1688381417350325193, guid: df6578ae4ea20624c80f08e0aa2f539c, type: 3}
   warningIndicator: {fileID: 6954165050603246389, guid: 4b1259a6f1e94e54580dbe77b87b4c21, type: 3}
   ultimateCooldown: 15
-  ultimateChance: 10
+  ultimateChance: 50
   lightningCount: 8
   lightningSpawnRadius: 5
   warningDuration: 0.5
   delayBetweenLightning: 0.15
   freezeDurationTime: 0
+  spawnHeightOffset: 3

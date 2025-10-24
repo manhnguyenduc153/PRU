@@ -318,6 +318,8 @@ public class EnemyAI : MonoBehaviour
         StartCoroutine(LightningStrikeCoroutine());
     }
 
+    [SerializeField] private float spawnHeightOffset = 2f; // độ cao spawn thêm
+
     IEnumerator LightningStrikeCoroutine()
     {
         Vector3 playerPos = GetPlayerPosition();
@@ -331,7 +333,7 @@ public class EnemyAI : MonoBehaviour
             Vector2 randomOffset = Random.insideUnitCircle * lightningSpawnRadius;
             Vector3 strikePos = new Vector3(
                 playerPos.x + randomOffset.x,
-                playerPos.y + randomOffset.y,
+                playerPos.y + randomOffset.y, // ✅ thêm offset
                 playerPos.z
             );
             strikePositions.Add(strikePos);
@@ -359,12 +361,15 @@ public class EnemyAI : MonoBehaviour
             }
 
             // Triệu hồi cột sét tại vị trí
-            Instantiate(lightningBolt, strikePositions[i], Quaternion.identity);
+            Vector3 lightningPos = strikePositions[i];
+            lightningPos.y += spawnHeightOffset; // ✅ có thể thêm offset riêng cho tia sét
+            Instantiate(lightningBolt, lightningPos, Quaternion.identity);
 
             // Delay nhỏ giữa các cột sét để tạo hiệu ứng
             yield return new WaitForSeconds(0.05f);
         }
     }
+
 
     Vector3 GetPlayerPosition()
     {
