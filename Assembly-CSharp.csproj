@@ -60,7 +60,6 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.62f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Script\SceneTransitionManager.cs" />
     <Compile Include="Assets\Script\Sword\ActiveWeapon.cs" />
     <Compile Include="Assets\Script\Enemy\HybridEnemyAI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyHealth.cs" />
@@ -83,29 +82,31 @@
     <Compile Include="Assets\Script\Skills\EnemyBullet.cs" />
     <Compile Include="Assets\Script\Item\LootDropper.cs" />
     <Compile Include="Assets\Script\Item\PotionItem.cs" />
+    <Compile Include="Assets\Script\SceneManager\SceneTransition.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyFinalBoss.cs" />
     <Compile Include="Assets\Script\Enemy\DarkKing.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyRangeNormal.cs" />
+    <Compile Include="Assets\Script\SceneManager\GameManager.cs" />
     <Compile Include="Assets\Script\Sword\SlashAnim.cs" />
     <Compile Include="Assets\Script\Buff\BuffUIManager.cs" />
     <Compile Include="Assets\Script\Player\PlayerBullet.cs" />
     <Compile Include="Assets\Script\Sword\DamageSource.cs" />
+    <Compile Include="Assets\Script\SceneManager\SceneSpawnPoint.cs" />
     <Compile Include="Assets\Script\Item\Coin.cs" />
     <Compile Include="Assets\Script\Chest\Chest.cs" />
     <Compile Include="Assets\Script\Enemy\NewHybridEnemyAI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemySlashEffect.cs" />
-    <Compile Include="Assets\Script\Player\PlayerSpawnManager.cs" />
     <Compile Include="Assets\Script\Player\PlayerMana.cs" />
     <Compile Include="Assets\Script\SelfDestroy.cs" />
     <Compile Include="Assets\Script\Item\CoinManager.cs" />
     <Compile Include="Assets\Script\SpawnZone.cs" />
+    <Compile Include="Assets\Script\SceneManager\AstarSingleton.cs" />
     <Compile Include="Assets\Script\Sword\Sword.cs" />
     <Compile Include="Assets\Script\JumpWarningEffect.cs" />
     <Compile Include="Assets\Script\Enemy\MeleeEnemyAI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyAI.cs" />
     <Compile Include="Assets\Script\Player\PlayerHealth.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyAIGolem.cs" />
-    <Compile Include="Assets\Script\SpawnPoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
