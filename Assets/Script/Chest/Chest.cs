@@ -13,6 +13,12 @@ public class Chest : MonoBehaviour
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private float spawnForce = 5f;
 
+    [Header("Multiple Items Chance")]
+    [Tooltip("Xác suất (%) rơi ra nhiều item khi mở chest")]
+    [Range(0f, 100f)][SerializeField] private float multiItemChance = 25f;
+    [Tooltip("Số item tối đa có thể rơi ra khi chest mở nhiều item")]
+    [SerializeField] private int maxExtraItems = 3;
+
     [Header("References")]
     [SerializeField] private Animator animator;
 
@@ -36,7 +42,6 @@ public class Chest : MonoBehaviour
             spawnPoint = spawnObj.transform;
         }
 
-        // Ẩn UI lúc bắt đầu
         if (interactUI != null)
             interactUI.SetActive(false);
     }
@@ -48,7 +53,6 @@ public class Chest : MonoBehaviour
             TryOpenChest();
         }
 
-        // Cập nhật text mỗi frame khi player ở gần
         if (isPlayerNearby && !isOpened)
         {
             UpdateInteractText();
@@ -78,16 +82,25 @@ public class Chest : MonoBehaviour
 
         isOpened = true;
 
-        // Ẩn UI
         if (interactUI != null)
             interactUI.SetActive(false);
 
-        // Animation
         if (animator != null)
             animator.SetTrigger("Open");
 
-        // Spawn item
+        // Spawn ít nhất 1 item
         SpawnRandomItem();
+
+        // Kiểm tra khả năng spawn thêm item
+        float roll = Random.Range(0f, 100f);
+        if (roll <= multiItemChance)
+        {
+            int extraItems = Random.Range(1, maxExtraItems + 1);
+            for (int i = 0; i < extraItems; i++)
+            {
+                SpawnRandomItem();
+            }
+        }
     }
 
     void SpawnRandomItem()
@@ -95,31 +108,30 @@ public class Chest : MonoBehaviour
         int randomIndex = Random.Range(0, itemPrefabs.Length);
         GameObject itemToSpawn = itemPrefabs[randomIndex];
 
-        GameObject spawnedItem = Instantiate(itemToSpawn, spawnPoint.position, Quaternion.identity);
+        // Vị trí ngẫu nhiên xung quanh rương
+        float radius = 1f; // Bán kính rơi ra, có thể tùy chỉnh
+        Vector2 randomOffset = Random.insideUnitCircle * radius;
+        Vector3 spawnPos = spawnPoint.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
+
+        GameObject spawnedItem = Instantiate(itemToSpawn, spawnPos, Quaternion.identity);
 
         Rigidbody2D rb = spawnedItem.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
+            // Force vẫn hướng lên trên nhưng có thể hơi lệch trái/phải
             Vector2 randomDirection = new Vector2(Random.Range(-0.5f, 0.5f), 1f).normalized;
             rb.AddForce(randomDirection * spawnForce, ForceMode2D.Impulse);
         }
     }
+
 
     void UpdateInteractText()
     {
         if (interactText != null)
         {
             int currentCoins = CoinManager.Instance.GetCurrentCoins();
-            if (currentCoins >= coinCost)
-            {
-                interactText.text = $"({currentCoins}/{coinCost})";
-                interactText.color = Color.blue;
-            }
-            else
-            {
-                interactText.text = $"({currentCoins}/{coinCost})";
-                interactText.color = Color.red;
-            }
+            interactText.text = $"({currentCoins}/{coinCost})";
+            interactText.color = (currentCoins >= coinCost) ? Color.blue : Color.red;
         }
     }
 
@@ -129,7 +141,6 @@ public class Chest : MonoBehaviour
         {
             isPlayerNearby = true;
 
-            // Hiện UI
             if (interactUI != null)
                 interactUI.SetActive(true);
         }
@@ -141,7 +152,6 @@ public class Chest : MonoBehaviour
         {
             isPlayerNearby = false;
 
-            // Ẩn UI
             if (interactUI != null)
                 interactUI.SetActive(false);
         }
