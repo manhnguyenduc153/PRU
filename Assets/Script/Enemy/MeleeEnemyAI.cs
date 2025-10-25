@@ -20,6 +20,38 @@ public class MeleeEnemyAI : MonoBehaviour
     private float attackTimer;
     private bool isAttacking = false;
 
+    [Header("Projectile Attack Settings")]
+    public bool enableProjectileAttack = true;
+    public GameObject projectilePrefab;
+    public Transform projectileSpawnPoint;
+    public float projectileRange = 6f; // Khoảng cách tối thiểu để bắn
+    public float projectileMaxRange = 12f; // Khoảng cách tối đa
+    public float projectileCooldown = 4f;
+    public float projectileSpeed = 8f;
+    public int projectileDamage = 15;
+    public float projectileKnockbackForce = 5f;
+    private float projectileTimer;
+    private bool isShooting = false;
+
+    [Header("Jump Attack Settings")]
+    public bool enableJumpAttack = true;
+    public float jumpAttackRange = 8f;
+    public float jumpAttackMaxRange = 15f;
+    public float jumpAttackCooldown = 8f;
+    public GameObject warningPrefab;
+    public float warningDuration = 1f;
+    public float jumpDuration = 0.5f;
+    public float jumpHeight = 3f;
+    public float jumpDamageRadius = 2f;
+    public int jumpDamage = 30;
+    public float jumpKnockbackForce = 12f;
+    private float jumpAttackTimer;
+    private bool isJumping = false;
+
+    [Header("Ground Slam Effect")]
+    public GameObject groundSlamPrefab;
+    public float groundSlamDuration = 0.5f;
+
     private Path path;
     private Seeker seeker;
     private Rigidbody2D rb;
@@ -35,9 +67,10 @@ public class MeleeEnemyAI : MonoBehaviour
     public float knockbackForce = 8f;
 
     [Header("Pathfinding Fix")]
-    public float maxPathDistance = 100f; // Giới hạn khoảng cách tìm đường
-    public bool waitForGraphScan = true; // Đợi graph scan xong
+    public float maxPathDistance = 100f;
+    public bool waitForGraphScan = true;
     private bool isInitialized = false;
+
 
     private void Start()
     {
@@ -48,36 +81,32 @@ public class MeleeEnemyAI : MonoBehaviour
         player = FindObjectOfType<PlayerController>()?.transform;
         freezeDuration = 0;
         attackTimer = 0f;
+        jumpAttackTimer = 0f;
+        projectileTimer = 0f;
 
-        // Đợi graph sẵn sàng trước khi bắt đầu
         StartCoroutine(InitializePathfinding());
     }
 
     private IEnumerator InitializePathfinding()
     {
-        // Đợi graph được scan
         if (waitForGraphScan && AstarPath.active != null)
         {
             while (AstarPath.active.isScanning)
             {
                 yield return null;
             }
-
-            // Đợi thêm 1 frame để đảm bảo
             yield return new WaitForEndOfFrame();
         }
 
-        // Kiểm tra xem vị trí hiện tại có hợp lệ không
         if (AstarPath.active != null)
         {
             NNInfo nearestNode = AstarPath.active.GetNearest(transform.position);
             if (nearestNode.node != null)
             {
-                // Snap enemy về vị trí gần nhất trên graph nếu cần
                 Vector3 nearestPoint = (Vector3)nearestNode.position;
                 float distanceToNode = Vector3.Distance(transform.position, nearestPoint);
 
-                if (distanceToNode > 2f) // Nếu quá xa node gần nhất
+                if (distanceToNode > 2f)
                 {
                     Debug.LogWarning($"Enemy spawned too far from navmesh. Moving from {transform.position} to {nearestPoint}");
                     transform.position = nearestPoint;
@@ -101,14 +130,22 @@ public class MeleeEnemyAI : MonoBehaviour
             attackTimer -= Time.deltaTime;
         }
 
-        // ✅ Thêm phần này: luôn nhìn về phía player
+        if (jumpAttackTimer > 0)
+        {
+            jumpAttackTimer -= Time.deltaTime;
+        }
+
+        if (projectileTimer > 0)
+        {
+            projectileTimer -= Time.deltaTime;
+        }
+
         FacePlayer();
     }
 
-    // ✅ Hàm mới để luôn nhìn player
     private void FacePlayer()
     {
-        if (player == null || characterSR == null) return;
+        if (player == null || characterSR == null || isJumping) return;
 
         float dirX = player.position.x - transform.position.x;
         if (Mathf.Abs(dirX) > 0.05f)
@@ -125,7 +162,6 @@ public class MeleeEnemyAI : MonoBehaviour
     {
         if (!isInitialized || player == null) return;
 
-        // Kiểm tra khoảng cách trước khi tìm đường
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
         if (distanceToPlayer > maxPathDistance)
         {
@@ -171,13 +207,30 @@ public class MeleeEnemyAI : MonoBehaviour
 
             float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-            if (isAttacking)
+            // Kiểm tra jump attack trước (ưu tiên cao nhất)
+            if (enableJumpAttack && CanUseJumpAttack(distanceToPlayer))
+            {
+                rb.velocity = Vector2.zero;
+                StartCoroutine(PerformJumpAttack());
+                yield break;
+            }
+
+            // Kiểm tra projectile attack (ưu tiên thứ 2)
+            if (enableProjectileAttack && CanUseProjectileAttack(distanceToPlayer))
+            {
+                rb.velocity = Vector2.zero;
+                yield return StartCoroutine(PerformProjectileAttack());
+                continue;
+            }
+
+            if (isAttacking || isJumping || isShooting)
             {
                 rb.velocity = Vector2.zero;
                 yield return null;
                 continue;
             }
 
+            // Tấn công cận chiến
             if (distanceToPlayer <= attackRange)
             {
                 rb.velocity = Vector2.zero;
@@ -205,9 +258,243 @@ public class MeleeEnemyAI : MonoBehaviour
             if (distance < nextWaypointDistance)
                 currentWP++;
 
-            // ❌ Không cần flip hướng ở đây nữa vì đã có FacePlayer()
             yield return null;
         }
+    }
+
+    bool CanUseJumpAttack(float distanceToPlayer)
+    {
+        return jumpAttackTimer <= 0
+            && !isAttacking
+            && !isJumping
+            && !isShooting
+            && distanceToPlayer >= jumpAttackRange
+            && distanceToPlayer <= jumpAttackMaxRange
+            && warningPrefab != null;
+    }
+
+    bool CanUseProjectileAttack(float distanceToPlayer)
+    {
+        return projectileTimer <= 0
+            && !isAttacking
+            && !isJumping
+            && !isShooting
+            && distanceToPlayer >= projectileRange
+            && distanceToPlayer <= projectileMaxRange
+            && projectilePrefab != null;
+    }
+
+    IEnumerator PerformProjectileAttack()
+    {
+        isShooting = true;
+        projectileTimer = projectileCooldown;
+
+        // Trigger animation bắn (nếu có)
+        if (animator != null)
+        {
+            animator.SetTrigger("Punch");
+        }
+
+        // Đợi animation chuẩn bị
+        yield return new WaitForSeconds(0.3f);
+
+        // Bắn đạn
+        ShootProjectile();
+
+        // Đợi animation kết thúc
+        yield return new WaitForSeconds(0.3f);
+
+        isShooting = false;
+    }
+
+    void ShootProjectile()
+    {
+        if (projectilePrefab == null || player == null) return;
+
+        // Tính hướng bắn
+        Vector2 direction = (player.position - transform.position).normalized;
+
+        // Vị trí spawn
+        Vector3 spawnPos;
+        if (projectileSpawnPoint != null)
+        {
+            spawnPos = projectileSpawnPoint.position;
+        }
+        else
+        {
+            spawnPos = transform.position + (Vector3)direction * 1f;
+        }
+
+        // Tạo projectile
+        GameObject projectile = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
+
+        // Set velocity cho Rigidbody2D
+        Rigidbody2D projRb = projectile.GetComponent<Rigidbody2D>();
+        if (projRb != null)
+        {
+            projRb.velocity = direction * projectileSpeed;
+        }
+
+        // Script EnemyBullet sẽ tự động xử lý:
+        // - Xoay theo hướng bay (autoRotate)
+        // - Damage và knockback khi chạm Player
+        // - Tự hủy sau lifeTime hoặc khi chạm tường
+    }
+
+    IEnumerator PerformJumpAttack()
+    {
+        isJumping = true;
+        jumpAttackTimer = jumpAttackCooldown;
+
+        Vector3 targetPosition = player.position;
+
+        GameObject warning = null;
+        if (warningPrefab != null)
+        {
+            warning = Instantiate(warningPrefab, targetPosition, Quaternion.identity);
+        }
+
+        animator.SetTrigger("Jump");
+
+        yield return new WaitForSeconds(warningDuration);
+
+        if (warning != null)
+        {
+            Destroy(warning);
+        }
+
+        yield return StartCoroutine(JumpToPosition(targetPosition));
+
+        PerformGroundSlam(targetPosition);
+
+        yield return new WaitForSeconds(0.3f);
+
+        isJumping = false;
+
+        CalculatePath();
+    }
+
+    IEnumerator JumpToPosition(Vector3 targetPos)
+    {
+        Vector3 startPos = transform.position;
+        targetPos.y += 1.7f;
+        float elapsed = 0f;
+
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
+        while (elapsed < jumpDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / jumpDuration;
+
+            Vector3 currentPos = Vector3.Lerp(startPos, targetPos, t);
+
+            float height = jumpHeight * Mathf.Sin(t * Mathf.PI);
+            currentPos.y += height;
+
+            transform.position = currentPos;
+
+            yield return null;
+        }
+
+        transform.position = targetPos;
+
+        if (col != null) col.enabled = true;
+    }
+
+    void PerformGroundSlam(Vector3 position)
+    {
+        if (groundSlamPrefab != null)
+        {
+            GameObject slam = Instantiate(groundSlamPrefab, position, Quaternion.identity);
+            Destroy(slam, groundSlamDuration);
+        }
+        else
+        {
+            StartCoroutine(CreateSimpleGroundSlamEffect(position));
+        }
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(position, jumpDamageRadius);
+
+        foreach (Collider2D hit in hits)
+        {
+            if (hit.CompareTag("Player"))
+            {
+                PlayerHealth playerHealth = hit.GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.TakeDamage(jumpDamage);
+                }
+
+                PlayerKnockback playerKnockback = hit.GetComponent<PlayerKnockback>();
+                if (playerKnockback != null)
+                {
+                    Vector2 knockbackDir = (hit.transform.position - position).normalized;
+                    playerKnockback.ApplyKnockback(knockbackDir, jumpKnockbackForce);
+                }
+            }
+        }
+    }
+
+    IEnumerator CreateSimpleGroundSlamEffect(Vector3 position)
+    {
+        int ringCount = 3;
+        for (int i = 0; i < ringCount; i++)
+        {
+            GameObject ring = new GameObject("SlamRing");
+            ring.transform.position = position;
+
+            LineRenderer lr = ring.AddComponent<LineRenderer>();
+            lr.material = new Material(Shader.Find("Sprites/Default"));
+            lr.startColor = new Color(1, 0.5f, 0, 0.8f);
+            lr.endColor = new Color(1, 0.5f, 0, 0.8f);
+            lr.startWidth = 0.2f;
+            lr.endWidth = 0.2f;
+            lr.positionCount = 50;
+            lr.useWorldSpace = false;
+
+            float angle = 0f;
+            for (int j = 0; j < 50; j++)
+            {
+                float x = Mathf.Sin(Mathf.Deg2Rad * angle);
+                float y = Mathf.Cos(Mathf.Deg2Rad * angle);
+                lr.SetPosition(j, new Vector3(x, y, 0) * 0.5f);
+                angle += 360f / 50f;
+            }
+
+            StartCoroutine(ExpandAndFadeRing(ring, i * 0.1f));
+        }
+
+        yield return null;
+    }
+
+    IEnumerator ExpandAndFadeRing(GameObject ring, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        LineRenderer lr = ring.GetComponent<LineRenderer>();
+        float duration = 0.5f;
+        float elapsed = 0f;
+        Vector3 startScale = Vector3.one * 0.5f;
+        Vector3 endScale = Vector3.one * jumpDamageRadius;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            ring.transform.localScale = Vector3.Lerp(startScale, endScale, t);
+
+            Color col = lr.startColor;
+            col.a = 1 - t;
+            lr.startColor = col;
+            lr.endColor = col;
+
+            yield return null;
+        }
+
+        Destroy(ring);
     }
 
     void TryAttack()
@@ -271,7 +558,11 @@ public class MeleeEnemyAI : MonoBehaviour
         isAttacking = false;
     }
 
-    // Gọi hàm này khi spawn enemy bằng script
+    public void ShootAnimationEvent()
+    {
+        ShootProjectile();
+    }
+
     public void ForceRecalculatePath()
     {
         if (isInitialized)
@@ -292,8 +583,31 @@ public class MeleeEnemyAI : MonoBehaviour
             Gizmos.DrawWireSphere(slashSpawnPoint.position, 0.3f);
         }
 
-        // Vẽ khoảng cách tìm đường tối đa
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, maxPathDistance);
+
+        if (enableJumpAttack)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, jumpAttackRange);
+
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, jumpAttackMaxRange);
+        }
+
+        if (enableProjectileAttack)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position, projectileRange);
+
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(transform.position, projectileMaxRange);
+        }
+
+        if (projectileSpawnPoint != null)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(projectileSpawnPoint.position, 0.3f);
+        }
     }
 }

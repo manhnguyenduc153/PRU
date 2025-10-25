@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -564013619, guid: 1a993fc18e35ee740acca44e8b652593, type: 3}
-  m_Color: {r: 0.7345319, g: 0.8867924, b: 0.8827022, a: 1}
+  m_Color: {r: 0.121146254, g: 0.15471691, b: 0.15385613, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -167,6 +167,8 @@ MonoBehaviour:
   knockbackForce: 5
   autoRotate: 1
   destroyOnHitPlayer: 0
+  explodeOnHitPlayer: 1
+  explosionEffectPrefab: {fileID: 0}
 --- !u!95 &5130834929951887198
 Animator:
   serializedVersion: 5
