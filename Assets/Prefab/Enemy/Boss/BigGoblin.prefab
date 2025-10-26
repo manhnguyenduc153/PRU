@@ -407,6 +407,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 300
+  isBoss: 1
+  bossName: Goblin King
   deathVFXPrefab: {fileID: 224097407149449950, guid: 0ccbfcfa7f623804d998e24c3476deb6, type: 3}
 --- !u!114 &4613989634672233111
 MonoBehaviour:
