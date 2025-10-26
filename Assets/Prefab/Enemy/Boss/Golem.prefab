@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 5804519418524984525}
   - component: {fileID: 1252056132900967374}
   - component: {fileID: 7964337629014961265}
+  - component: {fileID: 6355691731462237837}
   m_Layer: 0
   m_Name: Golem
   m_TagString: Untagged
@@ -244,7 +245,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 300
+  startingHealth: 30
+  isBoss: 0
+  bossName: Boss Name
   deathVFXPrefab: {fileID: 224097407149449950, guid: 6c2f6a174938e8c49890f4719d8a2ce8, type: 3}
 --- !u!114 &5804519418524984525
 MonoBehaviour:
@@ -333,6 +336,25 @@ MonoBehaviour:
   maxPathDistance: 100
   waitForGraphScan: 1
   freezeDurationTime: 1
+--- !u!114 &6355691731462237837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3372005201994356536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fbf2d19adeaab8479df5134ad8474c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleDrops:
+  - itemPrefab: {fileID: 3259144119370911444, guid: 4d983a23c9b2d9d46a2b5f19421d07a0, type: 3}
+    dropChance: 1
+  minDropCount: 1
+  maxDropCount: 1
+  dropRadius: 0.5
+  allowDuplicateDrops: 0
 --- !u!1 &4782853100426023125
 GameObject:
   m_ObjectHideFlags: 0

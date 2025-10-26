@@ -5,6 +5,9 @@ using Pathfinding;
 
 public class EnemyAIMinotaur : MonoBehaviour
 {
+    [Header("Sprite Facing Settings")]
+    [SerializeField] private bool defaultFacingRight = true; // <-- thêm dòng này
+
     [Header("Movement Settings")]
     public float moveSpeed = 2f;
     public float nextWaypointDistance = 2f;
@@ -138,8 +141,15 @@ public class EnemyAIMinotaur : MonoBehaviour
 
         if (Mathf.Abs(dirX) > 0.05f)
         {
-            float newScaleX = dirX < 0 ? Mathf.Abs(originalScale.x) : -Mathf.Abs(originalScale.x);
-            characterSR.transform.localScale = new Vector3(newScaleX, originalScale.y, originalScale.z);
+            // Nếu enemy mặc định quay phải thì flip ngược lại logic cũ
+            if (defaultFacingRight)
+            {
+                characterSR.flipX = dirX < 0; // Player bên trái => lật sprite
+            }
+            else
+            {
+                characterSR.flipX = dirX > 0; // Player bên phải => lật sprite
+            }
         }
     }
 

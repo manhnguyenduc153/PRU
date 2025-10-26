@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 6352146204150531430}
   - component: {fileID: 4613989634672233111}
   - component: {fileID: 1253736184015981333}
+  - component: {fileID: 5262786350437643167}
   m_Layer: 0
   m_Name: BigGoblin
   m_TagString: Untagged
@@ -406,7 +407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 300
+  startingHealth: 30
   isBoss: 1
   bossName: Goblin King
   deathVFXPrefab: {fileID: 224097407149449950, guid: 0ccbfcfa7f623804d998e24c3476deb6, type: 3}
@@ -462,3 +463,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whiteFlashMat: {fileID: 2100000, guid: 05487a7d7b484e24a880c2c0917e84e8, type: 2}
   restoreDefaultMatTime: 0.2
+--- !u!114 &5262786350437643167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4512645381195066547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fbf2d19adeaab8479df5134ad8474c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleDrops:
+  - itemPrefab: {fileID: 1285098124904972862, guid: e7d235a79d9b3a5488d756d3908850d7, type: 3}
+    dropChance: 1
+  minDropCount: 1
+  maxDropCount: 1
+  dropRadius: 0.5
+  allowDuplicateDrops: 1

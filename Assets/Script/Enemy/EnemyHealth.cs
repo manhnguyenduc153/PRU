@@ -122,7 +122,14 @@ public class EnemyHealth : MonoBehaviour
             {
                 lootDropper.DropLoot();
             }
-            
+
+            // Gọi drop
+            EnemyDrop dropper = GetComponent<EnemyDrop>();
+            if (dropper != null)
+            {
+                dropper.DropLoot();
+            }
+
             // VFX
             if (deathVFXPrefab != null)
             {
