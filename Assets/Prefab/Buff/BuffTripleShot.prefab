@@ -101,6 +101,7 @@ MonoBehaviour:
   buffType: 2
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
+  pickupDelay: 0.5
 --- !u!58 &7356698286511929842
 CircleCollider2D:
   m_ObjectHideFlags: 0
