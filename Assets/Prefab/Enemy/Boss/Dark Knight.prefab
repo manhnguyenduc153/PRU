@@ -375,8 +375,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fbf2d19adeaab8479df5134ad8474c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  possibleDrops: []
-  minDropCount: 1
-  maxDropCount: 1
+  possibleDrops:
+  - itemPrefab: {fileID: 4589400155456446401, guid: fe05bf36a700d4e48bcc862cac6b7dd6, type: 3}
+    dropChance: 1
+  minDropCount: 5
+  maxDropCount: 10
   dropRadius: 0.5
   allowDuplicateDrops: 0

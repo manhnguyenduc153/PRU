@@ -97,11 +97,12 @@ GameObject:
   - component: {fileID: 7541993761636840337}
   - component: {fileID: 4403969627643636414}
   - component: {fileID: 3855776899752168051}
-  - component: {fileID: 1723071573038765870}
   - component: {fileID: 5759520658276108058}
   - component: {fileID: 6486064598892673258}
   - component: {fileID: 8618392525144792360}
   - component: {fileID: 2839573398967578713}
+  - component: {fileID: 8302041192562104998}
+  - component: {fileID: 5314325476182861068}
   m_Layer: 0
   m_Name: Skeleton
   m_TagString: Untagged
@@ -252,41 +253,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!70 &1723071573038765870
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5472773179426766410}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.1962749, y: -0.9278508}
-  m_Size: {x: 0.89682734, y: 2.3599782}
-  m_Direction: 0
 --- !u!95 &5759520658276108058
 Animator:
   serializedVersion: 5
@@ -321,6 +287,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 3
+  isBoss: 0
+  bossName: Boss Name
   deathVFXPrefab: {fileID: 224097407149449950, guid: ee9fd44b34de8d5469580d953ec2ef1d, type: 3}
 --- !u!114 &8618392525144792360
 MonoBehaviour:
@@ -374,3 +342,77 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whiteFlashMat: {fileID: 2100000, guid: 05487a7d7b484e24a880c2c0917e84e8, type: 2}
   restoreDefaultMatTime: 0.2
+--- !u!60 &8302041192562104998
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5472773179426766410}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 6, y: 4}
+    newSize: {x: 3, y: 3}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 1.3125, y: 0.1875}
+      - {x: 1.3125, y: 0.5625}
+      - {x: 1.125, y: 0.6875}
+      - {x: 0.4375, y: -0.1875}
+      - {x: 0.3125, y: 0.6875}
+      - {x: 0.0625, y: 0.9375}
+      - {x: -0.4375, y: 0.9375}
+      - {x: -0.875, y: 0.8125}
+      - {x: -0.875, y: -2}
+      - {x: 0.5, y: -2}
+  m_UseDelaunayMesh: 0
+--- !u!114 &5314325476182861068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5472773179426766410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fbf2d19adeaab8479df5134ad8474c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleDrops:
+  - itemPrefab: {fileID: 4589400155456446401, guid: fe05bf36a700d4e48bcc862cac6b7dd6, type: 3}
+    dropChance: 1
+  minDropCount: 2
+  maxDropCount: 4
+  dropRadius: 0.5
+  allowDuplicateDrops: 0

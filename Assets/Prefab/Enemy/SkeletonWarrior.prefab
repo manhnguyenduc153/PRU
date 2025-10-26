@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 2171112887778676843}
   - component: {fileID: 7224896670126930108}
   - component: {fileID: 3511241873899010603}
+  - component: {fileID: -6236857065554806540}
   m_Layer: 0
   m_Name: SkeletonWarrior
   m_TagString: Untagged
@@ -238,6 +239,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 3
+  isBoss: 0
+  bossName: Boss Name
   deathVFXPrefab: {fileID: 224097407149449950, guid: 28a998774bc55424ba936959026a08cb, type: 3}
 --- !u!114 &2171112887778676843
 MonoBehaviour:
@@ -309,6 +312,25 @@ MonoBehaviour:
   dropRadius: 0.5
   randomRotation: 1
   spawnDelay: 0.1
+--- !u!114 &-6236857065554806540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2135236015558776858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fbf2d19adeaab8479df5134ad8474c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleDrops:
+  - itemPrefab: {fileID: 4589400155456446401, guid: fe05bf36a700d4e48bcc862cac6b7dd6, type: 3}
+    dropChance: 1
+  minDropCount: 3
+  maxDropCount: 5
+  dropRadius: 0.5
+  allowDuplicateDrops: 0
 --- !u!1 &2151007729173618874
 GameObject:
   m_ObjectHideFlags: 0

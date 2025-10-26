@@ -351,8 +351,10 @@ MonoBehaviour:
   possibleDrops:
   - itemPrefab: {fileID: 3259144119370911444, guid: 4d983a23c9b2d9d46a2b5f19421d07a0, type: 3}
     dropChance: 1
-  minDropCount: 1
-  maxDropCount: 1
+  - itemPrefab: {fileID: 5129465232877784365, guid: fa27ea050fd428048b7f9ca2d5c95960, type: 3}
+    dropChance: 1
+  minDropCount: 2
+  maxDropCount: 2
   dropRadius: 0.5
   allowDuplicateDrops: 0
 --- !u!1 &4782853100426023125

@@ -96,12 +96,13 @@ GameObject:
   - component: {fileID: 6631419343772021989}
   - component: {fileID: 1769891193948399932}
   - component: {fileID: 199051369030023371}
-  - component: {fileID: 4047481669575622162}
   - component: {fileID: 6218461711149831000}
   - component: {fileID: 6549057597390441807}
   - component: {fileID: 1094762066406886433}
   - component: {fileID: 6631340046642217945}
   - component: {fileID: 6690584917579027574}
+  - component: {fileID: -6772521140307030489}
+  - component: {fileID: 6785594702500668638}
   m_Layer: 0
   m_Name: GoblinArcher
   m_TagString: Untagged
@@ -232,41 +233,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!70 &4047481669575622162
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2729161209583412626}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.19627494, y: -0.6748935}
-  m_Size: {x: 0.89682734, y: 1.3870661}
-  m_Direction: 0
 --- !u!95 &6218461711149831000
 Animator:
   serializedVersion: 5
@@ -381,3 +347,132 @@ MonoBehaviour:
   attackCooldown: 3
   attackChance: 100
   freezeDurationTime: 0
+--- !u!60 &-6772521140307030489
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2729161209583412626}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.3441162, y: 1.953125}
+    newSize: {x: 3, y: 3}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.22662842, y: -0.72727096}
+      - {x: -0.14421809, y: -0.6448606}
+      - {x: -0.15451938, y: -0.5315464}
+      - {x: -0.010301292, y: -0.59335417}
+      - {x: 0.05150646, y: -0.60365546}
+      - {x: 0.06180775, y: -0.9538994}
+      - {x: 0.082410336, y: -0.97450197}
+      - {x: 0.44295555, y: -0.97450197}
+      - {x: 0.46355814, y: -0.9538994}
+      - {x: 0.47385943, y: -0.88179034}
+      - {x: 0.3914491, y: -0.79938}
+      - {x: 0.27813488, y: -0.8096813}
+      - {x: 0.72109044, y: -0.304918}
+      - {x: 0.72109044, y: 0.14833885}
+      - {x: 0.669584, y: 0.24105048}
+      - {x: 0.6077762, y: 0.364666}
+      - {x: 0.67988527, y: 0.41617244}
+      - {x: 0.669584, y: 0.55008924}
+      - {x: 0.55626976, y: 0.67370474}
+      - {x: 0.4017504, y: 0.80762154}
+      - {x: -0.05150646, y: 0.80762154}
+      - {x: -0.07210904, y: 0.7561151}
+      - {x: -0.3708465, y: 0.7561151}
+      - {x: -0.55626976, y: 0.5706918}
+      - {x: -0.70048785, y: 0.30285823}
+      - {x: -0.7519943, y: 0.10713369}
+      - {x: -0.83440465, y: -0.006180524}
+      - {x: -0.8035008, y: -0.18130249}
+      - {x: -0.67988527, y: -0.2946167}
+      - {x: -0.7622956, y: -0.51094383}
+      - {x: -0.81380206, y: -0.79938}
+      - {x: -0.8756098, y: -0.86118776}
+      - {x: -0.8756098, y: -0.9538994}
+      - {x: -0.8653085, y: -0.97450197}
+      - {x: -0.55626976, y: -0.97450197}
+      - {x: -0.5356672, y: -0.9538994}
+      - {x: -0.41205168, y: -0.5727516}
+      - {x: -0.30903876, y: -0.72727096}
+    - - {x: 0.22662842, y: -0.33582187}
+      - {x: 0.07210904, y: -0.18130249}
+      - {x: 0.041205168, y: -0.18130249}
+      - {x: 0.041205168, y: -0.109193444}
+      - {x: 0.05150646, y: -0.14009732}
+      - {x: 0.20602584, y: -0.2946167}
+      - {x: 0.23692971, y: -0.2946167}
+      - {x: 0.23692971, y: -0.4285335}
+    - - {x: 0.35024393, y: -0.2946167}
+      - {x: 0.42235297, y: -0.2946167}
+      - {x: 0.42235297, y: -0.304918}
+      - {x: 0.35024393, y: -0.304918}
+    - - {x: 0.35024393, y: 0.045325935}
+      - {x: 0.31934005, y: 0.07622981}
+      - {x: 0.28843617, y: 0.07622981}
+      - {x: 0.28843617, y: 0.2101466}
+      - {x: 0.48416072, y: 0.2101466}
+      - {x: 0.48416072, y: 0.13803756}
+      - {x: 0.45325685, y: 0.13803756}
+      - {x: 0.42235297, y: 0.10713369}
+      - {x: 0.42235297, y: 0.01442206}
+      - {x: 0.3914491, y: 0.01442206}
+      - {x: 0.36054522, y: -0.016481815}
+      - {x: 0.36054522, y: -0.047385693}
+      - {x: 0.35024393, y: -0.047385693}
+    - - {x: 0.5459685, y: -0.047385693}
+      - {x: 0.47385943, y: -0.047385693}
+  m_UseDelaunayMesh: 0
+--- !u!114 &6785594702500668638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2729161209583412626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fbf2d19adeaab8479df5134ad8474c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleDrops:
+  - itemPrefab: {fileID: 4589400155456446401, guid: fe05bf36a700d4e48bcc862cac6b7dd6, type: 3}
+    dropChance: 1
+  minDropCount: 2
+  maxDropCount: 3
+  dropRadius: 0.5
+  allowDuplicateDrops: 1
