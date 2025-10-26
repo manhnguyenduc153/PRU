@@ -27,10 +27,10 @@ public class PlayerMana : MonoBehaviour
         }
 
         // Test: Bấm Space để giảm mana
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            UseMana(50);
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    UseMana(50);
+        //}
     }
 
     public void UseMana(int amount)
@@ -52,7 +52,7 @@ public class PlayerMana : MonoBehaviour
         {
             currentMana = maxMana;
         }
-        Debug.Log($"Mana regenerated {amount}! Current Mana: {currentMana}/{maxMana}");
+       // Debug.Log($"Mana regenerated {amount}! Current Mana: {currentMana}/{maxMana}");
     }
 
     public int GetCurrentMana()

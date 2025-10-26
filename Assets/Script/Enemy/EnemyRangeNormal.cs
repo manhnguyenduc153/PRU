@@ -101,13 +101,20 @@ public class EnemyRangeNormal : MonoBehaviour
     // Tấn công bắn đạn - giống Normal Attack từ script gốc
     void UseNormalAttack()
     {
-        if (bulletPrefab == null) return;
-
-        // ✅ Trigger animation
         if (animator != null)
         {
             animator.SetTrigger("Attack");
         }
+
+        // Gọi coroutine để delay việc bắn đạn 0.5s
+        StartCoroutine(DelayedShoot(0.5f));
+    }
+
+    IEnumerator DelayedShoot(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (bulletPrefab == null) yield break;
 
         var bulletTmp = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
         Rigidbody2D bulletRb = bulletTmp.GetComponent<Rigidbody2D>();
@@ -117,6 +124,7 @@ public class EnemyRangeNormal : MonoBehaviour
 
         bulletRb.AddForce(direction * bulletSpeed, ForceMode2D.Impulse);
     }
+
 
     Vector3 GetPlayerPosition()
     {

@@ -6,37 +6,43 @@ public enum BuffType
 {
     Slash,
     Lightning,
-    TripleShot
+    TripleShot,
+    Attack,
+    Mana,
+    Hp
 }
 
 public class BuffPickup : MonoBehaviour
 {
     [SerializeField] private BuffType buffType;
     [SerializeField] private GameObject pickupEffect; // Optional: VFX khi nhặt buff
-    [SerializeField] private AudioClip pickupSound; // Optional: Sound khi nhặt buff
+    [SerializeField] private AudioClip pickupSound;   // Optional: Sound khi nhặt buff
+    [SerializeField] private float pickupDelay = 0.5f; // Thời gian delay trước khi nhặt
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Check xem có phải player không
-        if (other.CompareTag("Player"))
-        {
-            ActivateBuff();
+        if (!other.CompareTag("Player")) return;
 
-            // Spawn pickup effect nếu có
-            if (pickupEffect != null)
-            {
-                Instantiate(pickupEffect, transform.position, Quaternion.identity);
-            }
+        // Bắt đầu coroutine delay
+        StartCoroutine(DelayedPickup());
+    }
 
-            // Play sound nếu có
-            if (pickupSound != null)
-            {
-                AudioSource.PlayClipAtPoint(pickupSound, transform.position);
-            }
+    private IEnumerator DelayedPickup()
+    {
+        yield return new WaitForSeconds(pickupDelay); // chờ 0.5 giây
 
-            // Destroy buff pickup object
-            Destroy(gameObject);
-        }
+        ActivateBuff();
+
+        // Spawn pickup effect nếu có
+        if (pickupEffect != null)
+            Instantiate(pickupEffect, transform.position, Quaternion.identity);
+
+        // Play sound nếu có
+        if (pickupSound != null)
+            AudioSource.PlayClipAtPoint(pickupSound, transform.position);
+
+        // Destroy buff pickup object
+        Destroy(gameObject);
     }
 
     private void ActivateBuff()
@@ -57,6 +63,15 @@ public class BuffPickup : MonoBehaviour
                 break;
             case BuffType.TripleShot:
                 BuffManager.Instance.AddTripleShotBuff();
+                break;
+            case BuffType.Attack:
+                BuffManager.Instance.AddAttackBuff();
+                break;
+            case BuffType.Mana:
+                BuffManager.Instance.AddManaBuff();
+                break;
+            case BuffType.Hp:
+                BuffManager.Instance.AddHpBuff();
                 break;
         }
     }

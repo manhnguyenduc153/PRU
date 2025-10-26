@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class SpawnZone : MonoBehaviour
@@ -7,8 +8,7 @@ public class SpawnZone : MonoBehaviour
     public class EnemySpawnData
     {
         public GameObject enemyPrefab;
-        [Range(0f, 100f)]
-        public float spawnChance = 50f;
+        [Range(0f, 100f)] public float spawnChance = 50f;
     }
 
     [Header("Enemy Settings")]
@@ -18,157 +18,285 @@ public class SpawnZone : MonoBehaviour
 
     [Header("Spawn Area (2D)")]
     [SerializeField] private Vector2 spawnAreaSize = new Vector2(10f, 5f);
-
-    [Header("Spawn Settings")]
-    [SerializeField] private bool spawnOnce = true;
     [SerializeField] private float minDistanceBetweenEnemies = 1f;
+    [SerializeField] private float radiusDetectColliderSpawn = 1.5f;
 
-    public float radiusDetectColliderSpawn = 1.5f;
+    [Header("Spawn Behavior")]
+    [SerializeField] private bool spawnOnStart = false;
+    [SerializeField] private bool spawnOnPlayerEnter = true;
+    [SerializeField] private bool enableRespawn = false;
+    [SerializeField] private bool requireTriggerToRespawn = false;
+    [SerializeField] private float respawnDelay = 10f;
 
-    [SerializeField] private bool hasSpawned = false;
-    [SerializeField] private List<GameObject> spawnedEnemies = new List<GameObject>();
+    // Internal state
+    private bool hasTriggered = false;
+    private bool isWaitingForRespawn = false; // Đang trong thời gian delay
+    private bool canRespawn = false; // Đã hết delay, sẵn sàng spawn
+    private List<GameObject> spawnedEnemies = new List<GameObject>();
+    private Coroutine respawnCoroutine;
 
     private void Start()
     {
         gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+        if (spawnOnStart)
+        {
+            TriggerSpawn();
+        }
+    }
+
+    private void Update()
+    {
+        if (!hasTriggered || spawnedEnemies.Count == 0) return;
+
+        // Cleanup null references và check nếu tất cả enemy đã chết
+        CleanupDeadEnemies();
+
+        // Bắt đầu respawn coroutine khi tất cả enemy chết
+        if (spawnedEnemies.Count == 0 && enableRespawn && !isWaitingForRespawn && !canRespawn)
+        {
+            respawnCoroutine = StartCoroutine(RespawnCoroutine());
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
+        if (!spawnOnPlayerEnter) return;
 
-        // Kiểm tra với GameManager xem đã spawn chưa
-        if (spawnOnce && GameManager.Instance != null && GameManager.Instance.IsSpawned(this))
-            return;
-
-        if (!spawnOnce || !hasSpawned)
+        // Trường hợp 1: Lần đầu spawn
+        if (!hasTriggered)
         {
-            SpawnEnemies();
-            hasSpawned = true;
-
-            // Cập nhật trạng thái vào GameManager
-            if (GameManager.Instance != null)
+            // Kiểm tra với GameManager nếu có
+            if (GameManager.Instance != null && GameManager.Instance.IsSpawned(this))
             {
-                string key = GameManager.Instance.GetSpawnZoneKey(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, gameObject);
-                GameManager.Instance.SetSpawned(key, true, spawnedEnemies);
+                return;
+            }
+
+            TriggerSpawn();
+            return;
+        }
+
+        // Trường hợp 2: Respawn khi đã hết delay
+        if (canRespawn && spawnedEnemies.Count == 0)
+        {
+            Debug.Log($"[{gameObject.name}] Player vào trigger sau {respawnDelay}s, respawn ngay!");
+            canRespawn = false;
+            SpawnEnemies();
+        }
+    }
+
+    private void TriggerSpawn()
+    {
+        if (respawnCoroutine != null)
+        {
+            StopCoroutine(respawnCoroutine);
+            respawnCoroutine = null;
+        }
+
+        SpawnEnemies();
+        hasTriggered = true;
+        isWaitingForRespawn = false;
+        canRespawn = false;
+
+        // Lưu vào GameManager nếu có
+        if (GameManager.Instance != null)
+        {
+            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            string key = GameManager.Instance.GetSpawnZoneKey(sceneName, gameObject);
+            GameManager.Instance.SetSpawned(key, true, spawnedEnemies);
+        }
+    }
+
+    private IEnumerator RespawnCoroutine()
+    {
+        isWaitingForRespawn = true;
+        Debug.Log($"[{gameObject.name}] Tất cả enemy đã chết. Chờ {respawnDelay}s...");
+
+        yield return new WaitForSeconds(respawnDelay);
+
+        // Double check không có enemy nào còn sống
+        CleanupDeadEnemies();
+
+        if (spawnedEnemies.Count == 0)
+        {
+            if (requireTriggerToRespawn)
+            {
+                // Chờ player vào trigger
+                canRespawn = true;
+                Debug.Log($"[{gameObject.name}] Đã hết delay. Chờ player vào trigger để respawn...");
+            }
+            else
+            {
+                // Auto spawn ngay
+                Debug.Log($"[{gameObject.name}] Auto respawn enemies");
+                SpawnEnemies();
             }
         }
+
+        isWaitingForRespawn = false;
+        respawnCoroutine = null;
     }
 
     private void SpawnEnemies()
     {
-        if (enemyTypes.Count == 0)
+        if (enemyTypes == null || enemyTypes.Count == 0)
         {
-            Debug.LogError("Chưa thêm Enemy Prefab nào!");
+            Debug.LogError($"[{gameObject.name}] Chưa thêm Enemy Prefab nào!");
             return;
         }
+
+        // Clear danh sách cũ
+        ClearSpawnedEnemies();
 
         int enemyCount = Random.Range(minEnemyCount, maxEnemyCount + 1);
         List<Vector2> spawnedPositions = new List<Vector2>();
 
         for (int i = 0; i < enemyCount; i++)
         {
-            GameObject selectedEnemy = GetRandomEnemyPrefab();
-            if (selectedEnemy == null) continue;
+            GameObject selectedPrefab = GetRandomEnemyPrefab();
+            if (selectedPrefab == null) continue;
 
-            Vector2 spawnPos = GetRandomSpawnPosition(spawnedPositions);
-            if (spawnPos != Vector2.zero)
+            Vector2 spawnPos = GetValidSpawnPosition(spawnedPositions);
+            if (spawnPos == Vector2.zero) continue;
+
+            GameObject enemy = Instantiate(selectedPrefab, spawnPos, Quaternion.identity);
+            spawnedEnemies.Add(enemy);
+            spawnedPositions.Add(spawnPos);
+
+            // Random flip hướng
+            if (Random.value > 0.5f)
             {
-                GameObject enemy = Instantiate(selectedEnemy, spawnPos, Quaternion.identity);
-                spawnedEnemies.Add(enemy);
-                spawnedPositions.Add(spawnPos);
+                Vector3 scale = enemy.transform.localScale;
+                scale.x *= -1;
+                enemy.transform.localScale = scale;
+            }
 
-                if (Random.value > 0.5f)
-                {
-                    Vector3 scale = enemy.transform.localScale;
-                    scale.x *= -1;
-                    enemy.transform.localScale = scale;
-                }
+            // Reset AI component nếu có
+            var enemyAI = enemy.GetComponent<MeleeEnemyAINormal>();
+            if (enemyAI != null)
+            {
+                enemyAI.enabled = false;
+                enemyAI.enabled = true;
+            }
 
-                var enemyAI = enemy.GetComponent<MeleeEnemyAINormal>();
-                if (enemyAI != null)
-                {
-                    enemyAI.enabled = false;
-                    enemyAI.enabled = true;
-                }
-
-                Collider2D enemyCol = enemy.GetComponent<Collider2D>();
-                Collider2D zoneCol = GetComponent<Collider2D>();
-                if (enemyCol != null && zoneCol != null)
-                {
-                    Physics2D.IgnoreCollision(zoneCol, enemyCol, true);
-                }
+            // Ignore collision với spawn zone
+            Collider2D enemyCol = enemy.GetComponent<Collider2D>();
+            Collider2D zoneCol = GetComponent<Collider2D>();
+            if (enemyCol != null && zoneCol != null)
+            {
+                Physics2D.IgnoreCollision(zoneCol, enemyCol, true);
             }
         }
 
-        Debug.Log($"Đã spawn {spawnedEnemies.Count} enemies trong khu vực {gameObject.name}");
+        Debug.Log($"[{gameObject.name}] Đã spawn {spawnedEnemies.Count}/{enemyCount} enemies");
     }
 
     private GameObject GetRandomEnemyPrefab()
     {
         List<GameObject> weightedList = new List<GameObject>();
+
         foreach (var enemyData in enemyTypes)
         {
             if (enemyData.enemyPrefab != null)
             {
-                int weight = Mathf.RoundToInt(enemyData.spawnChance);
-                for (int i = 0; i < weight; i++) weightedList.Add(enemyData.enemyPrefab);
+                int weight = Mathf.Max(1, Mathf.RoundToInt(enemyData.spawnChance));
+                for (int i = 0; i < weight; i++)
+                {
+                    weightedList.Add(enemyData.enemyPrefab);
+                }
             }
         }
+
         if (weightedList.Count == 0)
         {
-            Debug.LogError("Không có enemy prefab hợp lệ!");
+            Debug.LogError($"[{gameObject.name}] Không có enemy prefab hợp lệ!");
             return null;
         }
+
         return weightedList[Random.Range(0, weightedList.Count)];
     }
 
-    private Vector2 GetRandomSpawnPosition(List<Vector2> existingPositions)
+    private Vector2 GetValidSpawnPosition(List<Vector2> existingPositions)
     {
-        int attempts = 0;
         int maxAttempts = 30;
 
-        while (attempts < maxAttempts)
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
             float randomX = Random.Range(-spawnAreaSize.x / 2, spawnAreaSize.x / 2);
             float randomY = Random.Range(-spawnAreaSize.y / 2, spawnAreaSize.y / 2);
-            Vector2 randomPos = (Vector2)transform.position + new Vector2(randomX, randomY);
+            Vector2 candidatePos = (Vector2)transform.position + new Vector2(randomX, randomY);
 
-            bool validPosition = true;
+            // Check khoảng cách với enemy khác
+            bool tooClose = false;
             foreach (var pos in existingPositions)
             {
-                if (Vector2.Distance(randomPos, pos) < minDistanceBetweenEnemies)
+                if (Vector2.Distance(candidatePos, pos) < minDistanceBetweenEnemies)
                 {
-                    validPosition = false;
+                    tooClose = true;
                     break;
                 }
             }
 
-            if (validPosition)
-            {
-                float checkRadius = radiusDetectColliderSpawn;
-                Collider2D hit = Physics2D.OverlapCircle(randomPos, checkRadius, LayerMask.GetMask("Obstacle", "Ground"));
-                if (hit == null) return randomPos;
-            }
+            if (tooClose) continue;
 
-            attempts++;
+            // Check overlap với obstacle/ground
+            Collider2D hit = Physics2D.OverlapCircle(
+                candidatePos,
+                radiusDetectColliderSpawn,
+                LayerMask.GetMask("Obstacle", "Ground")
+            );
+
+            if (hit == null)
+            {
+                return candidatePos;
+            }
         }
 
-        Debug.LogWarning("Không tìm được vị trí spawn phù hợp (vướng collider)!");
+        Debug.LogWarning($"[{gameObject.name}] Không tìm được vị trí spawn hợp lệ sau {maxAttempts} lần thử!");
         return Vector2.zero;
+    }
+
+    private void CleanupDeadEnemies()
+    {
+        for (int i = spawnedEnemies.Count - 1; i >= 0; i--)
+        {
+            if (spawnedEnemies[i] == null)
+            {
+                spawnedEnemies.RemoveAt(i);
+            }
+        }
     }
 
     public void ClearSpawnedEnemies()
     {
         foreach (var enemy in spawnedEnemies)
-            if (enemy != null) Destroy(enemy);
+        {
+            if (enemy != null)
+            {
+                Destroy(enemy);
+            }
+        }
         spawnedEnemies.Clear();
-        hasSpawned = false;
     }
 
     public void ResetZone()
     {
-        hasSpawned = false;
+        if (respawnCoroutine != null)
+        {
+            StopCoroutine(respawnCoroutine);
+            respawnCoroutine = null;
+        }
+
+        ClearSpawnedEnemies();
+        hasTriggered = false;
+        isWaitingForRespawn = false;
+        canRespawn = false;
+    }
+
+    public void ForceSpawn()
+    {
+        TriggerSpawn();
     }
 
     private void OnDrawGizmosSelected()
@@ -179,5 +307,9 @@ public class SpawnZone : MonoBehaviour
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(transform.position, size);
+
+        // Vẽ min distance circle
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, minDistanceBetweenEnemies);
     }
 }

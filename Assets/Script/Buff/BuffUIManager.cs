@@ -19,9 +19,13 @@ public class BuffUIManager : MonoBehaviour
     [SerializeField] private Transform buffIconContainer;
     [SerializeField] private GameObject buffIconPrefab;
 
+    [Header("Buff Icons")]
     [SerializeField] private Sprite slashBuffIcon;
     [SerializeField] private Sprite lightningBuffIcon;
     [SerializeField] private Sprite tripleShotBuffIcon;
+    [SerializeField] private Sprite attackBuffIcon;
+    [SerializeField] private Sprite manaBuffIcon;
+    [SerializeField] private Sprite hpBuffIcon;
 
     private BuffManager buffManager;
     private List<BuffDisplay> buffDisplays = new List<BuffDisplay>();
@@ -29,6 +33,9 @@ public class BuffUIManager : MonoBehaviour
     private int previousSlashLevel = 0;
     private int previousLightningLevel = 0;
     private int previousTripleShotLevel = 0;
+    private int previousAttackLevel = 0;
+    private int previousManaLevel = 0;
+    private int previousHpLevel = 0;
 
     private void Start()
     {
@@ -38,31 +45,34 @@ public class BuffUIManager : MonoBehaviour
             Debug.LogError("BuffManager Instance not found!");
             return;
         }
-
-        if (buffIconPrefab == null || buffIconContainer == null)
-        {
-            Debug.LogError("BuffIconPrefab hoặc BuffIconContainer chưa được assign!");
-            return;
-        }
-
         UpdateBuffUI();
     }
 
     private void Update()
     {
+        // Lấy level hiện tại
         int currentSlashLevel = buffManager.GetSlashLevel();
         int currentLightningLevel = buffManager.GetLightningLevel();
         int currentTripleShotLevel = buffManager.GetTripleShotLevel();
+        int currentAttackLevel = buffManager.GetAttackLevel();
+        int currentManaLevel = buffManager.GetManaLevel();
+        int currentHpLevel = buffManager.GetHpLevel();
 
         // Cập nhật level text
         UpdateLevelDisplay("Slash", currentSlashLevel);
         UpdateLevelDisplay("Lightning", currentLightningLevel);
         UpdateLevelDisplay("TripleShot", currentTripleShotLevel);
+        UpdateLevelDisplay("Attack", currentAttackLevel);
+        UpdateLevelDisplay("Mana", currentManaLevel);
+        UpdateLevelDisplay("Hp", currentHpLevel);
 
-        // Kiểm tra nếu có buff mới được nhặt
+        // Nếu có buff mới nhặt
         if ((currentSlashLevel > 0 && previousSlashLevel == 0) ||
             (currentLightningLevel > 0 && previousLightningLevel == 0) ||
-            (currentTripleShotLevel > 0 && previousTripleShotLevel == 0))
+            (currentTripleShotLevel > 0 && previousTripleShotLevel == 0) ||
+            (currentAttackLevel > 0 && previousAttackLevel == 0) ||
+            (currentManaLevel > 0 && previousManaLevel == 0) ||
+            (currentHpLevel > 0 && previousHpLevel == 0))
         {
             UpdateBuffUI();
         }
@@ -70,28 +80,29 @@ public class BuffUIManager : MonoBehaviour
         previousSlashLevel = currentSlashLevel;
         previousLightningLevel = currentLightningLevel;
         previousTripleShotLevel = currentTripleShotLevel;
+        previousAttackLevel = currentAttackLevel;
+        previousManaLevel = currentManaLevel;
+        previousHpLevel = currentHpLevel;
     }
 
     private void UpdateBuffUI()
     {
         if (buffManager == null) return;
 
-        // Xóa tất cả UI cũ
+        // Xóa UI cũ
         foreach (var display in buffDisplays)
-        {
             Destroy(display.buffIcon);
-        }
         buffDisplays.Clear();
 
-        // Tạo UI theo thứ tự
-        if (buffManager.GetSlashLevel() > 0)
-            CreateBuffIcon("Slash", slashBuffIcon);
+        // Buff cũ
+        if (buffManager.GetSlashLevel() > 0) CreateBuffIcon("Slash", slashBuffIcon);
+        if (buffManager.GetLightningLevel() > 0) CreateBuffIcon("Lightning", lightningBuffIcon);
+        if (buffManager.GetTripleShotLevel() > 0) CreateBuffIcon("TripleShot", tripleShotBuffIcon);
 
-        if (buffManager.GetLightningLevel() > 0)
-            CreateBuffIcon("Lightning", lightningBuffIcon);
-
-        if (buffManager.GetTripleShotLevel() > 0)
-            CreateBuffIcon("TripleShot", tripleShotBuffIcon);
+        // Buff mới
+        if (buffManager.GetAttackLevel() > 0) CreateBuffIcon("Attack", attackBuffIcon);
+        if (buffManager.GetManaLevel() > 0) CreateBuffIcon("Mana", manaBuffIcon);
+        if (buffManager.GetHpLevel() > 0) CreateBuffIcon("Hp", hpBuffIcon);
     }
 
     private void CreateBuffIcon(string buffName, Sprite icon)
@@ -99,26 +110,13 @@ public class BuffUIManager : MonoBehaviour
         GameObject iconGO = Instantiate(buffIconPrefab, buffIconContainer);
         iconGO.name = buffName + "Icon";
 
-        Transform imageTransform = iconGO.transform.GetChild(0);
-        Image iconImage = imageTransform.GetComponent<Image>();
-
-        if (iconImage != null && icon != null)
-        {
-            iconImage.sprite = icon;
-            Debug.Log($"✓ {buffName} icon set: {icon.name}");
-        }
-        else
-        {
-            Debug.LogError($"✗ Cannot find Image for {buffName}");
-        }
+        Image iconImage = iconGO.transform.GetChild(0).GetComponent<Image>();
+        if (iconImage != null && icon != null) iconImage.sprite = icon;
 
         TextMeshProUGUI levelText = iconGO.GetComponentInChildren<TextMeshProUGUI>();
 
-        // Fade in animation
         CanvasGroup canvasGroup = iconGO.GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
-            canvasGroup = iconGO.AddComponent<CanvasGroup>();
-
+        if (canvasGroup == null) canvasGroup = iconGO.AddComponent<CanvasGroup>();
         StartCoroutine(FadeIn(canvasGroup));
 
         BuffDisplay display = new BuffDisplay
@@ -129,7 +127,6 @@ public class BuffUIManager : MonoBehaviour
             levelText = levelText,
             sprite = icon
         };
-
         buffDisplays.Add(display);
     }
 
@@ -138,14 +135,12 @@ public class BuffUIManager : MonoBehaviour
         canvasGroup.alpha = 0f;
         float duration = 0.3f;
         float elapsed = 0f;
-
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             canvasGroup.alpha = Mathf.Lerp(0f, 1f, elapsed / duration);
             yield return null;
         }
-
         canvasGroup.alpha = 1f;
     }
 
@@ -153,8 +148,6 @@ public class BuffUIManager : MonoBehaviour
     {
         BuffDisplay display = buffDisplays.Find(x => x.buffName == buffName);
         if (display != null && display.levelText != null)
-        {
             display.levelText.text = level.ToString();
-        }
     }
 }

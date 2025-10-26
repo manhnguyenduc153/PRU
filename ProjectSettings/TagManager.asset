@@ -10,6 +10,9 @@ TagManager:
   - Camera
   - AstarPath
   - SpawnEnemy
+  - Chest
+  - Manager
+  - BossItem
   layers:
   - Default
   - TransparentFX

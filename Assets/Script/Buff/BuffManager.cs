@@ -9,14 +9,23 @@ public class BuffManager : MonoBehaviour
     private const int MAX_BUFF_LEVEL = 5;
     private const float BASE_PROC_INCREASE = 0.05f; // Tăng 5% proc chance mỗi level
 
-    // Buff 1: Slash on hit
+    #region Buff Levels
+    [Header("Buff Levels")]
     [SerializeField] private int slashLevel = 0;
+    [SerializeField] private int lightningLevel = 0;
+    [SerializeField] private int tripleShotLevel = 0;
+    [SerializeField] private int attackLevel = 0;
+    [SerializeField] private int manaLevel = 0;
+    [SerializeField] private int hpLevel = 0;
+    #endregion
+
+    #region Buff Settings
+    [Header("Slash Buff")]
     [SerializeField] private float slashBaseProcChance = 0.3f;
     [SerializeField] private GameObject slashPrefab;
     [SerializeField] private float slashSpeed = 10f;
 
-    // Buff 2: Lightning strike
-    [SerializeField] private int lightningLevel = 0;
+    [Header("Lightning Buff")]
     [SerializeField] private float lightningBaseProcChance = 0.25f;
     [SerializeField] private GameObject lightningWarningPrefab;
     [SerializeField] private GameObject lightningStrikePrefab;
@@ -25,79 +34,63 @@ public class BuffManager : MonoBehaviour
     [SerializeField] private int lightningBaseDamage = 2;
     [SerializeField] private float lightningSpawnHeight = 3f;
 
-    // Buff 3: Triple shot
-    [SerializeField] private int tripleShotLevel = 0;
+    [Header("Triple Shot Buff")]
     [SerializeField] private float tripleShotBaseProcChance = 0.3f;
     [SerializeField] private GameObject tripleShotPrefab;
     [SerializeField] private float tripleShotSpeed = 8f;
     [SerializeField] private float spreadAngle = 20f;
 
-    private void OnValidate()
-    {
-        // Clamp các giá trị level trong Unity Editor
-        slashLevel = Mathf.Clamp(slashLevel, 0, MAX_BUFF_LEVEL);
-        lightningLevel = Mathf.Clamp(lightningLevel, 0, MAX_BUFF_LEVEL);
-        tripleShotLevel = Mathf.Clamp(tripleShotLevel, 0, MAX_BUFF_LEVEL);
-    }
+    [Header("Attack / Mana / HP Buff")]
+    [SerializeField] private int attackPerLevel = 5;
+    [SerializeField] private int manaPerLevel = 50;
+    [SerializeField] private int hpPerLevel = 50;
+    #endregion
 
     private void Awake()
     {
         if (Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-        }
     }
 
-    // Gọi method này khi player tấn công trúng enemy
+    private void OnValidate()
+    {
+        // Clamp levels
+        slashLevel = Mathf.Clamp(slashLevel, 0, MAX_BUFF_LEVEL);
+        lightningLevel = Mathf.Clamp(lightningLevel, 0, MAX_BUFF_LEVEL);
+        tripleShotLevel = Mathf.Clamp(tripleShotLevel, 0, MAX_BUFF_LEVEL);
+        attackLevel = Mathf.Clamp(attackLevel, 0, MAX_BUFF_LEVEL);
+        manaLevel = Mathf.Clamp(manaLevel, 0, MAX_BUFF_LEVEL);
+        hpLevel = Mathf.Clamp(hpLevel, 0, MAX_BUFF_LEVEL);
+    }
+
+    #region Proc Chance Calculations
+    private float GetSlashProcChance() => Mathf.Min(slashBaseProcChance + (slashLevel - 1) * BASE_PROC_INCREASE, 0.99f);
+    private float GetLightningProcChance() => Mathf.Min(lightningBaseProcChance + (lightningLevel - 1) * BASE_PROC_INCREASE, 0.99f);
+    private float GetTripleShotProcChance() => Mathf.Min(tripleShotBaseProcChance + (tripleShotLevel - 1) * BASE_PROC_INCREASE, 0.99f);
+    private int GetLightningDamage() => lightningBaseDamage + (lightningLevel - 1);
+    #endregion
+
+    #region Buff Triggers
     public void OnEnemyHit(Transform enemyTransform, Transform attackSource)
     {
         List<System.Action> availableBuffs = new List<System.Action>();
 
         if (slashLevel > 0 && Random.value <= GetSlashProcChance())
-        {
             availableBuffs.Add(() => TriggerSlashEffect(enemyTransform, attackSource));
-        }
 
         if (lightningLevel > 0 && Random.value <= GetLightningProcChance())
-        {
             availableBuffs.Add(() => TriggerLightningEffect(enemyTransform));
-        }
 
         if (tripleShotLevel > 0 && Random.value <= GetTripleShotProcChance())
-        {
             availableBuffs.Add(() => TriggerTripleShotEffect(attackSource));
-        }
 
         if (availableBuffs.Count > 0)
         {
             int randomIndex = Random.Range(0, availableBuffs.Count);
             availableBuffs[randomIndex].Invoke();
         }
-    }
-
-    #region Proc Chance Calculations
-    private float GetSlashProcChance()
-    {
-        return Mathf.Min(slashBaseProcChance + (slashLevel - 1) * BASE_PROC_INCREASE, 0.99f);
-    }
-
-    private float GetLightningProcChance()
-    {
-        return Mathf.Min(lightningBaseProcChance + (lightningLevel - 1) * BASE_PROC_INCREASE, 0.99f);
-    }
-
-    private float GetTripleShotProcChance()
-    {
-        return Mathf.Min(tripleShotBaseProcChance + (tripleShotLevel - 1) * BASE_PROC_INCREASE, 0.99f);
-    }
-
-    private int GetLightningDamage()
-    {
-        return lightningBaseDamage + (lightningLevel - 1);
     }
     #endregion
 
@@ -107,29 +100,21 @@ public class BuffManager : MonoBehaviour
         if (slashPrefab == null) return;
 
         Vector2 direction = (enemyTransform.position - attackSource.position).normalized;
-        int slashCount = slashLevel; // Level 1 = 1 slash, Level 5 = 5 slashes
+        int slashCount = slashLevel;
 
         for (int i = 0; i < slashCount; i++)
-        {
-            // Tạo một chút độ trễ giữa các slash
             StartCoroutine(SpawnSlashDelayed(direction, attackSource, i * 0.05f));
-        }
     }
 
     private IEnumerator SpawnSlashDelayed(Vector2 direction, Transform attackSource, float delay)
     {
         yield return new WaitForSeconds(delay);
-
         GameObject slash = Instantiate(slashPrefab, attackSource.position, Quaternion.identity);
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         slash.transform.rotation = Quaternion.Euler(0, 0, angle);
-
         Rigidbody2D slashRb = slash.GetComponent<Rigidbody2D>();
         if (slashRb != null)
-        {
             slashRb.velocity = direction * slashSpeed;
-        }
-
         Destroy(slash, 2f);
     }
     #endregion
@@ -139,8 +124,7 @@ public class BuffManager : MonoBehaviour
     {
         if (lightningWarningPrefab == null || lightningStrikePrefab == null) return;
 
-        int strikeCount = lightningLevel; // Level 1 = 1 strike, Level 5 = 5 strikes
-
+        int strikeCount = lightningLevel;
         for (int i = 0; i < strikeCount; i++)
         {
             Vector2 randomOffset = Random.insideUnitCircle * lightningRadius;
@@ -163,9 +147,7 @@ public class BuffManager : MonoBehaviour
         {
             EnemyHealth enemyHealth = col.GetComponent<EnemyHealth>();
             if (enemyHealth != null)
-            {
                 enemyHealth.TakeDamage(GetLightningDamage(), lightning.transform);
-            }
         }
 
         Destroy(lightning, 1f);
@@ -179,13 +161,10 @@ public class BuffManager : MonoBehaviour
 
         Vector3 mousePos = Input.mousePosition;
         Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(attackSource.position);
-        Vector2 direction = new Vector2(mousePos.x - playerScreenPoint.x, mousePos.y - playerScreenPoint.y).normalized;
+        Vector2 direction = (mousePos - playerScreenPoint).normalized;
         float baseAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        // Level 1 = 3 projectiles
-        // Level 2 = 4 projectiles, Level 3 = 5 projectiles, etc.
         int projectileCount = tripleShotLevel + 2;
-
         for (int i = 0; i < projectileCount; i++)
         {
             int offset = i - tripleShotLevel;
@@ -195,10 +174,7 @@ public class BuffManager : MonoBehaviour
 
             GameObject projectile = Instantiate(tripleShotPrefab, attackSource.position, Quaternion.Euler(0, 0, currentAngle));
             Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                rb.velocity = shootDirection * tripleShotSpeed;
-            }
+            if (rb != null) rb.velocity = shootDirection * tripleShotSpeed;
 
             Destroy(projectile, 3f);
         }
@@ -206,47 +182,43 @@ public class BuffManager : MonoBehaviour
     #endregion
 
     #region Buff Management
-    public void AddSlashBuff()
+    public void AddSlashBuff() { if (slashLevel < MAX_BUFF_LEVEL) slashLevel++; }
+    public void AddLightningBuff() { if (lightningLevel < MAX_BUFF_LEVEL) lightningLevel++; }
+    public void AddTripleShotBuff() { if (tripleShotLevel < MAX_BUFF_LEVEL) tripleShotLevel++; }
+
+    public void AddAttackBuff() { if (attackLevel < MAX_BUFF_LEVEL) attackLevel++; }
+    public void AddManaBuff()
     {
-        if (slashLevel < MAX_BUFF_LEVEL)
+        if (manaLevel < MAX_BUFF_LEVEL)
         {
-            slashLevel++;
-            Debug.Log($"Slash Buff Level: {slashLevel} (Proc Chance: {GetSlashProcChance():P0})");
-        }
-        else
-        {
-            Debug.Log("Slash Buff is already at max level!");
+            manaLevel++;
+            PlayerMana playerMana = FindObjectOfType<PlayerMana>();
+            if (playerMana != null)
+            {
+                playerMana.maxMana += manaPerLevel;
+                playerMana.RegenerateMana(manaPerLevel);
+            }
         }
     }
-
-    public void AddLightningBuff()
+    public void AddHpBuff()
     {
-        if (lightningLevel < MAX_BUFF_LEVEL)
+        if (hpLevel < MAX_BUFF_LEVEL)
         {
-            lightningLevel++;
-            Debug.Log($"Lightning Buff Level: {lightningLevel} (Proc Chance: {GetLightningProcChance():P0})");
-        }
-        else
-        {
-            Debug.Log("Lightning Buff is already at max level!");
-        }
-    }
-
-    public void AddTripleShotBuff()
-    {
-        if (tripleShotLevel < MAX_BUFF_LEVEL)
-        {
-            tripleShotLevel++;
-            Debug.Log($"Triple Shot Buff Level: {tripleShotLevel} (Proc Chance: {GetTripleShotProcChance():P0})");
-        }
-        else
-        {
-            Debug.Log("Triple Shot Buff is already at max level!");
+            hpLevel++;
+            PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.maxHealth += hpPerLevel;
+                playerHealth.Heal(hpPerLevel);
+            }
         }
     }
 
     public int GetSlashLevel() => slashLevel;
     public int GetLightningLevel() => lightningLevel;
     public int GetTripleShotLevel() => tripleShotLevel;
+    public int GetAttackLevel() => attackLevel;
+    public int GetManaLevel() => manaLevel;
+    public int GetHpLevel() => hpLevel;
     #endregion
 }

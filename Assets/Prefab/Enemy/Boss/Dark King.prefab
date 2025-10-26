@@ -374,6 +374,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 300
+  isBoss: 1
+  bossName: Dark King
   deathVFXPrefab: {fileID: 224097407149449950, guid: 6c2f6a174938e8c49890f4719d8a2ce8, type: 3}
 --- !u!114 &5382631666415785611
 MonoBehaviour:
@@ -444,6 +446,7 @@ MonoBehaviour:
   nextWayPointDistance: 2
   repeatTimeUpdatePath: 0.5
   characterSR: {fileID: 4127449962210387425}
+  canUseNormalAttack: 1
   hasMeleeAttack: 1
   meleeAttackRange: 2
   meleeAttackCooldown: 2

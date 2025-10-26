@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 8039900936355508634}
   - component: {fileID: 547274232184383808}
   - component: {fileID: 5246140033773428786}
+  - component: {fileID: 3725546141588195378}
   m_Layer: 0
   m_Name: Lich
   m_TagString: Untagged
@@ -296,8 +297,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.012508631, y: -0.6254314}
-  m_Size: {x: 0.67201185, y: 1.3975155}
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 5, y: 5}
   m_Direction: 0
 --- !u!95 &66976552128595826
 Animator:
@@ -332,7 +333,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 300
+  startingHealth: 30
+  isBoss: 0
+  bossName: Boss Name
   deathVFXPrefab: {fileID: 224097407149449950, guid: 7f8174866ff8d1e40a27dd1db90d7c6d, type: 3}
 --- !u!114 &8039900936355508634
 MonoBehaviour:
@@ -432,3 +435,24 @@ MonoBehaviour:
   delayBetweenLightning: 0.15
   freezeDurationTime: 0
   spawnHeightOffset: 3
+--- !u!114 &3725546141588195378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8654663858534113776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fbf2d19adeaab8479df5134ad8474c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleDrops:
+  - itemPrefab: {fileID: 4894995501525870782, guid: d929a99aa8906c44a82334893e30b39b, type: 3}
+    dropChance: 1
+  - itemPrefab: {fileID: 5129465232877784365, guid: fa27ea050fd428048b7f9ca2d5c95960, type: 3}
+    dropChance: 1
+  minDropCount: 2
+  maxDropCount: 2
+  dropRadius: 0.5
+  allowDuplicateDrops: 0

@@ -1,10 +1,18 @@
 ﻿using TMPro;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Chest : MonoBehaviour
 {
-    [Header("Items")]
-    [SerializeField] private GameObject[] itemPrefabs;
+    [System.Serializable]
+    public struct ChestItem
+    {
+        public GameObject prefab;
+        [Range(0f, 100f)] public float dropChance; // Xác suất rơi của item
+    }
+
+    [Header("Items and Drop Rates")]
+    [SerializeField] private ChestItem[] items; // danh sách item + tỉ lệ drop
 
     [Header("Coin Cost")]
     [SerializeField] private int coinCost = 10;
@@ -12,6 +20,12 @@ public class Chest : MonoBehaviour
     [Header("Spawn Settings")]
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private float spawnForce = 5f;
+
+    [Header("Multiple Items Chance")]
+    [Tooltip("Xác suất (%) rơi ra nhiều item khi mở chest")]
+    [Range(0f, 100f)][SerializeField] private float multiItemChance = 25f;
+    [Tooltip("Số item tối đa có thể rơi ra khi chest mở nhiều item")]
+    [SerializeField] private int maxExtraItems = 3;
 
     [Header("References")]
     [SerializeField] private Animator animator;
@@ -36,7 +50,6 @@ public class Chest : MonoBehaviour
             spawnPoint = spawnObj.transform;
         }
 
-        // Ẩn UI lúc bắt đầu
         if (interactUI != null)
             interactUI.SetActive(false);
     }
@@ -48,7 +61,6 @@ public class Chest : MonoBehaviour
             TryOpenChest();
         }
 
-        // Cập nhật text mỗi frame khi player ở gần
         if (isPlayerNearby && !isOpened)
         {
             UpdateInteractText();
@@ -70,7 +82,7 @@ public class Chest : MonoBehaviour
 
     void OpenChest()
     {
-        if (itemPrefabs.Length == 0)
+        if (items.Length == 0)
         {
             Debug.LogWarning("Chest không có item!");
             return;
@@ -78,24 +90,56 @@ public class Chest : MonoBehaviour
 
         isOpened = true;
 
-        // Ẩn UI
         if (interactUI != null)
             interactUI.SetActive(false);
 
-        // Animation
         if (animator != null)
             animator.SetTrigger("Open");
 
-        // Spawn item
-        SpawnRandomItem();
+        // Danh sách item sẽ drop
+        List<GameObject> itemsToDrop = new List<GameObject>();
+
+        // Luôn có ít nhất 1 item được chọn theo tỉ lệ
+        GameObject firstItem = GetRandomItemByWeight();
+        if (firstItem != null)
+            itemsToDrop.Add(firstItem);
+
+        // Nếu trúng tỉ lệ multi-item, thêm nhiều item khác (không trùng)
+        float roll = Random.Range(0f, 100f);
+        if (roll <= multiItemChance)
+        {
+            int extraCount = Random.Range(1, maxExtraItems + 1);
+
+            // Clone danh sách item để chọn thêm mà không lặp
+            List<GameObject> available = new List<GameObject>();
+            foreach (var chestItem in items)
+                if (chestItem.prefab != firstItem)
+                    available.Add(chestItem.prefab);
+
+            for (int i = 0; i < extraCount && available.Count > 0; i++)
+            {
+                int randIndex = Random.Range(0, available.Count);
+                GameObject selected = available[randIndex];
+                itemsToDrop.Add(selected);
+                available.RemoveAt(randIndex);
+            }
+        }
+
+        // Spawn toàn bộ item trong danh sách
+        foreach (var item in itemsToDrop)
+            SpawnItem(item);
     }
 
-    void SpawnRandomItem()
+    void SpawnItem(GameObject itemToSpawn)
     {
-        int randomIndex = Random.Range(0, itemPrefabs.Length);
-        GameObject itemToSpawn = itemPrefabs[randomIndex];
+        if (itemToSpawn == null) return;
 
-        GameObject spawnedItem = Instantiate(itemToSpawn, spawnPoint.position, Quaternion.identity);
+        // Vị trí ngẫu nhiên xung quanh rương
+        float radius = 1f;
+        Vector2 randomOffset = Random.insideUnitCircle * radius;
+        Vector3 spawnPos = spawnPoint.position + new Vector3(randomOffset.x, randomOffset.y, 0f);
+
+        GameObject spawnedItem = Instantiate(itemToSpawn, spawnPos, Quaternion.identity);
 
         Rigidbody2D rb = spawnedItem.GetComponent<Rigidbody2D>();
         if (rb != null)
@@ -105,21 +149,32 @@ public class Chest : MonoBehaviour
         }
     }
 
+    GameObject GetRandomItemByWeight()
+    {
+        float totalWeight = 0f;
+        foreach (var item in items)
+            totalWeight += item.dropChance;
+
+        float randomValue = Random.Range(0f, totalWeight);
+        float cumulative = 0f;
+
+        foreach (var item in items)
+        {
+            cumulative += item.dropChance;
+            if (randomValue <= cumulative)
+                return item.prefab;
+        }
+
+        return items[items.Length - 1].prefab;
+    }
+
     void UpdateInteractText()
     {
         if (interactText != null)
         {
             int currentCoins = CoinManager.Instance.GetCurrentCoins();
-            if (currentCoins >= coinCost)
-            {
-                interactText.text = $"({currentCoins}/{coinCost})";
-                interactText.color = Color.blue;
-            }
-            else
-            {
-                interactText.text = $"({currentCoins}/{coinCost})";
-                interactText.color = Color.red;
-            }
+            interactText.text = $"({currentCoins}/{coinCost})";
+            interactText.color = (currentCoins >= coinCost) ? Color.blue : Color.red;
         }
     }
 
@@ -128,8 +183,6 @@ public class Chest : MonoBehaviour
         if (other.CompareTag("Player") && !isOpened)
         {
             isPlayerNearby = true;
-
-            // Hiện UI
             if (interactUI != null)
                 interactUI.SetActive(true);
         }
@@ -140,8 +193,6 @@ public class Chest : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerNearby = false;
-
-            // Ẩn UI
             if (interactUI != null)
                 interactUI.SetActive(false);
         }

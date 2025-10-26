@@ -62,11 +62,14 @@
   <ItemGroup>
     <Compile Include="Assets\Script\Sword\ActiveWeapon.cs" />
     <Compile Include="Assets\Script\Enemy\HybridEnemyAI.cs" />
+    <Compile Include="Assets\Script\Gem\BossGateController.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyHealth.cs" />
     <Compile Include="Assets\Script\Item\ItemInventoryUI.cs" />
     <Compile Include="Assets\Script\Player\ItemInventory.cs" />
+    <Compile Include="Assets\Script\Enemy\Boss\EnemyHealthUI.cs" />
     <Compile Include="Assets\Script\Player\PlayerKnockback.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyRangeSkill.cs" />
+    <Compile Include="Assets\Script\Gem\BossItemInventory.cs" />
     <Compile Include="Assets\Script\Player\HealthBarUI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyKnockback.cs" />
     <Compile Include="Assets\Script\Skills\MeteorBullet.cs" />
@@ -81,11 +84,14 @@
     <Compile Include="Assets\Script\Enemy\EnemyAIMinotaur.cs" />
     <Compile Include="Assets\Script\Skills\EnemyBullet.cs" />
     <Compile Include="Assets\Script\Item\LootDropper.cs" />
+    <Compile Include="Assets\Script\SceneManager\CameraAutoFollow.cs" />
     <Compile Include="Assets\Script\Item\PotionItem.cs" />
     <Compile Include="Assets\Script\SceneManager\SceneTransition.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyFinalBoss.cs" />
+    <Compile Include="Assets\Script\Gem\BossItemPickup.cs" />
     <Compile Include="Assets\Script\Enemy\DarkKing.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyRangeNormal.cs" />
+    <Compile Include="Assets\Script\Gem\BossAltarController.cs" />
     <Compile Include="Assets\Script\SceneManager\GameManager.cs" />
     <Compile Include="Assets\Script\Sword\SlashAnim.cs" />
     <Compile Include="Assets\Script\Buff\BuffUIManager.cs" />
@@ -95,9 +101,11 @@
     <Compile Include="Assets\Script\Item\Coin.cs" />
     <Compile Include="Assets\Script\Chest\Chest.cs" />
     <Compile Include="Assets\Script\Enemy\NewHybridEnemyAI.cs" />
+    <Compile Include="Assets\Script\Enemy\EnemyDrop.cs" />
     <Compile Include="Assets\Script\Enemy\EnemySlashEffect.cs" />
     <Compile Include="Assets\Script\Player\PlayerMana.cs" />
     <Compile Include="Assets\Script\SelfDestroy.cs" />
+    <Compile Include="Assets\Script\Gem\BossItemUIManager.cs" />
     <Compile Include="Assets\Script\Item\CoinManager.cs" />
     <Compile Include="Assets\Script\SpawnZone.cs" />
     <Compile Include="Assets\Script\SceneManager\AstarSingleton.cs" />
