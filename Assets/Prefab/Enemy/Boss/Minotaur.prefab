@@ -359,6 +359,14 @@ MonoBehaviour:
   knockbackForce: 8
   maxPathDistance: 100
   waitForGraphScan: 1
+  audioSource: {fileID: 0}
+  moveSound: {fileID: 8300000, guid: 8bbce6dfd04069b4f86ab3ea82f269cc, type: 3}
+  attackSound: {fileID: 8300000, guid: df3d14586b5b0ce4d946e0854ae20263, type: 3}
+  groundSlamSound: {fileID: 8300000, guid: 5a5d50114c9b9fa4e8aab5858e11f9fd, type: 3}
+  moveVolume: 0.773
+  attackVolume: 0.8
+  groundSlamVolume: 1
+  moveFadeSmoothness: 0.2
 --- !u!114 &7193015809055712871
 MonoBehaviour:
   m_ObjectHideFlags: 0

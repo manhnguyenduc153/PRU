@@ -285,6 +285,14 @@ MonoBehaviour:
   knockbackForce: 8
   maxPathDistance: 100
   waitForGraphScan: 1
+  moveAudioSource: {fileID: 0}
+  sfxAudioSource: {fileID: 0}
+  moveClip: {fileID: 8300000, guid: 8bbce6dfd04069b4f86ab3ea82f269cc, type: 3}
+  normalAttackClip: {fileID: 8300000, guid: df3d14586b5b0ce4d946e0854ae20263, type: 3}
+  groundSlamClip: {fileID: 8300000, guid: 5a5d50114c9b9fa4e8aab5858e11f9fd, type: 3}
+  moveVolume: 0.4
+  sfxVolume: 0.7
+  fadeSmoothness: 0.2
 --- !u!50 &1367012826734319098
 Rigidbody2D:
   serializedVersion: 4

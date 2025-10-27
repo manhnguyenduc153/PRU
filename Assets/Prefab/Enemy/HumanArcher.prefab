@@ -346,6 +346,13 @@ MonoBehaviour:
   bulletSpeed: 8
   attackCooldown: 3
   attackChance: 100
+  moveAudioSource: {fileID: 0}
+  attackAudioSource: {fileID: 0}
+  moveClip: {fileID: 8300000, guid: 8bbce6dfd04069b4f86ab3ea82f269cc, type: 3}
+  attackClip: {fileID: 8300000, guid: 356f109dd7dc37342a354ba9277a901c, type: 3}
+  moveVolume: 0.5
+  attackVolume: 0.7
+  fadeSmoothness: 0.2
   freezeDurationTime: 0
 --- !u!60 &5622211744924393222
 PolygonCollider2D:

@@ -142,6 +142,11 @@ MonoBehaviour:
   attackCooldown: 2
   freezeDurationTime: 0
   knockbackForce: 8
+  audioSource: {fileID: 0}
+  moveClip: {fileID: 8300000, guid: 8bbce6dfd04069b4f86ab3ea82f269cc, type: 3}
+  attackClip: {fileID: 8300000, guid: 27bb8082b72be1944b88ec98425dcea4, type: 3}
+  enableMoveSound: 1
+  enableAttackSound: 1
 --- !u!50 &7216048451492202842
 Rigidbody2D:
   serializedVersion: 4

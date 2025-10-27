@@ -24,8 +24,8 @@ public class MeleeEnemyAI : MonoBehaviour
     public bool enableProjectileAttack = true;
     public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
-    public float projectileRange = 6f; // Khoảng cách tối thiểu để bắn
-    public float projectileMaxRange = 12f; // Khoảng cách tối đa
+    public float projectileRange = 6f;
+    public float projectileMaxRange = 12f;
     public float projectileCooldown = 4f;
     public float projectileSpeed = 8f;
     public int projectileDamage = 15;
@@ -71,6 +71,18 @@ public class MeleeEnemyAI : MonoBehaviour
     public bool waitForGraphScan = true;
     private bool isInitialized = false;
 
+    // ------------------ 🎧 AUDIO SETTINGS ------------------
+    [Header("Audio Settings")]
+    [SerializeField] private AudioSource moveAudioSource;
+    [SerializeField] private AudioSource sfxAudioSource;
+    [SerializeField] private AudioClip moveClip;
+    [SerializeField] private AudioClip normalAttackClip;
+    [SerializeField] private AudioClip groundSlamClip;
+    [Range(0f, 1f)] public float moveVolume = 0.4f;
+    [Range(0f, 1f)] public float sfxVolume = 0.7f;
+    [Range(0.05f, 1f)] public float fadeSmoothness = 0.2f;
+    private bool isMovingSoundPlaying = false;
+    // -------------------------------------------------------
 
     private void Start()
     {
@@ -84,6 +96,20 @@ public class MeleeEnemyAI : MonoBehaviour
         jumpAttackTimer = 0f;
         projectileTimer = 0f;
 
+        // 🔊 Tạo AudioSource nếu chưa có
+        if (moveAudioSource == null)
+        {
+            moveAudioSource = gameObject.AddComponent<AudioSource>();
+            moveAudioSource.loop = true;
+            moveAudioSource.playOnAwake = false;
+        }
+        if (sfxAudioSource == null)
+        {
+            sfxAudioSource = gameObject.AddComponent<AudioSource>();
+            sfxAudioSource.loop = false;
+            sfxAudioSource.playOnAwake = false;
+        }
+
         StartCoroutine(InitializePathfinding());
     }
 
@@ -92,9 +118,8 @@ public class MeleeEnemyAI : MonoBehaviour
         if (waitForGraphScan && AstarPath.active != null)
         {
             while (AstarPath.active.isScanning)
-            {
                 yield return null;
-            }
+
             yield return new WaitForEndOfFrame();
         }
 
@@ -125,22 +150,52 @@ public class MeleeEnemyAI : MonoBehaviour
 
     private void Update()
     {
-        if (attackTimer > 0)
-        {
-            attackTimer -= Time.deltaTime;
-        }
-
-        if (jumpAttackTimer > 0)
-        {
-            jumpAttackTimer -= Time.deltaTime;
-        }
-
-        if (projectileTimer > 0)
-        {
-            projectileTimer -= Time.deltaTime;
-        }
+        if (attackTimer > 0) attackTimer -= Time.deltaTime;
+        if (jumpAttackTimer > 0) jumpAttackTimer -= Time.deltaTime;
+        if (projectileTimer > 0) projectileTimer -= Time.deltaTime;
 
         FacePlayer();
+
+        HandleMoveSound(); // 🔊 xử lý tiếng bước chân
+    }
+
+    // 🔊 Chạy loop tiếng bước chân khi enemy di chuyển
+    void HandleMoveSound()
+    {
+        bool shouldPlayMoveSound = !isAttacking && !isJumping && !isShooting && rb.velocity.magnitude > 0.1f;
+
+        if (shouldPlayMoveSound && !isMovingSoundPlaying && moveClip != null)
+        {
+            moveAudioSource.clip = moveClip;
+            moveAudioSource.volume = 0f;
+            moveAudioSource.loop = true;
+            moveAudioSource.Play();
+            StartCoroutine(FadeAudio(moveAudioSource, moveVolume, fadeSmoothness));
+            isMovingSoundPlaying = true;
+        }
+        else if (!shouldPlayMoveSound && isMovingSoundPlaying)
+        {
+            StartCoroutine(FadeAudio(moveAudioSource, 0f, fadeSmoothness, stopAfterFade: true));
+            isMovingSoundPlaying = false;
+        }
+    }
+
+    IEnumerator FadeAudio(AudioSource source, float targetVolume, float duration, bool stopAfterFade = false)
+    {
+        float startVolume = source.volume;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            source.volume = Mathf.Lerp(startVolume, targetVolume, elapsed / duration);
+            yield return null;
+        }
+
+        source.volume = targetVolume;
+
+        if (stopAfterFade && targetVolume <= 0f)
+            source.Stop();
     }
 
     private void FacePlayer()
@@ -170,9 +225,7 @@ public class MeleeEnemyAI : MonoBehaviour
         }
 
         if (seeker.IsDone())
-        {
             seeker.StartPath(rb.position, player.position, OnPathCompleted);
-        }
     }
 
     private void OnPathCompleted(Path p)
@@ -207,7 +260,7 @@ public class MeleeEnemyAI : MonoBehaviour
 
             float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-            // Kiểm tra jump attack trước (ưu tiên cao nhất)
+            // Jump attack
             if (enableJumpAttack && CanUseJumpAttack(distanceToPlayer))
             {
                 rb.velocity = Vector2.zero;
@@ -215,7 +268,7 @@ public class MeleeEnemyAI : MonoBehaviour
                 yield break;
             }
 
-            // Kiểm tra projectile attack (ưu tiên thứ 2)
+            // Projectile attack
             if (enableProjectileAttack && CanUseProjectileAttack(distanceToPlayer))
             {
                 rb.velocity = Vector2.zero;
@@ -230,7 +283,7 @@ public class MeleeEnemyAI : MonoBehaviour
                 continue;
             }
 
-            // Tấn công cận chiến
+            // Normal attack
             if (distanceToPlayer <= attackRange)
             {
                 rb.velocity = Vector2.zero;
@@ -265,22 +318,16 @@ public class MeleeEnemyAI : MonoBehaviour
     bool CanUseJumpAttack(float distanceToPlayer)
     {
         return jumpAttackTimer <= 0
-            && !isAttacking
-            && !isJumping
-            && !isShooting
-            && distanceToPlayer >= jumpAttackRange
-            && distanceToPlayer <= jumpAttackMaxRange
+            && !isAttacking && !isJumping && !isShooting
+            && distanceToPlayer >= jumpAttackRange && distanceToPlayer <= jumpAttackMaxRange
             && warningPrefab != null;
     }
 
     bool CanUseProjectileAttack(float distanceToPlayer)
     {
         return projectileTimer <= 0
-            && !isAttacking
-            && !isJumping
-            && !isShooting
-            && distanceToPlayer >= projectileRange
-            && distanceToPlayer <= projectileMaxRange
+            && !isAttacking && !isJumping && !isShooting
+            && distanceToPlayer >= projectileRange && distanceToPlayer <= projectileMaxRange
             && projectilePrefab != null;
     }
 
@@ -289,19 +336,11 @@ public class MeleeEnemyAI : MonoBehaviour
         isShooting = true;
         projectileTimer = projectileCooldown;
 
-        // Trigger animation bắn (nếu có)
         if (animator != null)
-        {
             animator.SetTrigger("Punch");
-        }
 
-        // Đợi animation chuẩn bị
         yield return new WaitForSeconds(0.3f);
-
-        // Bắn đạn
         ShootProjectile();
-
-        // Đợi animation kết thúc
         yield return new WaitForSeconds(0.3f);
 
         isShooting = false;
@@ -310,67 +349,31 @@ public class MeleeEnemyAI : MonoBehaviour
     void ShootProjectile()
     {
         if (projectilePrefab == null || player == null) return;
-
-        // Tính hướng bắn
         Vector2 direction = (player.position - transform.position).normalized;
-
-        // Vị trí spawn
-        Vector3 spawnPos;
-        if (projectileSpawnPoint != null)
-        {
-            spawnPos = projectileSpawnPoint.position;
-        }
-        else
-        {
-            spawnPos = transform.position + (Vector3)direction * 1f;
-        }
-
-        // Tạo projectile
+        Vector3 spawnPos = projectileSpawnPoint ? projectileSpawnPoint.position : transform.position + (Vector3)direction * 1f;
         GameObject projectile = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
-
-        // Set velocity cho Rigidbody2D
         Rigidbody2D projRb = projectile.GetComponent<Rigidbody2D>();
-        if (projRb != null)
-        {
-            projRb.velocity = direction * projectileSpeed;
-        }
-
-        // Script EnemyBullet sẽ tự động xử lý:
-        // - Xoay theo hướng bay (autoRotate)
-        // - Damage và knockback khi chạm Player
-        // - Tự hủy sau lifeTime hoặc khi chạm tường
+        if (projRb != null) projRb.velocity = direction * projectileSpeed;
     }
 
     IEnumerator PerformJumpAttack()
     {
         isJumping = true;
         jumpAttackTimer = jumpAttackCooldown;
-
         Vector3 targetPosition = player.position;
 
         GameObject warning = null;
         if (warningPrefab != null)
-        {
             warning = Instantiate(warningPrefab, targetPosition, Quaternion.identity);
-        }
 
         animator.SetTrigger("Jump");
-
         yield return new WaitForSeconds(warningDuration);
-
-        if (warning != null)
-        {
-            Destroy(warning);
-        }
-
+        if (warning != null) Destroy(warning);
         yield return StartCoroutine(JumpToPosition(targetPosition));
 
         PerformGroundSlam(targetPosition);
-
         yield return new WaitForSeconds(0.3f);
-
         isJumping = false;
-
         CalculatePath();
     }
 
@@ -379,7 +382,6 @@ public class MeleeEnemyAI : MonoBehaviour
         Vector3 startPos = transform.position;
         targetPos.y += 1.7f;
         float elapsed = 0f;
-
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
 
@@ -387,114 +389,44 @@ public class MeleeEnemyAI : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = elapsed / jumpDuration;
-
             Vector3 currentPos = Vector3.Lerp(startPos, targetPos, t);
-
             float height = jumpHeight * Mathf.Sin(t * Mathf.PI);
             currentPos.y += height;
-
             transform.position = currentPos;
-
             yield return null;
         }
 
         transform.position = targetPos;
-
         if (col != null) col.enabled = true;
     }
 
     void PerformGroundSlam(Vector3 position)
     {
+        // 🔊 Âm thanh ground slam
+        if (groundSlamClip != null)
+            sfxAudioSource.PlayOneShot(groundSlamClip, sfxVolume);
+
         if (groundSlamPrefab != null)
         {
             GameObject slam = Instantiate(groundSlamPrefab, position, Quaternion.identity);
             Destroy(slam, groundSlamDuration);
         }
-        else
-        {
-            StartCoroutine(CreateSimpleGroundSlamEffect(position));
-        }
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(position, jumpDamageRadius);
-
         foreach (Collider2D hit in hits)
         {
             if (hit.CompareTag("Player"))
             {
-                PlayerHealth playerHealth = hit.GetComponent<PlayerHealth>();
-                if (playerHealth != null)
+                PlayerHealth ph = hit.GetComponent<PlayerHealth>();
+                if (ph != null) ph.TakeDamage(jumpDamage);
+                PlayerKnockback pk = hit.GetComponent<PlayerKnockback>();
+                if (pk != null)
                 {
-                    playerHealth.TakeDamage(jumpDamage);
-                }
-
-                PlayerKnockback playerKnockback = hit.GetComponent<PlayerKnockback>();
-                if (playerKnockback != null)
-                {
-                    Vector2 knockbackDir = (hit.transform.position - position).normalized;
-                    playerKnockback.ApplyKnockback(knockbackDir, jumpKnockbackForce);
+                    Vector2 dir = (hit.transform.position - position).normalized;
+                    pk.ApplyKnockback(dir, jumpKnockbackForce);
                 }
             }
         }
-    }
-
-    IEnumerator CreateSimpleGroundSlamEffect(Vector3 position)
-    {
-        int ringCount = 3;
-        for (int i = 0; i < ringCount; i++)
-        {
-            GameObject ring = new GameObject("SlamRing");
-            ring.transform.position = position;
-
-            LineRenderer lr = ring.AddComponent<LineRenderer>();
-            lr.material = new Material(Shader.Find("Sprites/Default"));
-            lr.startColor = new Color(1, 0.5f, 0, 0.8f);
-            lr.endColor = new Color(1, 0.5f, 0, 0.8f);
-            lr.startWidth = 0.2f;
-            lr.endWidth = 0.2f;
-            lr.positionCount = 50;
-            lr.useWorldSpace = false;
-
-            float angle = 0f;
-            for (int j = 0; j < 50; j++)
-            {
-                float x = Mathf.Sin(Mathf.Deg2Rad * angle);
-                float y = Mathf.Cos(Mathf.Deg2Rad * angle);
-                lr.SetPosition(j, new Vector3(x, y, 0) * 0.5f);
-                angle += 360f / 50f;
-            }
-
-            StartCoroutine(ExpandAndFadeRing(ring, i * 0.1f));
-        }
-
-        yield return null;
-    }
-
-    IEnumerator ExpandAndFadeRing(GameObject ring, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        LineRenderer lr = ring.GetComponent<LineRenderer>();
-        float duration = 0.5f;
-        float elapsed = 0f;
-        Vector3 startScale = Vector3.one * 0.5f;
-        Vector3 endScale = Vector3.one * jumpDamageRadius;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-
-            ring.transform.localScale = Vector3.Lerp(startScale, endScale, t);
-
-            Color col = lr.startColor;
-            col.a = 1 - t;
-            lr.startColor = col;
-            lr.endColor = col;
-
-            yield return null;
-        }
-
-        Destroy(ring);
     }
 
     void TryAttack()
@@ -503,6 +435,10 @@ public class MeleeEnemyAI : MonoBehaviour
 
         isAttacking = true;
         animator.SetTrigger("Attack");
+
+        // 🔊 Phát âm thanh tấn công cận chiến
+        if (normalAttackClip != null)
+            sfxAudioSource.PlayOneShot(normalAttackClip, sfxVolume);
 
         attackTimer = attackCooldown;
         StartCoroutine(ResetAttackState());
@@ -519,95 +455,24 @@ public class MeleeEnemyAI : MonoBehaviour
     void SpawnSlashEffect()
     {
         if (slashPrefab == null || player == null) return;
-
-        Vector2 directionToPlayer = (player.position - transform.position).normalized;
-
-        Vector3 spawnPosition;
-        if (slashSpawnPoint != null)
-        {
-            spawnPosition = slashSpawnPoint.position;
-        }
-        else
-        {
-            spawnPosition = transform.position + (Vector3)directionToPlayer * slashOffsetDistance;
-        }
-
-        GameObject slash = Instantiate(slashPrefab, spawnPosition, Quaternion.identity);
-
+        Vector2 direction = (player.position - transform.position).normalized;
+        Vector3 spawnPos = slashSpawnPoint ? slashSpawnPoint.position : transform.position + (Vector3)direction * slashOffsetDistance;
+        GameObject slash = Instantiate(slashPrefab, spawnPos, Quaternion.identity);
         EnemySlashEffect slashEffect = slash.GetComponent<EnemySlashEffect>();
         if (slashEffect != null)
-        {
-            slashEffect.Initialize(directionToPlayer, characterSR.transform.localScale.x < 0, knockbackForce);
-        }
+            slashEffect.Initialize(direction, characterSR.transform.localScale.x < 0, knockbackForce);
     }
 
-    public void FreezeEnemy()
-    {
-        freezeDuration = freezeDurationTime;
-    }
-
-    public void PlayHurtAnimation()
-    {
-        animator.SetTrigger("Attacked");
-    }
-
-    public void TestAnimationEvent() { }
-
-    public void MeleeAttackComplete()
-    {
-        isAttacking = false;
-    }
-
-    public void ShootAnimationEvent()
-    {
-        ShootProjectile();
-    }
-
-    public void ForceRecalculatePath()
-    {
-        if (isInitialized)
-        {
-            CancelInvoke(nameof(CalculatePath));
-            InvokeRepeating(nameof(CalculatePath), 0f, repeatTimeUpdatePath);
-        }
-    }
+    public void FreezeEnemy() => freezeDuration = freezeDurationTime;
+    public void PlayHurtAnimation() => animator.SetTrigger("Attacked");
+    public void MeleeAttackComplete() => isAttacking = false;
+    public void ShootAnimationEvent() => ShootProjectile();
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-
-        if (slashSpawnPoint != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(slashSpawnPoint.position, 0.3f);
-        }
-
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, maxPathDistance);
-
-        if (enableJumpAttack)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, jumpAttackRange);
-
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, jumpAttackMaxRange);
-        }
-
-        if (enableProjectileAttack)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(transform.position, projectileRange);
-
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(transform.position, projectileMaxRange);
-        }
-
-        if (projectileSpawnPoint != null)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(projectileSpawnPoint.position, 0.3f);
-        }
+        Gizmos.color = Color.red; Gizmos.DrawWireSphere(transform.position, attackRange);
+        if (slashSpawnPoint != null) { Gizmos.color = Color.yellow; Gizmos.DrawWireSphere(slashSpawnPoint.position, 0.3f); }
+        if (enableJumpAttack) { Gizmos.color = Color.green; Gizmos.DrawWireSphere(transform.position, jumpAttackRange); Gizmos.color = Color.yellow; Gizmos.DrawWireSphere(transform.position, jumpAttackMaxRange); }
+        if (enableProjectileAttack) { Gizmos.color = Color.blue; Gizmos.DrawWireSphere(transform.position, projectileRange); Gizmos.color = Color.magenta; Gizmos.DrawWireSphere(transform.position, projectileMaxRange); }
     }
 }

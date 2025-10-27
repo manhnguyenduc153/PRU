@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3836859937096084552}
   - component: {fileID: 6782354904608787884}
   - component: {fileID: 2466832254874251966}
+  - component: {fileID: -7571949551622674331}
   m_Layer: 0
   m_Name: EarthGolen
   m_TagString: Untagged
@@ -190,3 +191,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-7571949551622674331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5318806266106783405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0182d0623e1cdf144a5ca10e94b2f18d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitPlayerSound: {fileID: 8300000, guid: 497e63489b5aea348933776e16e90b7b, type: 3}
+  hitWallSound: {fileID: 8300000, guid: 497e63489b5aea348933776e16e90b7b, type: 3}
+  shootSound: {fileID: 8300000, guid: 497e63489b5aea348933776e16e90b7b, type: 3}
+  volume: 0.5
+  randomizePitch: 1
+  minPitch: 0.9
+  maxPitch: 1.1
+  use3DAudio: 0
+  maxDistance: 50

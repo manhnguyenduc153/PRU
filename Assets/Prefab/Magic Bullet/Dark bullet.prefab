@@ -183,6 +183,7 @@ GameObject:
   - component: {fileID: 1840711933051058747}
   - component: {fileID: 4181712892428574866}
   - component: {fileID: -5104147504675126032}
+  - component: {fileID: -1493753162421340924}
   m_Layer: 0
   m_Name: Dark bullet
   m_TagString: Untagged
@@ -374,3 +375,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyAfter: 1.5
+--- !u!114 &-1493753162421340924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9042451354514355422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0182d0623e1cdf144a5ca10e94b2f18d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitPlayerSound: {fileID: 0}
+  hitWallSound: {fileID: 0}
+  shootSound: {fileID: 8300000, guid: 2cc3d2f8284649e42a5eadfb2f754bbd, type: 3}
+  volume: 1
+  randomizePitch: 1
+  minPitch: 0.9
+  maxPitch: 1.1
+  use3DAudio: 0
+  maxDistance: 50
