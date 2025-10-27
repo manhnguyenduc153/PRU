@@ -413,6 +413,6 @@ MonoBehaviour:
   - itemPrefab: {fileID: 4589400155456446401, guid: fe05bf36a700d4e48bcc862cac6b7dd6, type: 3}
     dropChance: 1
   minDropCount: 2
-  maxDropCount: 4
+  maxDropCount: 2
   dropRadius: 0.5
-  allowDuplicateDrops: 0
+  allowDuplicateDrops: 1

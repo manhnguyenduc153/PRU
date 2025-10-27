@@ -334,7 +334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 469a47eb00335e148831358d28094b0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultFacingRight: 1
+  defaultFacingRight: 0
   moveSpeed: 2
   nextWaypointDistance: 2
   repeatTimeUpdatePath: 0.5
@@ -376,9 +376,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   possibleDrops:
-  - itemPrefab: {fileID: 4589400155456446401, guid: fe05bf36a700d4e48bcc862cac6b7dd6, type: 3}
+  - itemPrefab: {fileID: 3418777474631325476, guid: 19379a93015b9ba4194b3a72524569c3, type: 3}
     dropChance: 1
-  minDropCount: 5
-  maxDropCount: 10
+  minDropCount: 1
+  maxDropCount: 1
   dropRadius: 0.5
   allowDuplicateDrops: 0
