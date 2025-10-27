@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
 public class Sword : MonoBehaviour
@@ -13,8 +12,9 @@ public class Sword : MonoBehaviour
     private Animator myAnimator;
     private PlayerController playerController;
     private ActiveWeapon activeWeapon;
-    private bool attackButtonDown, isAttacking = false;
+    private WeaponAudio weaponAudio; // 🔹 Thêm dòng này
 
+    private bool attackButtonDown, isAttacking = false;
     private GameObject slashAnim;
 
     private void Awake()
@@ -23,6 +23,7 @@ public class Sword : MonoBehaviour
         activeWeapon = GetComponentInParent<ActiveWeapon>();
         myAnimator = GetComponent<Animator>();
         playerControls = new PlayerControls();
+        weaponAudio = GetComponent<WeaponAudio>(); // 🔹 Lấy component WeaponAudio
     }
 
     private void OnEnable()
@@ -59,6 +60,11 @@ public class Sword : MonoBehaviour
             isAttacking = true;
             myAnimator.SetTrigger("Attack");
             weaponCollider.gameObject.SetActive(true);
+
+            // 🔹 Gọi âm thanh chém
+            if (weaponAudio != null)
+                weaponAudio.PlaySwingSound();
+
             slashAnim = Instantiate(slashAnimPrefab, slashAnimSpawnPoint.position, Quaternion.identity);
             slashAnim.transform.parent = this.transform.parent;
             StartCoroutine(AttackCDRoutine());
@@ -75,7 +81,6 @@ public class Sword : MonoBehaviour
     {
         weaponCollider.gameObject.SetActive(false);
     }
-
 
     public void SwingUpFlipAnimEvent()
     {

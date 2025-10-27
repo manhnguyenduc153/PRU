@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5231924571231695249}
   - component: {fileID: 9058299258207033979}
   - component: {fileID: 2393470371433225269}
+  - component: {fileID: -5278030579338928020}
   m_Layer: 0
   m_Name: FireBallBig
   m_TagString: Untagged
@@ -207,3 +208,24 @@ PolygonCollider2D:
       - {x: 0.25, y: -0.125}
       - {x: 0.1875, y: 0}
   m_UseDelaunayMesh: 0
+--- !u!114 &-5278030579338928020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1243321618215088774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0182d0623e1cdf144a5ca10e94b2f18d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitPlayerSound: {fileID: 8300000, guid: 5a5d50114c9b9fa4e8aab5858e11f9fd, type: 3}
+  hitWallSound: {fileID: 8300000, guid: 5a5d50114c9b9fa4e8aab5858e11f9fd, type: 3}
+  shootSound: {fileID: 0}
+  volume: 0.3
+  randomizePitch: 1
+  minPitch: 0.9
+  maxPitch: 1.1
+  use3DAudio: 0
+  maxDistance: 50

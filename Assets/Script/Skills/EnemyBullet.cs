@@ -20,10 +20,13 @@ public class EnemyBullet : MonoBehaviour
     public GameObject explosionEffectPrefab; // Prefab hiệu ứng nổ
 
     private Rigidbody2D rb;
+    private BulletAudioManager audioManager;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        audioManager = GetComponent<BulletAudioManager>();
+
         Destroy(gameObject, lifeTime);
     }
 
@@ -54,6 +57,12 @@ public class EnemyBullet : MonoBehaviour
                 playerKnockback.ApplyKnockback(knockbackDirection, knockbackForce);
             }
 
+            // ⭐ Phát âm thanh va chạm với Player
+            if (audioManager != null)
+            {
+                audioManager.PlayHitPlayerSound();
+            }
+
             // Hiệu ứng nổ
             if (explodeOnHitPlayer && explosionEffectPrefab != null)
             {
@@ -65,17 +74,23 @@ public class EnemyBullet : MonoBehaviour
             {
                 Destroy(gameObject);
             }
-
             return;
         }
 
         // ✅ Nếu chạm tường thì luôn phá hủy
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
+            // ⭐ Phát âm thanh va chạm với tường
+            if (audioManager != null)
+            {
+                audioManager.PlayHitWallSound();
+            }
+
             if (explosionEffectPrefab != null)
             {
                 Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
             }
+
             Destroy(gameObject);
         }
     }
