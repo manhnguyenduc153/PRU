@@ -12,17 +12,20 @@ public class SceneTransition : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log($"[SceneTransition] OnTriggerEnter2D: {other.gameObject.name}, Tag: {other.tag}");
+
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
+            Debug.Log("[SceneTransition] Player in range!");
 
             if (!requireKeyPress)
             {
+                Debug.Log("[SceneTransition] Auto transition (no key required)");
                 TransitionToScene();
             }
             else
             {
-                // Hiển thị UI prompt nếu cần
                 ShowInteractionPrompt(true);
             }
         }
@@ -34,6 +37,7 @@ public class SceneTransition : MonoBehaviour
         {
             playerInRange = false;
             ShowInteractionPrompt(false);
+            Debug.Log("[SceneTransition] Player left range");
         }
     }
 
@@ -41,32 +45,47 @@ public class SceneTransition : MonoBehaviour
     {
         if (requireKeyPress && playerInRange && Input.GetKeyDown(interactionKey))
         {
+            Debug.Log($"[SceneTransition] Key {interactionKey} pressed");
             TransitionToScene();
         }
     }
 
     public void TransitionToScene()
     {
+        Debug.Log($"[SceneTransition] TransitionToScene called. Target: {targetSceneName}");
+
         if (string.IsNullOrEmpty(targetSceneName))
         {
-            Debug.LogError("Target scene name is not set!");
+            Debug.LogError("[SceneTransition] Target scene name is not set!");
             return;
         }
 
-        if (GameManager.Instance != null)
+        // Sử dụng SceneTransitionManager để có fade effect
+        if (SceneTransitionManager.Instance != null)
         {
-            if (useAsyncLoading)
-            {
-                GameManager.Instance.LoadSceneAsync(targetSceneName);
-            }
-            else
-            {
-                GameManager.Instance.LoadScene(targetSceneName);
-            }
+            Debug.Log("[SceneTransition] SceneTransitionManager found, starting fade transition");
+            SceneTransitionManager.Instance.TransitionToScene(targetSceneName, useAsyncLoading);
         }
         else
         {
-            Debug.LogError("GameManager not found!");
+            // Fallback nếu không có TransitionManager
+            Debug.LogWarning("[SceneTransition] SceneTransitionManager not found, loading directly...");
+
+            if (GameManager.Instance != null)
+            {
+                if (useAsyncLoading)
+                {
+                    GameManager.Instance.LoadSceneAsync(targetSceneName);
+                }
+                else
+                {
+                    GameManager.Instance.LoadScene(targetSceneName);
+                }
+            }
+            else
+            {
+                Debug.LogError("[SceneTransition] GameManager not found!");
+            }
         }
     }
 
@@ -74,12 +93,15 @@ public class SceneTransition : MonoBehaviour
     {
         // Implement UI prompt logic here
         // Ví dụ: UIManager.Instance?.ShowPrompt(show ? $"Press {interactionKey} to enter" : "");
+        if (show)
+        {
+            Debug.Log($"[SceneTransition] Show prompt: Press {interactionKey} to enter");
+        }
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
-
         BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
         if (boxCollider != null)
         {
