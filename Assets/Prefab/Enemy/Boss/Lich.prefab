@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 3725546141588195378}
   m_Layer: 0
   m_Name: Lich
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -425,7 +425,7 @@ MonoBehaviour:
   waveAttackChance: 10
   wavesCount: 3
   delayBetweenWaves: 0.3
-  lightningBolt: {fileID: 1688381417350325193, guid: df6578ae4ea20624c80f08e0aa2f539c, type: 3}
+  lightningBolt: {fileID: 2564506387876294689, guid: 4a4d897e24bc2c8419fc5ef976a7e6bc, type: 3}
   warningIndicator: {fileID: 6954165050603246389, guid: 4b1259a6f1e94e54580dbe77b87b4c21, type: 3}
   ultimateCooldown: 15
   ultimateChance: 50

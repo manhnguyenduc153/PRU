@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: -5086075383174531491}
   m_Layer: 0
   m_Name: HumanArcher
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -346,6 +346,13 @@ MonoBehaviour:
   bulletSpeed: 8
   attackCooldown: 3
   attackChance: 100
+  moveAudioSource: {fileID: 0}
+  attackAudioSource: {fileID: 0}
+  moveClip: {fileID: 8300000, guid: 8bbce6dfd04069b4f86ab3ea82f269cc, type: 3}
+  attackClip: {fileID: 8300000, guid: 356f109dd7dc37342a354ba9277a901c, type: 3}
+  moveVolume: 0.5
+  attackVolume: 0.7
+  fadeSmoothness: 0.2
   freezeDurationTime: 0
 --- !u!60 &5622211744924393222
 PolygonCollider2D:
@@ -411,9 +418,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   possibleDrops:
-  - itemPrefab: {fileID: 4589400155456446401, guid: fe05bf36a700d4e48bcc862cac6b7dd6, type: 3}
+  - itemPrefab: {fileID: 2890304010296273847, guid: b9aeaa15d5401e64fb38dab0dc7e6fe2, type: 3}
     dropChance: 1
-  minDropCount: 3
-  maxDropCount: 5
+  minDropCount: 1
+  maxDropCount: 1
   dropRadius: 0.5
   allowDuplicateDrops: 0

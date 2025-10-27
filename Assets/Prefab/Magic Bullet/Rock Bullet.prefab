@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2237371551563245166}
   - component: {fileID: 5401769388576858817}
   - component: {fileID: 7397510834231568581}
+  - component: {fileID: 6295543977363601731}
   m_Layer: 0
   m_Name: Rock Bullet
   m_TagString: Untagged
@@ -190,3 +191,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6295543977363601731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8006122400761347174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0182d0623e1cdf144a5ca10e94b2f18d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitPlayerSound: {fileID: 8300000, guid: 5a5d50114c9b9fa4e8aab5858e11f9fd, type: 3}
+  hitWallSound: {fileID: 8300000, guid: 5a5d50114c9b9fa4e8aab5858e11f9fd, type: 3}
+  shootSound: {fileID: 0}
+  volume: 0.3
+  randomizePitch: 1
+  minPitch: 0.9
+  maxPitch: 1.1
+  use3DAudio: 0
+  maxDistance: 50

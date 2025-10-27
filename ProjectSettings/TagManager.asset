@@ -13,6 +13,7 @@ TagManager:
   - Chest
   - Manager
   - BossItem
+  - Enemy
   layers:
   - Default
   - TransparentFX

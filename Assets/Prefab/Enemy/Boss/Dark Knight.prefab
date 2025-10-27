@@ -52,7 +52,7 @@ GameObject:
   - component: {fileID: 8020348724029843139}
   m_Layer: 0
   m_Name: Dark Knight
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -376,9 +376,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   possibleDrops:
-  - itemPrefab: {fileID: 4589400155456446401, guid: fe05bf36a700d4e48bcc862cac6b7dd6, type: 3}
+  - itemPrefab: {fileID: 3418777474631325476, guid: 19379a93015b9ba4194b3a72524569c3, type: 3}
     dropChance: 1
-  minDropCount: 5
-  maxDropCount: 10
+  minDropCount: 1
+  maxDropCount: 1
   dropRadius: 0.5
   allowDuplicateDrops: 0

@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 193487574194877536}
   m_Layer: 0
   m_Name: GoblinMelee
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -226,6 +226,11 @@ MonoBehaviour:
   attackCooldown: 2
   freezeDurationTime: 0
   knockbackForce: 8
+  audioSource: {fileID: 0}
+  moveClip: {fileID: 8300000, guid: bc312561f3815634fa57b2872f021bc0, type: 3}
+  attackClip: {fileID: 8300000, guid: 356f109dd7dc37342a354ba9277a901c, type: 3}
+  enableMoveSound: 1
+  enableAttackSound: 1
 --- !u!50 &5408491682267923260
 Rigidbody2D:
   serializedVersion: 4

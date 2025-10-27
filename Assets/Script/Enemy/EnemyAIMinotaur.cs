@@ -6,7 +6,7 @@ using Pathfinding;
 public class EnemyAIMinotaur : MonoBehaviour
 {
     [Header("Sprite Facing Settings")]
-    [SerializeField] private bool defaultFacingRight = true; // <-- thêm dòng này
+    [SerializeField] private bool defaultFacingRight = true;
 
     [Header("Movement Settings")]
     public float moveSpeed = 2f;
@@ -25,7 +25,7 @@ public class EnemyAIMinotaur : MonoBehaviour
     public bool enableForceAttack = true;
     public float forceDashDistance = 4f;
     public float forceDashTime = 0.2f;
-    public float forceDashCooldown = 3f; // Thời gian hồi chiêu Force Attack
+    public float forceDashCooldown = 3f;
     private float forceDashTimer = 0f;
 
     [Header("Jump Attack / Ground Slam (Skill 3)")]
@@ -45,13 +45,6 @@ public class EnemyAIMinotaur : MonoBehaviour
     private float jumpAttackTimer;
     private bool isJumping = false;
 
-    private Path path;
-    private Seeker seeker;
-    private Rigidbody2D rb;
-    private Animator animator;
-    private Coroutine moveCoroutine;
-    private Transform player;
-
     [Header("Freeze Settings")]
     public float freezeDurationTime;
     private float freezeDuration;
@@ -62,7 +55,34 @@ public class EnemyAIMinotaur : MonoBehaviour
     public bool waitForGraphScan = true;
     private bool isInitialized = false;
 
+    private Path path;
+    private Seeker seeker;
+    private Rigidbody2D rb;
+    private Animator animator;
+    private Coroutine moveCoroutine;
+    private Transform player;
     private Vector3 originalScale;
+
+    // ======================================
+    // 🎵 SOUND SETTINGS - IMPROVED
+    // ======================================
+    [Header("Sound Settings")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip moveSound;
+    [SerializeField] private AudioClip attackSound;
+    [SerializeField] private AudioClip groundSlamSound;
+
+    [Range(0f, 1f)] public float moveVolume = 0.7f;
+    [Range(0f, 1f)] public float attackVolume = 1f;
+    [Range(0f, 1f)] public float groundSlamVolume = 1f;
+
+    [Tooltip("Độ mượt khi loop âm thanh di chuyển")]
+    [Range(0f, 1f)] public float moveFadeSmoothness = 0.2f;
+
+    private bool isPlayingMoveSound = false;
+    private Coroutine moveSoundCoroutine;
+
+    // ======================================
 
     private void Start()
     {
@@ -70,6 +90,9 @@ public class EnemyAIMinotaur : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         player = FindObjectOfType<PlayerController>()?.transform;
+
+        // 🎵 Auto-setup AudioSource nếu chưa có
+        SetupAudioSource();
 
         freezeDuration = 0;
         attackTimer = 0f;
@@ -82,14 +105,43 @@ public class EnemyAIMinotaur : MonoBehaviour
         StartCoroutine(InitializePathfinding());
     }
 
+    // 🎵 Tự động tạo AudioSource nếu thiếu
+    private void SetupAudioSource()
+    {
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+                Debug.Log("Auto-created AudioSource for " + gameObject.name);
+            }
+        }
+
+        // Cấu hình AudioSource
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f; // 2D sound
+        audioSource.loop = false;
+
+        // Kiểm tra AudioListener
+        if (FindObjectOfType<AudioListener>() == null)
+        {
+            Debug.LogWarning("⚠️ No AudioListener found in scene! Add one to Main Camera.");
+        }
+
+        // Debug log để kiểm tra
+        if (moveSound == null) Debug.LogWarning("⚠️ Move Sound not assigned!");
+        if (attackSound == null) Debug.LogWarning("⚠️ Attack Sound not assigned!");
+        if (groundSlamSound == null) Debug.LogWarning("⚠️ Ground Slam Sound not assigned!");
+    }
+
     private IEnumerator InitializePathfinding()
     {
         if (waitForGraphScan && AstarPath.active != null)
         {
             while (AstarPath.active.isScanning)
-            {
                 yield return null;
-            }
             yield return new WaitForEndOfFrame();
         }
 
@@ -141,15 +193,10 @@ public class EnemyAIMinotaur : MonoBehaviour
 
         if (Mathf.Abs(dirX) > 0.05f)
         {
-            // Nếu enemy mặc định quay phải thì flip ngược lại logic cũ
             if (defaultFacingRight)
-            {
-                characterSR.flipX = dirX < 0; // Player bên trái => lật sprite
-            }
+                characterSR.flipX = dirX < 0;
             else
-            {
-                characterSR.flipX = dirX > 0; // Player bên phải => lật sprite
-            }
+                characterSR.flipX = dirX > 0;
         }
     }
 
@@ -193,6 +240,7 @@ public class EnemyAIMinotaur : MonoBehaviour
     IEnumerator MoveToPlayerCoroutine()
     {
         int currentWP = 0;
+        PlayMoveSound();
 
         while (path != null && currentWP < path.vectorPath.Count)
         {
@@ -204,29 +252,32 @@ public class EnemyAIMinotaur : MonoBehaviour
             }
 
             if (player == null)
+            {
+                StopMoveSound();
                 yield break;
+            }
 
             float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-            // Skill 3: Jump/Ground Slam
             if (enableJumpAttack && CanUseJumpAttack(distanceToPlayer))
             {
+                StopMoveSound();
                 rb.velocity = Vector2.zero;
                 StartCoroutine(PerformJumpAttack());
                 yield break;
             }
 
-            // Skill 2: Force Attack nếu player trong khoảng gần và cooldown xong
             if (enableForceAttack && forceDashTimer <= 0f && distanceToPlayer > attackRange && distanceToPlayer <= jumpAttackRange)
             {
+                StopMoveSound();
                 rb.velocity = Vector2.zero;
                 yield return StartCoroutine(PerformForceAttack());
                 continue;
             }
 
-            // Normal attack
             if (distanceToPlayer <= attackRange)
             {
+                StopMoveSound();
                 rb.velocity = Vector2.zero;
                 TryAttack();
 
@@ -237,6 +288,7 @@ public class EnemyAIMinotaur : MonoBehaviour
                     yield return null;
                 }
 
+                PlayMoveSound();
                 continue;
             }
 
@@ -254,16 +306,15 @@ public class EnemyAIMinotaur : MonoBehaviour
 
             yield return null;
         }
+
+        StopMoveSound();
     }
 
     bool CanUseJumpAttack(float distanceToPlayer)
     {
-        return jumpAttackTimer <= 0
-            && !isAttacking
-            && !isJumping
-            && distanceToPlayer >= jumpAttackRange
-            && distanceToPlayer <= jumpAttackMaxRange
-            && warningPrefab != null;
+        return jumpAttackTimer <= 0 && !isAttacking && !isJumping &&
+               distanceToPlayer >= jumpAttackRange && distanceToPlayer <= jumpAttackMaxRange &&
+               warningPrefab != null;
     }
 
     void TryAttack()
@@ -273,6 +324,9 @@ public class EnemyAIMinotaur : MonoBehaviour
         isAttacking = true;
         attackTimer = attackCooldown;
         animator.SetTrigger("Attack");
+
+        // 🎵 Phát 2 âm Attack liên tiếp
+        StartCoroutine(PlayAttackSoundTwice());
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange);
         foreach (Collider2D hit in hits)
@@ -295,6 +349,22 @@ public class EnemyAIMinotaur : MonoBehaviour
         StartCoroutine(ResetAttackState());
     }
 
+    IEnumerator PlayAttackSoundTwice()
+    {
+        if (attackSound == null || audioSource == null)
+        {
+            Debug.LogWarning("⚠️ Cannot play attack sound - AudioSource or AudioClip missing!");
+            yield break;
+        }
+
+        // Debug để kiểm tra
+        Debug.Log("🎵 Playing attack sound x2");
+
+        audioSource.PlayOneShot(attackSound, attackVolume);
+        yield return new WaitForSeconds(0.1f);
+        audioSource.PlayOneShot(attackSound, attackVolume);
+    }
+
     IEnumerator ResetAttackState()
     {
         yield return new WaitForSeconds(0.3f);
@@ -305,8 +375,6 @@ public class EnemyAIMinotaur : MonoBehaviour
     {
         isAttacking = true;
         forceDashTimer = forceDashCooldown;
-
-        // Face player trước khi dash
         FacePlayer();
 
         Vector2 direction = (player.position - transform.position).normalized;
@@ -319,9 +387,7 @@ public class EnemyAIMinotaur : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / forceDashTime;
 
-            // Face player liên tục
             FacePlayer();
-
             transform.position = Vector3.Lerp(startPos, targetPos, t);
             yield return null;
         }
@@ -392,6 +458,9 @@ public class EnemyAIMinotaur : MonoBehaviour
             Destroy(slam, groundSlamDuration);
         }
 
+        // 🎵 Âm thanh Ground Slam
+        PlaySoundEffect(groundSlamSound, groundSlamVolume, "Ground Slam");
+
         Collider2D[] hits = Physics2D.OverlapCircleAll(position, jumpDamageRadius);
         foreach (Collider2D hit in hits)
         {
@@ -410,6 +479,72 @@ public class EnemyAIMinotaur : MonoBehaviour
             }
         }
     }
+
+    // ======================================
+    // 🎵 SOUND HELPERS - IMPROVED
+    // ======================================
+
+    void PlayMoveSound()
+    {
+        if (audioSource == null || moveSound == null)
+        {
+            Debug.LogWarning("⚠️ Cannot play move sound - AudioSource or AudioClip missing!");
+            return;
+        }
+
+        if (isPlayingMoveSound) return;
+
+        if (moveSoundCoroutine != null)
+            StopCoroutine(moveSoundCoroutine);
+
+        moveSoundCoroutine = StartCoroutine(MoveSoundLoop());
+    }
+
+    IEnumerator MoveSoundLoop()
+    {
+        isPlayingMoveSound = true;
+        Debug.Log("🎵 Started move sound loop");
+
+        while (isPlayingMoveSound)
+        {
+            audioSource.PlayOneShot(moveSound, moveVolume);
+            yield return new WaitForSeconds(moveSound.length * (1f - moveFadeSmoothness));
+        }
+
+        Debug.Log("🎵 Stopped move sound loop");
+    }
+
+    void StopMoveSound()
+    {
+        isPlayingMoveSound = false;
+
+        if (moveSoundCoroutine != null)
+        {
+            StopCoroutine(moveSoundCoroutine);
+            moveSoundCoroutine = null;
+        }
+    }
+
+    // 🎵 Helper method để play sound với error handling
+    void PlaySoundEffect(AudioClip clip, float volume, string soundName)
+    {
+        if (audioSource == null)
+        {
+            Debug.LogWarning($"⚠️ Cannot play {soundName} - AudioSource missing!");
+            return;
+        }
+
+        if (clip == null)
+        {
+            Debug.LogWarning($"⚠️ Cannot play {soundName} - AudioClip not assigned!");
+            return;
+        }
+
+        Debug.Log($"🎵 Playing {soundName}");
+        audioSource.PlayOneShot(clip, volume);
+    }
+
+    // ======================================
 
     public void FreezeEnemy()
     {
@@ -432,5 +567,11 @@ public class EnemyAIMinotaur : MonoBehaviour
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, jumpAttackMaxRange);
         }
+    }
+
+    private void OnDestroy()
+    {
+        // Clean up coroutines
+        StopMoveSound();
     }
 }

@@ -132,12 +132,11 @@ GameObject:
   - component: {fileID: 7221461756929221092}
   - component: {fileID: 3725068428513692460}
   - component: {fileID: 554162398093347920}
-  - component: {fileID: 8459179061008364194}
   - component: {fileID: 962021024445781444}
   - component: {fileID: -3625176892327688213}
   m_Layer: 0
   m_Name: FlyDemon
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -401,25 +400,6 @@ MonoBehaviour:
   delayBetweenLightning: 0.15
   freezeDurationTime: 0
   spawnHeightOffset: 3
---- !u!114 &8459179061008364194
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7768211551890539951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fbf2d19adeaab8479df5134ad8474c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  possibleDrops:
-  - itemPrefab: {fileID: 4894995501525870782, guid: d929a99aa8906c44a82334893e30b39b, type: 3}
-    dropChance: 1
-  minDropCount: 1
-  maxDropCount: 1
-  dropRadius: 0.5
-  allowDuplicateDrops: 0
 --- !u!60 &962021024445781444
 PolygonCollider2D:
   m_ObjectHideFlags: 0

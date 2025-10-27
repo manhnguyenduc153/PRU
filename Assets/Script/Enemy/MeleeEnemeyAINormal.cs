@@ -34,6 +34,19 @@ public class MeleeEnemyAINormal : MonoBehaviour
     // ✅ Lưu scale ban đầu
     private Vector3 originalScale;
 
+    // ==============================================
+    // 🔊 SOUND SETTINGS
+    // ==============================================
+    [Header("Sound Settings")]
+    public AudioSource audioSource; // gắn vào chính enemy
+    public AudioClip moveClip;
+    public AudioClip attackClip;
+    public bool enableMoveSound = true;
+    public bool enableAttackSound = true;
+
+    private bool isMovingSoundPlaying = false;
+    // ==============================================
+
     private void Start()
     {
         seeker = GetComponent<Seeker>();
@@ -50,23 +63,27 @@ public class MeleeEnemyAINormal : MonoBehaviour
             originalScale = characterSR.transform.localScale;
         }
 
+        // ✅ Chuẩn bị audio
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+        }
+
         InvokeRepeating(nameof(CalculatePath), 0f, repeatTimeUpdatePath);
     }
 
     private void Update()
     {
         if (attackTimer > 0)
-        {
             attackTimer -= Time.deltaTime;
-        }
 
         // ✅ Luôn nhìn về phía player (giữ nguyên scale ban đầu)
         if (player != null && characterSR != null)
         {
             float xDiff = player.position.x - transform.position.x;
-            if (Mathf.Abs(xDiff) > 0.1f) // tránh flip khi rất gần
+            if (Mathf.Abs(xDiff) > 0.1f)
             {
-                // ✅ Chỉ flip trục X, giữ nguyên Y và Z
                 float newScaleX = xDiff < 0 ? -Mathf.Abs(originalScale.x) : Mathf.Abs(originalScale.x);
                 characterSR.transform.localScale = new Vector3(newScaleX, originalScale.y, originalScale.z);
             }
@@ -101,17 +118,22 @@ public class MeleeEnemyAINormal : MonoBehaviour
             {
                 freezeDuration -= Time.deltaTime;
                 rb.velocity = Vector2.zero;
+                StopMoveSound();
                 yield return null;
             }
 
             if (player == null)
+            {
+                StopMoveSound();
                 yield break;
+            }
 
             float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
             if (isAttacking)
             {
                 rb.velocity = Vector2.zero;
+                StopMoveSound();
                 yield return null;
                 continue;
             }
@@ -119,6 +141,7 @@ public class MeleeEnemyAINormal : MonoBehaviour
             if (distanceToPlayer <= attackRange)
             {
                 rb.velocity = Vector2.zero;
+                StopMoveSound();
                 TryAttack();
 
                 while (isAttacking || (distanceToPlayer <= attackRange && attackTimer > 0))
@@ -130,6 +153,10 @@ public class MeleeEnemyAINormal : MonoBehaviour
 
                 continue;
             }
+
+            // ✅ Enemy đang di chuyển → phát âm thanh bước chân
+            if (enableMoveSound)
+                PlayMoveSound();
 
             Vector2 targetPos = path.vectorPath[currentWP];
             Vector2 direction = (targetPos - rb.position).normalized;
@@ -145,6 +172,8 @@ public class MeleeEnemyAINormal : MonoBehaviour
 
             yield return null;
         }
+
+        StopMoveSound();
     }
 
     void TryAttack()
@@ -155,6 +184,11 @@ public class MeleeEnemyAINormal : MonoBehaviour
         animator.SetTrigger("Attack");
 
         attackTimer = attackCooldown;
+
+        // ✅ Phát âm thanh tấn công
+        if (enableAttackSound && attackClip != null && audioSource != null)
+            audioSource.PlayOneShot(attackClip);
+
         StartCoroutine(ResetAttackState());
     }
 
@@ -188,9 +222,7 @@ public class MeleeEnemyAINormal : MonoBehaviour
         {
             var playerHealth = player.GetComponent<PlayerHealth>();
             if (playerHealth != null)
-            {
                 playerHealth.TakeDamage(10);
-            }
 
             var playerKnockback = player.GetComponent<PlayerKnockback>();
             if (playerKnockback != null)
@@ -210,5 +242,27 @@ public class MeleeEnemyAINormal : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+    }
+
+    // ======================================================
+    // 🔊 SOUND HANDLING
+    // ======================================================
+    private void PlayMoveSound()
+    {
+        if (audioSource == null || moveClip == null || isMovingSoundPlaying) return;
+
+        audioSource.clip = moveClip;
+        audioSource.loop = true;
+        audioSource.Play();
+        isMovingSoundPlaying = true;
+    }
+
+    private void StopMoveSound()
+    {
+        if (audioSource == null || !isMovingSoundPlaying) return;
+
+        audioSource.Stop();
+        audioSource.loop = false;
+        isMovingSoundPlaying = false;
     }
 }

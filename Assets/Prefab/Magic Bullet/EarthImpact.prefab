@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2626471972746618239}
   - component: {fileID: 3592838927635840065}
   - component: {fileID: 3202338239484320325}
+  - component: {fileID: -8428192708837823276}
   m_Layer: 0
   m_Name: EarthImpact
   m_TagString: Untagged
@@ -169,8 +170,6 @@ MonoBehaviour:
   autoRotate: 1
   destroyOnHitPlayer: 0
   explodeOnHitPlayer: 1
-  pierceEnemies: 1
-  maxEnemyHits: -1
   explosionEffectPrefab: {fileID: 0}
 --- !u!95 &3592838927635840065
 Animator:
@@ -206,3 +205,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyAfter: 1.5
+--- !u!114 &-8428192708837823276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160080781336184281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0182d0623e1cdf144a5ca10e94b2f18d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitPlayerSound: {fileID: 8300000, guid: 5a5d50114c9b9fa4e8aab5858e11f9fd, type: 3}
+  hitWallSound: {fileID: 8300000, guid: 5a5d50114c9b9fa4e8aab5858e11f9fd, type: 3}
+  shootSound: {fileID: 0}
+  volume: 0.3
+  randomizePitch: 1
+  minPitch: 0.9
+  maxPitch: 1.1
+  use3DAudio: 0
+  maxDistance: 50

@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: -6053839794060926761}
   m_Layer: 0
   m_Name: Warrior
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -142,6 +142,11 @@ MonoBehaviour:
   attackCooldown: 2
   freezeDurationTime: 0
   knockbackForce: 8
+  audioSource: {fileID: 0}
+  moveClip: {fileID: 8300000, guid: 8bbce6dfd04069b4f86ab3ea82f269cc, type: 3}
+  attackClip: {fileID: 8300000, guid: 27bb8082b72be1944b88ec98425dcea4, type: 3}
+  enableMoveSound: 1
+  enableAttackSound: 1
 --- !u!50 &7216048451492202842
 Rigidbody2D:
   serializedVersion: 4
@@ -324,10 +329,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   possibleDrops:
-  - itemPrefab: {fileID: 4589400155456446401, guid: fe05bf36a700d4e48bcc862cac6b7dd6, type: 3}
+  - itemPrefab: {fileID: 3418777474631325476, guid: 19379a93015b9ba4194b3a72524569c3, type: 3}
     dropChance: 1
-  minDropCount: 2
-  maxDropCount: 5
+  minDropCount: 1
+  maxDropCount: 1
   dropRadius: 0.5
   allowDuplicateDrops: 0
 --- !u!1 &4330309309789925006

@@ -13,15 +13,24 @@ public class EnemyRangeNormal : MonoBehaviour
     public SpriteRenderer characterSR;
 
     [Header("Attack Range")]
-    public float detectionRange = 15f; // Phạm vi phát hiện player
-    public float minAttackRange = 3f; // Khoảng cách tối thiểu để tấn công
-    public float maxAttackRange = 12f; // Khoảng cách tối đa để tấn công
+    public float detectionRange = 15f;
+    public float minAttackRange = 3f;
+    public float maxAttackRange = 12f;
 
     [Header("Range Attack Settings")]
     public GameObject bulletPrefab;
     public float bulletSpeed = 8f;
     public float attackCooldown = 2f;
-    public float attackChance = 100f; // Tỉ lệ tấn công khi trong tầm (100% = luôn tấn công)
+    public float attackChance = 100f;
+
+    [Header("Audio Settings")]
+    [SerializeField] private AudioSource moveAudioSource;
+    [SerializeField] private AudioSource attackAudioSource;
+    [SerializeField] private AudioClip moveClip;
+    [SerializeField] private AudioClip attackClip;
+    [Range(0f, 1f)] public float moveVolume = 0.5f;
+    [Range(0f, 1f)] public float attackVolume = 0.7f;
+    [Range(0f, 1f)] public float fadeSmoothness = 0.2f; // độ mượt khi fade
 
     // Private variables
     private Path path;
@@ -31,6 +40,7 @@ public class EnemyRangeNormal : MonoBehaviour
     private Coroutine moveCoroutine;
     private float attackTimer;
     private Vector3 originalScale;
+    private bool isMovingSoundPlaying = false;
 
     // Freeze
     public float freezeDurationTime;
@@ -44,10 +54,21 @@ public class EnemyRangeNormal : MonoBehaviour
         freezeDuration = 0;
         attackTimer = attackCooldown;
 
-        // Lưu scale ban đầu
         if (characterSR != null)
         {
             originalScale = characterSR.transform.localScale;
+        }
+
+        // Kiểm tra AudioSource
+        if (moveAudioSource == null)
+        {
+            moveAudioSource = gameObject.AddComponent<AudioSource>();
+            moveAudioSource.loop = true;
+        }
+
+        if (attackAudioSource == null)
+        {
+            attackAudioSource = gameObject.AddComponent<AudioSource>();
         }
 
         InvokeRepeating("CalculatePath", 0f, repeatTimeUpdatePath);
@@ -57,19 +78,56 @@ public class EnemyRangeNormal : MonoBehaviour
     {
         attackTimer -= Time.deltaTime;
 
-        // Flip theo hướng player
         FacePlayer();
 
-        // Kiểm tra khoảng cách để tấn công
         float distanceToPlayer = Vector2.Distance(transform.position, GetPlayerPosition());
 
-        // Chỉ tấn công khi player trong vùng tấn công hợp lệ
+        // Điều khiển âm thanh di chuyển
+        HandleMoveSound(distanceToPlayer);
+
         if (distanceToPlayer <= detectionRange &&
             distanceToPlayer >= minAttackRange &&
             distanceToPlayer <= maxAttackRange &&
             attackTimer <= 0)
         {
             TryAttack();
+        }
+    }
+
+    void HandleMoveSound(float distanceToPlayer)
+    {
+        // Enemy chỉ phát tiếng bước khi roaming hoặc đang di chuyển
+        bool shouldPlayMoveSound = roaming && distanceToPlayer > minAttackRange;
+
+        if (shouldPlayMoveSound && !isMovingSoundPlaying && moveClip != null)
+        {
+            moveAudioSource.clip = moveClip;
+            moveAudioSource.volume = 0;
+            moveAudioSource.Play();
+            StartCoroutine(FadeAudio(moveAudioSource, moveVolume, fadeSmoothness));
+            isMovingSoundPlaying = true;
+        }
+        else if (!shouldPlayMoveSound && isMovingSoundPlaying)
+        {
+            StartCoroutine(FadeAudio(moveAudioSource, 0f, fadeSmoothness, stopAfterFade: true));
+            isMovingSoundPlaying = false;
+        }
+    }
+
+    IEnumerator FadeAudio(AudioSource source, float targetVolume, float duration, bool stopAfterFade = false)
+    {
+        float startVolume = source.volume;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            source.volume = Mathf.Lerp(startVolume, targetVolume, elapsed / duration);
+            yield return null;
+        }
+        source.volume = targetVolume;
+        if (stopAfterFade && targetVolume <= 0f)
+        {
+            source.Stop();
         }
     }
 
@@ -89,7 +147,6 @@ public class EnemyRangeNormal : MonoBehaviour
 
     void TryAttack()
     {
-        // Random để quyết định có tấn công không
         float randomValue = Random.Range(0f, 100f);
         if (randomValue < attackChance)
         {
@@ -98,7 +155,6 @@ public class EnemyRangeNormal : MonoBehaviour
         }
     }
 
-    // Tấn công bắn đạn - giống Normal Attack từ script gốc
     void UseNormalAttack()
     {
         if (animator != null)
@@ -106,7 +162,12 @@ public class EnemyRangeNormal : MonoBehaviour
             animator.SetTrigger("Attack");
         }
 
-        // Gọi coroutine để delay việc bắn đạn 0.5s
+        // Phát âm thanh tấn công
+        if (attackClip != null)
+        {
+            attackAudioSource.PlayOneShot(attackClip, attackVolume);
+        }
+
         StartCoroutine(DelayedShoot(0.5f));
     }
 
@@ -124,7 +185,6 @@ public class EnemyRangeNormal : MonoBehaviour
 
         bulletRb.AddForce(direction * bulletSpeed, ForceMode2D.Impulse);
     }
-
 
     Vector3 GetPlayerPosition()
     {
@@ -146,12 +206,10 @@ public class EnemyRangeNormal : MonoBehaviour
         Vector3 playerPos = GetPlayerPosition();
         if (roaming)
         {
-            // Roaming: di chuyển xung quanh player nhưng giữ khoảng cách
             return (Vector2)playerPos + (Random.Range(5f, 10f) * new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized);
         }
         else
         {
-            // Đuổi theo player
             return playerPos;
         }
     }
@@ -181,7 +239,6 @@ public class EnemyRangeNormal : MonoBehaviour
         int currentWP = 0;
         while (currentWP < path.vectorPath.Count)
         {
-            // Xử lý freeze
             while (freezeDuration > 0)
             {
                 freezeDuration -= Time.deltaTime;
@@ -200,18 +257,14 @@ public class EnemyRangeNormal : MonoBehaviour
         }
     }
 
-    // Gizmos để debug
     private void OnDrawGizmosSelected()
     {
-        // Vẽ detection range (màu xanh dương)
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        // Vẽ min attack range (màu vàng)
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, minAttackRange);
 
-        // Vẽ max attack range (màu đỏ)
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, maxAttackRange);
     }

@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: -6236857065554806540}
   m_Layer: 0
   m_Name: SkeletonWarrior
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -143,6 +143,11 @@ MonoBehaviour:
   attackCooldown: 2
   freezeDurationTime: 0
   knockbackForce: 8
+  audioSource: {fileID: 0}
+  moveClip: {fileID: 8300000, guid: 1a0a631c7b7522746b8e093c56b0bc8f, type: 3}
+  attackClip: {fileID: 8300000, guid: 27bb8082b72be1944b88ec98425dcea4, type: 3}
+  enableMoveSound: 1
+  enableAttackSound: 1
 --- !u!50 &8564727114058184496
 Rigidbody2D:
   serializedVersion: 4

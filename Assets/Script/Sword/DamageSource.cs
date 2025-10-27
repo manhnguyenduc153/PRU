@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +14,7 @@ public class DamageSource : MonoBehaviour
 
             enemyHealth.TakeDamage(damageAmount, transform);
 
-            // THÊM DÒNG NÀY: Trigger buff effects khi hit enemy
+            // THÃŠM DÃ’NG NÃ€Y: Trigger buff effects khi hit enemy
             if (BuffManager.Instance != null)
             {
                 BuffManager.Instance.OnEnemyHit(other.transform, transform);

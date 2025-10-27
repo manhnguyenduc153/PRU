@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: -7662226378018946781}
   m_Layer: 0
   m_Name: SkullWolf
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -346,6 +346,13 @@ MonoBehaviour:
   bulletSpeed: 8
   attackCooldown: 3
   attackChance: 100
+  moveAudioSource: {fileID: 0}
+  attackAudioSource: {fileID: 0}
+  moveClip: {fileID: 8300000, guid: bc312561f3815634fa57b2872f021bc0, type: 3}
+  attackClip: {fileID: 8300000, guid: 356f109dd7dc37342a354ba9277a901c, type: 3}
+  moveVolume: 0.5
+  attackVolume: 0.7
+  fadeSmoothness: 0.2
   freezeDurationTime: 0
 --- !u!60 &-6410462604548682759
 PolygonCollider2D:
