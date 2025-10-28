@@ -141,6 +141,11 @@ MonoBehaviour:
   attackCooldown: 2
   freezeDurationTime: 0
   knockbackForce: 8
+  audioSource: {fileID: 0}
+  moveClip: {fileID: 0}
+  attackClip: {fileID: 0}
+  enableMoveSound: 1
+  enableAttackSound: 1
 --- !u!50 &6061939057383717328
 Rigidbody2D:
   serializedVersion: 4
@@ -149,7 +154,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3423815466151019796}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0

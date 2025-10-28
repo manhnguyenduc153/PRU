@@ -161,7 +161,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3075086127820513565}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -363,6 +363,14 @@ MonoBehaviour:
   knockbackForce: 8
   maxPathDistance: 100
   waitForGraphScan: 1
+  audioSource: {fileID: 0}
+  moveSound: {fileID: 0}
+  attackSound: {fileID: 0}
+  groundSlamSound: {fileID: 0}
+  moveVolume: 0.7
+  attackVolume: 1
+  groundSlamVolume: 1
+  moveFadeSmoothness: 0.2
 --- !u!114 &8020348724029843139
 MonoBehaviour:
   m_ObjectHideFlags: 0
