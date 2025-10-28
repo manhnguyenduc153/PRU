@@ -135,7 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bossItemType: 0
   pickupEffect: {fileID: 0}
-  pickupSound: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: b4e94a92be3f61842ae3291519e25d46, type: 3}
   pickupDelay: 0.5
   floatSpeed: 1
   floatAmplitude: 0.3

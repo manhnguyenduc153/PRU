@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buffType: 0
   pickupEffect: {fileID: 0}
-  pickupSound: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: 69c090fef82e5c641ae60b6d8786daba, type: 3}
   pickupDelay: 0.5
 --- !u!58 &7356698286511929842
 CircleCollider2D:

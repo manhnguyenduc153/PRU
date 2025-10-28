@@ -365,7 +365,7 @@ MonoBehaviour:
   waitForGraphScan: 1
   audioSource: {fileID: 0}
   moveSound: {fileID: 0}
-  attackSound: {fileID: 0}
+  attackSound: {fileID: 8300000, guid: 4ee757ed0bc347340b2bf9521b582508, type: 3}
   groundSlamSound: {fileID: 0}
   moveVolume: 0.7
   attackVolume: 1
