@@ -11,14 +11,23 @@ public class EnemyKnockback : MonoBehaviour
 
     private Rigidbody2D rb;
     private bool isKnockedBack = false;
+    private int originalLayer;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-
         if (rb == null)
         {
             Debug.LogError("Rigidbody2D cannot found on " + gameObject.name);
+        }
+
+        // Lưu layer gốc (phải là Enemy layer)
+        originalLayer = gameObject.layer;
+
+        // Kiểm tra xem có đúng layer không
+        if (LayerMask.LayerToName(originalLayer) != "Enemy")
+        {
+            Debug.LogWarning(gameObject.name + " không ở layer 'Enemy'. Vui lòng gán layer 'Enemy' cho object này!");
         }
     }
 
@@ -43,11 +52,23 @@ public class EnemyKnockback : MonoBehaviour
 
         var enemyMovement = GetComponent<MonoBehaviour>();
         bool wasEnabled = false;
+
         if (enemyMovement != null)
         {
             wasEnabled = enemyMovement.enabled;
             enemyMovement.enabled = false;
         }
+
+        // Chuyển sang layer EnemyKnockback
+        int knockbackLayer = LayerMask.NameToLayer("EnemyKnockback");
+
+        if (knockbackLayer == -1)
+        {
+            Debug.LogError("Layer 'EnemyKnockback' không tồn tại! Vui lòng tạo layer này.");
+            yield break;
+        }
+
+        SetLayerRecursively(gameObject, knockbackLayer);
 
         while (elapsed < knockbackDuration)
         {
@@ -59,12 +80,26 @@ public class EnemyKnockback : MonoBehaviour
 
         rb.velocity = Vector2.zero;
 
+        // Chuyển về layer Enemy gốc
+        SetLayerRecursively(gameObject, originalLayer);
+
         if (enemyMovement != null && wasEnabled)
         {
             enemyMovement.enabled = true;
         }
 
         isKnockedBack = false;
+    }
+
+    // Hàm đệ quy để set layer cho cả object và children
+    private void SetLayerRecursively(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+
+        foreach (Transform child in obj.transform)
+        {
+            SetLayerRecursively(child.gameObject, layer);
+        }
     }
 
     public bool IsKnockedBack()

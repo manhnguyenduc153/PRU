@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2039662287729123344}
   - component: {fileID: 6376748271623400633}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 6690584917579027574}
   - component: {fileID: -6772521140307030489}
   - component: {fileID: 6785594702500668638}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GoblinArcher
   m_TagString: Enemy
   m_Icon: {fileID: 0}

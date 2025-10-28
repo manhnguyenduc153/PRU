@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Script\Sword\ActiveWeapon.cs" />
+    <Compile Include="Assets\Script\Sound\SceneMusicData.cs" />
     <Compile Include="Assets\Script\Enemy\HybridEnemyAI.cs" />
     <Compile Include="Assets\Script\Gem\BossGateController.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyHealth.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Assets\Script\Sword\SlashAnim.cs" />
     <Compile Include="Assets\Script\Buff\BuffUIManager.cs" />
     <Compile Include="Assets\Script\Sound\BulletAudioManager.cs" />
+    <Compile Include="Assets\Script\Sound\DarkZoneCollider.cs" />
     <Compile Include="Assets\Script\Player\PlayerBullet.cs" />
     <Compile Include="Assets\Script\Sword\DamageSource.cs" />
     <Compile Include="Assets\Script\SceneManager\SceneSpawnPoint.cs" />
@@ -114,6 +116,7 @@
     <Compile Include="Assets\Script\SpawnZone.cs" />
     <Compile Include="Assets\Script\SceneManager\AstarSingleton.cs" />
     <Compile Include="Assets\Script\Sword\Sword.cs" />
+    <Compile Include="Assets\Script\Sound\AreaMusicZone.cs" />
     <Compile Include="Assets\Script\JumpWarningEffect.cs" />
     <Compile Include="Assets\Script\SceneManager\SceneTransitionManager.cs" />
     <Compile Include="Assets\Script\Enemy\MeleeEnemyAI.cs" />
