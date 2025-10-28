@@ -123,4 +123,21 @@ public class AudioManager : MonoBehaviour
         volume = Mathf.Clamp01(newVolume);
         musicSource.volume = volume;
     }
+
+    public void SetSceneMusic(AudioClip normal, AudioClip combat)
+    {
+        normalMusic = normal;
+        combatMusic = combat;
+
+        // Khi vừa load scene mới, bắt đầu phát nhạc bình thường
+        PlayNormalMusic();
+    }
+
+    public void PlayTemporaryMusic(AudioClip tempClip)
+    {
+        if (tempClip == null) return;
+
+        StopAllCoroutines();
+        StartCoroutine(FadeAndSwitch(tempClip));
+    }
 }
