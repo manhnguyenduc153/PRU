@@ -91,7 +91,6 @@ public class EnemyAIMinotaur : MonoBehaviour
         animator = GetComponent<Animator>();
         player = FindObjectOfType<PlayerController>()?.transform;
 
-        // 🎵 Auto-setup AudioSource nếu chưa có
         SetupAudioSource();
 
         freezeDuration = 0;
@@ -100,7 +99,12 @@ public class EnemyAIMinotaur : MonoBehaviour
         forceDashTimer = 0f;
 
         if (characterSR != null)
+        {
             originalScale = characterSR.transform.localScale;
+
+            // ✅ FIX: Khởi tạo hướng đúng ngay từ đầu
+            characterSR.flipX = !defaultFacingRight;
+        }
 
         StartCoroutine(InitializePathfinding());
     }
@@ -186,10 +190,9 @@ public class EnemyAIMinotaur : MonoBehaviour
 
     void FacePlayer()
     {
-        if (characterSR == null) return;
+        if (characterSR == null || player == null) return; // ✅ FIX: Thêm check player null
 
-        Vector3 playerPos = GetPlayerPosition();
-        float dirX = playerPos.x - transform.position.x;
+        float dirX = player.position.x - transform.position.x;
 
         if (Mathf.Abs(dirX) > 0.05f)
         {

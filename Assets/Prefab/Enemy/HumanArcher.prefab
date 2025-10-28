@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8050480117703711882}
   - component: {fileID: 3784038933548305963}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 7618963749721296560}
   - component: {fileID: 5622211744924393222}
   - component: {fileID: -5086075383174531491}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: HumanArcher
   m_TagString: Enemy
   m_Icon: {fileID: 0}

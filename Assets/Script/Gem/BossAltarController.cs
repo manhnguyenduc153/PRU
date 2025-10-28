@@ -15,15 +15,25 @@ public class BossAltarController : MonoBehaviour
     [SerializeField] private List<BossItemType> specificItemsRequired = new List<BossItemType>();
 
     [Header("References (Auto-detect if null)")]
-    [SerializeField] private GameObject runeParent;         // Object chứa 4 rune con (inactive sẵn)
-    [SerializeField] private GameObject goToDungeonParent;  // Object chứa Portal + TransitionScene (inactive sẵn)
+    [SerializeField] private GameObject runeParent;
+    [SerializeField] private GameObject goToDungeonParent;
     [SerializeField] private Animator altarAnimator;
     [SerializeField] private ParticleSystem activateEffect;
     [SerializeField] private AudioClip activateSound;
 
+    [Header("Sound Settings")]
+    [SerializeField] private float maxHearingDistance = 10f; // khoảng cách tối đa nghe được
+    [SerializeField] private float minVolumeDistance = 2f;   // khoảng cách gần nhất (âm lượng max)
+    [SerializeField] private float maxVolume = 1f;           // âm lượng tối đa khi player gần
+    [SerializeField] private float fadeSpeed = 2f;           // tốc độ fade mượt
+    private AudioSource loopingAudioSource;
+    private Transform playerTransform;
+    private float targetVolume = 0f;
+    private float volumeVelocity = 0f; // cho SmoothDamp
+
     [Header("UI")]
-    [SerializeField] private GameObject interactPrompt; // chứa Text “Press E” (đặt ẩn mặc định)
-    [SerializeField] private TextMeshProUGUI interactText; // text con bên trong
+    [SerializeField] private GameObject interactPrompt;
+    [SerializeField] private TextMeshProUGUI interactText;
     [SerializeField] private Image lockIcon;
     [SerializeField] private Color lockedColor = Color.red;
     [SerializeField] private Color unlockedColor = Color.green;
@@ -34,7 +44,6 @@ public class BossAltarController : MonoBehaviour
 
     private void Start()
     {
-        // Auto-find Rune & GoToDungeon
         if (runeParent == null)
             runeParent = transform.Find("Rune")?.gameObject;
 
@@ -51,12 +60,20 @@ public class BossAltarController : MonoBehaviour
 
         if (interactPrompt != null)
             interactPrompt.SetActive(false);
+
+        // Tìm player
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+            playerTransform = playerObj.transform;
     }
 
     private void OnDestroy()
     {
         if (inventory != null)
             inventory.OnBossItemCollected -= OnItemCollected;
+
+        if (loopingAudioSource != null)
+            Destroy(loopingAudioSource.gameObject);
     }
 
     private void Update()
@@ -68,13 +85,34 @@ public class BossAltarController : MonoBehaviour
         }
         else if (playerInRange && isActivated)
         {
-            // Khi altar đã được kích hoạt, nhấn E để teleport
             if (Input.GetKeyDown(KeyCode.E))
             {
-                // Bạn có thể gọi vào TransitionScene script tại đây nếu muốn chuyển cảnh thật
-                // Ví dụ: goToDungeonParent.GetComponentInChildren<TransitionScene>()?.StartTransition();
+                // Gọi TransitionScene tại đây nếu cần
             }
         }
+
+        UpdateSoundVolume();
+    }
+
+    private void UpdateSoundVolume()
+    {
+        if (loopingAudioSource == null || playerTransform == null) return;
+
+        float distance = Vector2.Distance(transform.position, playerTransform.position);
+
+        // Xác định targetVolume dựa trên khoảng cách
+        if (distance > maxHearingDistance)
+        {
+            targetVolume = 0f;
+        }
+        else
+        {
+            float t = Mathf.InverseLerp(maxHearingDistance, minVolumeDistance, distance);
+            targetVolume = Mathf.Lerp(0f, maxVolume, 1 - t);
+        }
+
+        // 🔊 Làm mượt chuyển đổi âm lượng
+        loopingAudioSource.volume = Mathf.SmoothDamp(loopingAudioSource.volume, targetVolume, ref volumeVelocity, 1f / fadeSpeed);
     }
 
     private void OnItemCollected(BossItemType itemType)
@@ -123,7 +161,6 @@ public class BossAltarController : MonoBehaviour
         if (isActivated) return;
         isActivated = true;
 
-        // 1️⃣ Bật Rune
         if (runeParent != null)
         {
             runeParent.SetActive(true);
@@ -131,7 +168,6 @@ public class BossAltarController : MonoBehaviour
                 runeParent.transform.GetChild(i).gameObject.SetActive(true);
         }
 
-        // 2️⃣ Bật GoToDungeon
         if (goToDungeonParent != null)
         {
             goToDungeonParent.SetActive(true);
@@ -146,17 +182,25 @@ public class BossAltarController : MonoBehaviour
                 transition.gameObject.SetActive(true);
         }
 
-        // 3️⃣ Hiệu ứng
         if (altarAnimator != null)
             altarAnimator.SetTrigger("Activate");
 
         if (activateEffect != null)
             activateEffect.Play();
 
+        // 🔊 Tạo loop sound và phát
         if (activateSound != null)
-            AudioSource.PlayClipAtPoint(activateSound, transform.position);
+        {
+            loopingAudioSource = new GameObject("Altar_LoopSound").AddComponent<AudioSource>();
+            loopingAudioSource.clip = activateSound;
+            loopingAudioSource.loop = true;
+            loopingAudioSource.spatialBlend = 0f;
+            loopingAudioSource.playOnAwake = false;
+            loopingAudioSource.volume = 0f;
+            loopingAudioSource.transform.position = transform.position;
+            loopingAudioSource.Play();
+        }
 
-        // 4️⃣ Cập nhật text prompt
         if (interactPrompt != null)
         {
             interactPrompt.SetActive(true);

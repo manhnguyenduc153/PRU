@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7549746070344293775}
   - component: {fileID: 6349838449063685428}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 3125658194415756445}
   - component: {fileID: 4663328608673250893}
   - component: {fileID: 5266385375581398803}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SkeletonMage
   m_TagString: Enemy
   m_Icon: {fileID: 0}

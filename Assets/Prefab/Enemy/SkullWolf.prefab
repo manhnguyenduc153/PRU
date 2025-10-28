@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4305151498100512940}
   - component: {fileID: 878365897342277884}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 531430254297260946}
   - component: {fileID: -6410462604548682759}
   - component: {fileID: -7662226378018946781}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: SkullWolf
   m_TagString: Enemy
   m_Icon: {fileID: 0}
