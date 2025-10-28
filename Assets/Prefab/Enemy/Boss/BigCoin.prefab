@@ -165,3 +165,5 @@ MonoBehaviour:
   maxValue: 200
   floatSpeed: 1
   floatAmount: 0.3
+  pickupSound: {fileID: 8300000, guid: ebe134541a1975b4fa05ed63ed95eca2, type: 3}
+  soundVolume: 2

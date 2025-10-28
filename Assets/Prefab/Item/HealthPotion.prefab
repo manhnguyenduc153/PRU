@@ -102,6 +102,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   potionType: 0
   quantity: 1
+  pickupSoundHealth: {fileID: 8300000, guid: b4e94a92be3f61842ae3291519e25d46, type: 3}
+  pickupSoundMana: {fileID: 8300000, guid: b4e94a92be3f61842ae3291519e25d46, type: 3}
+  soundVolume: 1
 --- !u!50 &1696254906091764921
 Rigidbody2D:
   serializedVersion: 4

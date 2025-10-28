@@ -245,7 +245,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6702689922867955545}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -472,5 +472,10 @@ MonoBehaviour:
   lightningSpawnRadius: 5
   warningDuration: 0.5
   delayBetweenLightning: 0.15
+  audioSource: {fileID: 0}
+  meleeAttackSFX: {fileID: 8300000, guid: 27bb8082b72be1944b88ec98425dcea4, type: 3}
+  moveSFX: {fileID: 8300000, guid: 8bbce6dfd04069b4f86ab3ea82f269cc, type: 3}
+  moveVolume: 1
+  meleeVolume: 1
   freezeDurationTime: 0
   spawnHeightOffset: 3

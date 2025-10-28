@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 using TMPro;
 
-
 public class Coin : MonoBehaviour
 {
     [Header("Coin Value")]
@@ -12,6 +11,10 @@ public class Coin : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private float floatSpeed = 1f;
     [SerializeField] private float floatAmount = 0.3f;
+
+    [Header("Sound Effect")]
+    [SerializeField] private AudioClip pickupSound;  // Gắn file âm thanh ở đây
+    [SerializeField] private float soundVolume = 1f; // Điều chỉnh âm lượng
 
     private int coinValue;
     private Vector3 startPos;
@@ -25,7 +28,7 @@ public class Coin : MonoBehaviour
 
     void Update()
     {
-        // Animation lơ lửng cho coin (optional)
+        // Animation lơ lửng cho coin
         float newY = startPos.y + Mathf.Sin(Time.time * floatSpeed) * floatAmount;
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
@@ -37,7 +40,13 @@ public class Coin : MonoBehaviour
             // Thêm coin vào player
             CoinManager.Instance.AddCoins(coinValue);
 
-            // Destroy coin
+            // Phát âm thanh pickup (độc lập, không bị destroy)
+            if (pickupSound != null)
+            {
+                AudioSource.PlayClipAtPoint(pickupSound, transform.position, soundVolume);
+            }
+
+            // Xóa coin
             Destroy(gameObject);
         }
     }

@@ -20,18 +20,16 @@ public class DarkKing : MonoBehaviour
     Animator animator;
     Coroutine moveCoroutine;
 
-    // ✅ Melee Attack Settings - KHÔNG dùng slash prefab
     [Header("Melee Attack")]
     public bool hasMeleeAttack = true;
     public float meleeAttackRange = 2f;
     public float meleeAttackCooldown = 2f;
-    public int meleeDamage = 20; // Sát thương melee
+    public int meleeDamage = 20;
     public float knockbackForce = 8f;
     public float meleeAttackChance = 100f;
     private float meleeAttackTimer;
     private bool isAttacking = false;
 
-    // Skill System
     [Header("Detection Range")]
     public float detectionRange = 15f;
 
@@ -59,11 +57,21 @@ public class DarkKing : MonoBehaviour
     public float warningDuration = 0.5f;
     public float delayBetweenLightning = 0.15f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource moveAudioSource;
+    [SerializeField] private AudioSource attackAudioSource;
+    [SerializeField] private AudioClip meleeAttackSFX;
+    [SerializeField] private AudioClip moveSFX;
+    [SerializeField, Range(0f, 1f)] private float moveVolume = 0.3f;
+    [SerializeField, Range(0f, 1f)] private float meleeVolume = 1f;
+    [SerializeField, Range(0f, 2f)] private float fadeSpeed = 1f; // Tốc độ fade âm
+
     private float normalAttackTimer;
     private float waveAttackTimer;
     private float ultimateTimer;
+    private bool isMovingSound = false;
+    private float moveTargetVolume = 0f;
 
-    // Freeze
     public float freezeDurationTime;
     float freezeDuration;
 
@@ -77,9 +85,7 @@ public class DarkKing : MonoBehaviour
         freezeDuration = 0;
 
         if (characterSR != null)
-        {
             originalScale = characterSR.transform.localScale;
-        }
 
         normalAttackTimer = normalAttackCooldown;
         waveAttackTimer = waveAttackCooldown;
@@ -87,6 +93,29 @@ public class DarkKing : MonoBehaviour
         meleeAttackTimer = 0f;
 
         InvokeRepeating("CalculatePath", 0f, repeatTimeUpdatePath);
+
+        // --- Tạo AudioSource tự động nếu chưa gắn ---
+        if (moveAudioSource == null)
+        {
+            moveAudioSource = gameObject.AddComponent<AudioSource>();
+        }
+        if (attackAudioSource == null)
+        {
+            attackAudioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        // --- Cấu hình moveAudioSource ---
+        if (moveSFX != null)
+        {
+            moveAudioSource.clip = moveSFX;
+            moveAudioSource.loop = true;
+            moveAudioSource.volume = 0f;
+            moveAudioSource.playOnAwake = false;
+        }
+
+        // --- Cấu hình attackAudioSource ---
+        attackAudioSource.loop = false;
+        attackAudioSource.playOnAwake = false;
     }
 
     private void Update()
@@ -100,10 +129,30 @@ public class DarkKing : MonoBehaviour
 
         float distanceToPlayer = Vector2.Distance(transform.position, GetPlayerPosition());
 
+        // Quản lý phát âm thanh di chuyển
+        bool shouldMoveSound = !isAttacking && distanceToPlayer <= detectionRange;
+
+        if (shouldMoveSound)
+            moveTargetVolume = moveVolume;
+        else
+            moveTargetVolume = 0f;
+
+        if (moveAudioSource != null && moveSFX != null)
+        {
+            if (!moveAudioSource.isPlaying)
+                moveAudioSource.Play();
+
+            // Làm mượt (fade) âm di chuyển
+            moveAudioSource.volume = Mathf.MoveTowards(
+                moveAudioSource.volume,
+                moveTargetVolume,
+                fadeSpeed * Time.deltaTime
+            );
+        }
+
         if (distanceToPlayer > detectionRange)
             return;
 
-        // ✅ Ưu tiên melee khi đủ gần
         if (hasMeleeAttack && distanceToPlayer <= meleeAttackRange && !isAttacking)
         {
             TryUseMeleeAttack();
@@ -128,7 +177,6 @@ public class DarkKing : MonoBehaviour
         }
     }
 
-    // ✅ Thử tấn công cận chiến
     void TryUseMeleeAttack()
     {
         if (meleeAttackTimer > 0 || isAttacking) return;
@@ -141,47 +189,39 @@ public class DarkKing : MonoBehaviour
         }
     }
 
-    // ✅ Tấn công cận chiến - CHỈ bật trigger và gây damage
     void UseMeleeAttack()
     {
         isAttacking = true;
 
-        // Bật trigger Attack animation
         if (animator != null)
-        {
             animator.SetTrigger("Attack");
+
+        // Phát âm thanh tấn công
+        if (attackAudioSource != null && meleeAttackSFX != null)
+        {
+            Debug.Log("🎵 DarkKing: Play melee attack sound!");
+            attackAudioSource.PlayOneShot(meleeAttackSFX, meleeVolume);
         }
 
         StartCoroutine(MeleeAttackCoroutine());
     }
 
-    // ✅ Coroutine xử lý melee attack
     IEnumerator MeleeAttackCoroutine()
     {
-        // Dừng di chuyển trong lúc tấn công
         if (moveCoroutine != null)
-        {
             StopCoroutine(moveCoroutine);
-        }
 
-        // Delay trước khi gây damage (để animation chạy)
         yield return new WaitForSeconds(0.3f);
 
-        // Gây sát thương và knockback cho player
         DealMeleeDamageToPlayer();
 
-        // Delay sau khi tấn công
         yield return new WaitForSeconds(0.3f);
         isAttacking = false;
 
-        // Tiếp tục di chuyển
         if (path != null)
-        {
             MoveToTarget();
-        }
     }
 
-    // ✅ Gây sát thương trực tiếp cho player
     void DealMeleeDamageToPlayer()
     {
         PlayerController player = FindObjectOfType<PlayerController>();
@@ -189,32 +229,17 @@ public class DarkKing : MonoBehaviour
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
 
-        // Kiểm tra player còn trong tầm melee không
         if (distanceToPlayer <= meleeAttackRange)
         {
-            // Gây sát thương cho player thông qua PlayerHealth
             PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
             if (playerHealth != null)
-            {
                 playerHealth.TakeDamage(meleeDamage);
-            }
 
-            // Tính hướng knockback
             Vector2 knockbackDirection = (player.transform.position - transform.position).normalized;
-
-            // Áp dụng knockback
             Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
             if (playerRb != null)
-            {
                 playerRb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
-            }
         }
-    }
-
-    // ✅ Animation Event callback (nếu dùng animation event)
-    public void MeleeAttackComplete()
-    {
-        isAttacking = false;
     }
 
     void TryUseSkill()
@@ -234,43 +259,14 @@ public class DarkKing : MonoBehaviour
             waveAttackTimer = waveAttackCooldown;
             return;
         }
-
-        //if (canUseNormalAttack && normalAttackTimer <= 0 && randomValue < (ultimateChance + waveAttackChance + normalAttackChance))
-        //{
-        //    UseNormalAttack();
-        //    normalAttackTimer = normalAttackCooldown;
-        //    return;
-        //}
     }
 
-    // Chiêu 1: Bắn thường
-    void UseNormalAttack()
-    {
-        if (normalBullet == null) return;
-
-        if (animator != null)
-        {
-            animator.SetTrigger("Attack");
-        }
-
-        var bulletTmp = Instantiate(normalBullet, transform.position, Quaternion.identity);
-        Rigidbody2D bulletRb = bulletTmp.GetComponent<Rigidbody2D>();
-
-        Vector3 playerPos = GetPlayerPosition();
-        Vector3 direction = (playerPos - transform.position).normalized;
-
-        bulletRb.AddForce(direction * normalBulletSpeed, ForceMode2D.Impulse);
-    }
-
-    // Chiêu 2: Wave Bullet
     void UseWaveSkill()
     {
         if (waveBullet == null) return;
 
         if (animator != null)
-        {
             animator.SetTrigger("Bullet");
-        }
 
         StartCoroutine(WaveAttackCoroutine());
     }
@@ -297,15 +293,12 @@ public class DarkKing : MonoBehaviour
         }
     }
 
-    // Chiêu 3: Ultimate - Lightning Strike
     void UseUltimateSkill()
     {
         if (lightningBolt == null) return;
 
         if (animator != null)
-        {
             animator.SetTrigger("Cast");
-        }
 
         StartCoroutine(LightningStrikeCoroutine());
     }
@@ -342,9 +335,7 @@ public class DarkKing : MonoBehaviour
         for (int i = 0; i < strikePositions.Count; i++)
         {
             if (i < warnings.Count && warnings[i] != null)
-            {
                 Destroy(warnings[i]);
-            }
 
             Vector3 lightningPos = strikePositions[i];
             lightningPos.y += spawnHeightOffset;
@@ -430,14 +421,11 @@ public class DarkKing : MonoBehaviour
         }
     }
 
-    // ✅ Gizmos để debug
     private void OnDrawGizmosSelected()
     {
-        // Detection range (màu xanh dương)
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        // Melee attack range (màu đỏ)
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, meleeAttackRange);
     }
