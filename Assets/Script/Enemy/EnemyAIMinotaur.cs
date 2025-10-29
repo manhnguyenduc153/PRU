@@ -385,10 +385,17 @@ public class EnemyAIMinotaur : MonoBehaviour
         Vector3 targetPos = startPos + (Vector3)(direction * forceDashDistance);
 
         float elapsed = 0f;
+        float stopDistance = attackRange * 0.8f; // Dừng trước khi chạm player
+
         while (elapsed < forceDashTime)
         {
             elapsed += Time.deltaTime;
             float t = elapsed / forceDashTime;
+
+            // ✅ Check khoảng cách, dừng nếu đã gần player
+            float distToPlayer = Vector2.Distance(transform.position, player.position);
+            if (distToPlayer <= stopDistance)
+                break;
 
             FacePlayer();
             transform.position = Vector3.Lerp(startPos, targetPos, t);

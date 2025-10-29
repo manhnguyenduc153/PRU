@@ -340,7 +340,7 @@ MonoBehaviour:
   normalAttackDamage: 15
   enableForceAttack: 1
   forceDashDistance: 4
-  forceDashTime: 0.2
+  forceDashTime: 0.1
   forceDashCooldown: 4
   enableJumpAttack: 1
   jumpAttackRange: 8
