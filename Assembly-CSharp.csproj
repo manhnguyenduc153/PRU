@@ -78,6 +78,7 @@
     <Compile Include="Assets\Script\Skills\MeteorBullet.cs" />
     <Compile Include="Assets\Script\Enemy\Bullet.cs" />
     <Compile Include="Assets\Script\Sound\WeaponAudio.cs" />
+    <Compile Include="Assets\Script\StatueInteraction.cs" />
     <Compile Include="Assets\Script\Player\PlayerController.cs" />
     <Compile Include="Assets\Script\Enemy\MeleeEnemeyAINormal.cs" />
     <Compile Include="Assets\Script\Player\Player Controls.cs" />

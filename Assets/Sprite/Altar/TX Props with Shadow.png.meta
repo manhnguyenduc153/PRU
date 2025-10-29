@@ -105,7 +105,7 @@ TextureImporter:
         width: 102
         height: 76
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -126,7 +126,7 @@ TextureImporter:
         width: 7
         height: 8
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -147,7 +147,7 @@ TextureImporter:
         width: 8
         height: 10
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -168,7 +168,7 @@ TextureImporter:
         width: 7
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -189,7 +189,7 @@ TextureImporter:
         width: 10
         height: 6
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -197,6 +197,48 @@ TextureImporter:
       bones: []
       spriteID: d52357a7e67928a4fa783b4363898371
       internalID: 916941122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Props with Shadow_5
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 348
+        width: 35
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3a1d89722943a842ab1c3aa8ddc6c32
+      internalID: 793937234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Props with Shadow_6
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 355
+        width: 16
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e01e1bb4de1cf7d4792b7323119caf12
+      internalID: 348105209
       vertices: []
       indices: 
       edges: []
@@ -217,6 +259,8 @@ TextureImporter:
       TX Props with Shadow_2: -29426975
       TX Props with Shadow_3: 1234346891
       TX Props with Shadow_4: 916941122
+      TX Props with Shadow_5: 793937234
+      TX Props with Shadow_6: 348105209
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
