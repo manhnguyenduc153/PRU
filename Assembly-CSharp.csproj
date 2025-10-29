@@ -60,8 +60,10 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.62f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Script\Sword\ActiveWeapon.cs" />
+    <Compile Include="Assets\Script\Dialogue\NPCDialogue.cs" />
+    <Compile Include="Assets\Script\NPC_RandomMoveZone.cs" />
     <Compile Include="Assets\Script\Sound\SceneMusicData.cs" />
+    <Compile Include="Assets\Script\Sword\ActiveWeapon.cs" />
     <Compile Include="Assets\Script\Enemy\HybridEnemyAI.cs" />
     <Compile Include="Assets\Script\Gem\BossGateController.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyHealth.cs" />
@@ -82,6 +84,7 @@
     <Compile Include="Assets\Script\Buff\BuffManager.cs" />
     <Compile Include="Assets\Script\Player\ManaBarUI.cs" />
     <Compile Include="Assets\Script\Enemy\Flash.cs" />
+    <Compile Include="Assets\Script\Dialogue\PlayerDialogueTrigger.cs" />
     <Compile Include="Assets\Script\Buff\BuffPickup.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyAIMinotaur.cs" />
     <Compile Include="Assets\Script\Sound\CombatZoneChecker.cs" />
@@ -100,6 +103,7 @@
     <Compile Include="Assets\Script\Buff\BuffUIManager.cs" />
     <Compile Include="Assets\Script\Sound\BulletAudioManager.cs" />
     <Compile Include="Assets\Script\Sound\DarkZoneCollider.cs" />
+    <Compile Include="Assets\Script\Dialogue\DialogueManager.cs" />
     <Compile Include="Assets\Script\Player\PlayerBullet.cs" />
     <Compile Include="Assets\Script\Sword\DamageSource.cs" />
     <Compile Include="Assets\Script\SceneManager\SceneSpawnPoint.cs" />
@@ -109,6 +113,7 @@
     <Compile Include="Assets\Script\Enemy\NewHybridEnemyAI.cs" />
     <Compile Include="Assets\Script\Enemy\EnemyDrop.cs" />
     <Compile Include="Assets\Script\Enemy\EnemySlashEffect.cs" />
+    <Compile Include="Assets\Script\Dialogue\NPCTalkPromt.cs" />
     <Compile Include="Assets\Script\Player\PlayerMana.cs" />
     <Compile Include="Assets\Script\SelfDestroy.cs" />
     <Compile Include="Assets\Script\Gem\BossItemUIManager.cs" />

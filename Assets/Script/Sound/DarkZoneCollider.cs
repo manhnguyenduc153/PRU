@@ -5,9 +5,10 @@ using System.Collections;
 public class DarkZoneController : MonoBehaviour
 {
     [Header("Dark Zone Settings")]
-    [SerializeField, Range(0f, 1f)] private float targetDarkness = 0.6f;
+    [SerializeField, Range(0f, 1f)] private float targetDarkness = 0.6f; // 🔹 Độ tối khi ở trong vùng
     [SerializeField] private float fadeDuration = 1.5f;
-    [SerializeField] private Color darkColor = Color.black;
+    [SerializeField] private Color darkColor = Color.black; // 🔹 Màu overlay (có thể chỉnh thành xanh, đỏ...)
+    [SerializeField] private Sprite darkOverlaySprite;
 
     private Image darkOverlay;
     private Coroutine fadeCoroutine;
@@ -37,12 +38,18 @@ public class DarkZoneController : MonoBehaviour
             overlayGO.transform.SetParent(canvas.transform, false);
 
             darkOverlay = overlayGO.AddComponent<Image>();
-            darkOverlay.color = new Color(darkColor.r, darkColor.g, darkColor.b, 0f);
             darkOverlay.rectTransform.anchorMin = Vector2.zero;
             darkOverlay.rectTransform.anchorMax = Vector2.one;
             darkOverlay.rectTransform.offsetMin = Vector2.zero;
             darkOverlay.rectTransform.offsetMax = Vector2.zero;
         }
+
+        // 🔹 Gắn sprite hoặc chỉ dùng màu
+        if (darkOverlaySprite != null)
+            darkOverlay.sprite = darkOverlaySprite;
+
+        darkOverlay.color = new Color(darkColor.r, darkColor.g, darkColor.b, 0f);
+        darkOverlay.preserveAspect = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -76,10 +83,16 @@ public class DarkZoneController : MonoBehaviour
             float t = Mathf.Clamp01(elapsed / fadeDuration);
             float alpha = Mathf.Lerp(startAlpha, targetAlpha, t);
 
-            darkOverlay.color = new Color(darkColor.r, darkColor.g, darkColor.b, alpha);
+            // 🔹 Giữ nguyên màu gốc hoặc texture, chỉ thay đổi độ trong suốt
+            Color currentColor = darkOverlay.color;
+            currentColor.a = alpha;
+            darkOverlay.color = currentColor;
+
             yield return null;
         }
 
-        darkOverlay.color = new Color(darkColor.r, darkColor.g, darkColor.b, targetAlpha);
+        Color finalColor = darkOverlay.color;
+        finalColor.a = targetAlpha;
+        darkOverlay.color = finalColor;
     }
 }
