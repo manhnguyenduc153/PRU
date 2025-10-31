@@ -124,6 +124,7 @@
     <Compile Include="Assets\Script\SelfDestroy.cs" />
     <Compile Include="Assets\Script\Gem\BossItemUIManager.cs" />
     <Compile Include="Assets\Script\Item\CoinManager.cs" />
+    <Compile Include="Assets\Script\StoryController.cs" />
     <Compile Include="Assets\Script\SpawnZone.cs" />
     <Compile Include="Assets\Script\SceneManager\AstarSingleton.cs" />
     <Compile Include="Assets\Script\Sword\Sword.cs" />
