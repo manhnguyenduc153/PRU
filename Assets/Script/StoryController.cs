@@ -8,6 +8,7 @@ public class StoryController : MonoBehaviour
 {
     public TextMeshProUGUI storyText;
     public Button nextButton;
+    public Button previousButton;
     public Button skipButton;
     public AudioSource audioSource;
     public AudioClip typingSound;
@@ -21,12 +22,13 @@ public class StoryController : MonoBehaviour
     private int currentLine = 0;
     private bool isTyping = false;
     private float typingSpeed = 0.05f;
-    private float autoNextDelay = 2.0f;
 
     void Start()
     {
         nextButton.onClick.AddListener(NextLine);
+        previousButton.onClick.AddListener(PreviousLine);
         skipButton.onClick.AddListener(SkipStory);
+        UpdatePreviousButtonState(); // cập nhật trạng thái nút previous
         UpdateBackground(); // hiển thị nền đầu tiên
         StartCoroutine(TypeLine());
     }
@@ -47,13 +49,6 @@ public class StoryController : MonoBehaviour
         }
 
         isTyping = false;
-        StartCoroutine(AutoNext());
-    }
-
-    IEnumerator AutoNext()
-    {
-        yield return new WaitForSeconds(autoNextDelay);
-        if (!isTyping) NextLine();
     }
 
     public void NextLine()
@@ -71,12 +66,43 @@ public class StoryController : MonoBehaviour
             if (currentLine < storyLines.Length)
             {
                 UpdateBackground(); // đổi nền mỗi khi qua đoạn mới
+                UpdatePreviousButtonState(); // cập nhật trạng thái nút previous
                 StartCoroutine(TypeLine());
             }
             else
             {
                 SceneManager.LoadScene("PlayScene");
             }
+        }
+    }
+
+    public void PreviousLine()
+    {
+        // Không cho quay lại nếu đang ở câu đầu tiên
+        if (currentLine <= 0) return;
+
+        StopAllCoroutines();
+
+        // Nếu đang typing, hiển thị full câu hiện tại
+        if (isTyping)
+        {
+            storyText.text = storyLines[currentLine];
+            isTyping = false;
+        }
+
+        // Quay lại câu trước đó
+        currentLine--;
+        UpdateBackground(); // đổi nền về câu trước
+        UpdatePreviousButtonState(); // cập nhật trạng thái nút previous
+        StartCoroutine(TypeLine());
+    }
+
+    private void UpdatePreviousButtonState()
+    {
+        // Vô hiệu hóa nút previous nếu đang ở câu đầu tiên
+        if (previousButton != null)
+        {
+            previousButton.interactable = (currentLine > 0);
         }
     }
 
