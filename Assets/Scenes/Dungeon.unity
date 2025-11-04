@@ -12071,7 +12071,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eddc9d3d278497a43bf15d9c64799e06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fromScene: Scene1
+  fromScene: PlayScene
   isDefaultSpawn: 0
 --- !u!4 &551804703
 Transform:
