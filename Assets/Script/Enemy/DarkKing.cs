@@ -11,9 +11,6 @@ public class DarkKing : MonoBehaviour
     public float repeatTimeUpdatePath = 0.5f;
     public SpriteRenderer characterSR;
 
-    [SerializeField]
-    public bool canUseNormalAttack = true;
-
     Path path;
     Seeker seeker;
     Rigidbody2D rb;
@@ -23,7 +20,7 @@ public class DarkKing : MonoBehaviour
     [Header("Melee Attack")]
     public bool hasMeleeAttack = true;
     public float meleeAttackRange = 2f;
-    public float meleeAttackCooldown = 2f;
+    public float meleeAttackCooldown = 1.2f;
     public int meleeDamage = 20;
     public float knockbackForce = 8f;
     public float meleeAttackChance = 100f;
@@ -32,26 +29,21 @@ public class DarkKing : MonoBehaviour
 
     [Header("Detection Range")]
     public float detectionRange = 15f;
-
-    [Header("Normal Attack")]
-    public GameObject normalBullet;
-    public float normalBulletSpeed = 8f;
-    public float normalAttackCooldown = 3f;
-    public float normalAttackChance = 60f;
+    public float closeRangeThreshold = 7f; // khoảng cách để ưu tiên cận chiến
 
     [Header("Wave Bullet Attack")]
     public GameObject waveBullet;
     public float waveBulletSpeed = 6f;
-    public float waveAttackCooldown = 8f;
-    public float waveAttackChance = 30f;
+    public float waveAttackCooldown = 5f;
+    public float waveAttackChance = 70f;
     public int wavesCount = 3;
     public float delayBetweenWaves = 0.3f;
 
     [Header("Ultimate - Lightning Strike")]
     public GameObject lightningBolt;
     public GameObject warningIndicator;
-    public float ultimateCooldown = 15f;
-    public float ultimateChance = 10f;
+    public float ultimateCooldown = 10f;
+    public float ultimateChance = 40f;
     public int lightningCount = 8;
     public float lightningSpawnRadius = 5f;
     public float warningDuration = 0.5f;
@@ -64,9 +56,8 @@ public class DarkKing : MonoBehaviour
     [SerializeField] private AudioClip moveSFX;
     [SerializeField, Range(0f, 1f)] private float moveVolume = 0.3f;
     [SerializeField, Range(0f, 1f)] private float meleeVolume = 1f;
-    [SerializeField, Range(0f, 2f)] private float fadeSpeed = 1f; // Tốc độ fade âm
+    [SerializeField, Range(0f, 2f)] private float fadeSpeed = 1f;
 
-    private float normalAttackTimer;
     private float waveAttackTimer;
     private float ultimateTimer;
     private bool isMovingSound = false;
@@ -74,7 +65,6 @@ public class DarkKing : MonoBehaviour
 
     public float freezeDurationTime;
     float freezeDuration;
-
     private Vector3 originalScale;
 
     private void Start()
@@ -83,28 +73,20 @@ public class DarkKing : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         freezeDuration = 0;
-
         if (characterSR != null)
             originalScale = characterSR.transform.localScale;
 
-        normalAttackTimer = normalAttackCooldown;
         waveAttackTimer = waveAttackCooldown;
         ultimateTimer = ultimateCooldown;
         meleeAttackTimer = 0f;
 
         InvokeRepeating("CalculatePath", 0f, repeatTimeUpdatePath);
 
-        // --- Tạo AudioSource tự động nếu chưa gắn ---
         if (moveAudioSource == null)
-        {
             moveAudioSource = gameObject.AddComponent<AudioSource>();
-        }
         if (attackAudioSource == null)
-        {
             attackAudioSource = gameObject.AddComponent<AudioSource>();
-        }
 
-        // --- Cấu hình moveAudioSource ---
         if (moveSFX != null)
         {
             moveAudioSource.clip = moveSFX;
@@ -113,14 +95,12 @@ public class DarkKing : MonoBehaviour
             moveAudioSource.playOnAwake = false;
         }
 
-        // --- Cấu hình attackAudioSource ---
         attackAudioSource.loop = false;
         attackAudioSource.playOnAwake = false;
     }
 
     private void Update()
     {
-        normalAttackTimer -= Time.deltaTime;
         waveAttackTimer -= Time.deltaTime;
         ultimateTimer -= Time.deltaTime;
         meleeAttackTimer -= Time.deltaTime;
@@ -129,20 +109,15 @@ public class DarkKing : MonoBehaviour
 
         float distanceToPlayer = Vector2.Distance(transform.position, GetPlayerPosition());
 
-        // Quản lý phát âm thanh di chuyển
+        // Quản lý âm thanh di chuyển
         bool shouldMoveSound = !isAttacking && distanceToPlayer <= detectionRange;
-
-        if (shouldMoveSound)
-            moveTargetVolume = moveVolume;
-        else
-            moveTargetVolume = 0f;
+        moveTargetVolume = shouldMoveSound ? moveVolume : 0f;
 
         if (moveAudioSource != null && moveSFX != null)
         {
             if (!moveAudioSource.isPlaying)
                 moveAudioSource.Play();
 
-            // Làm mượt (fade) âm di chuyển
             moveAudioSource.volume = Mathf.MoveTowards(
                 moveAudioSource.volume,
                 moveTargetVolume,
@@ -153,13 +128,16 @@ public class DarkKing : MonoBehaviour
         if (distanceToPlayer > detectionRange)
             return;
 
-        if (hasMeleeAttack && distanceToPlayer <= meleeAttackRange && !isAttacking)
+        // --- Ưu tiên chọn hành động theo khoảng cách ---
+        if (distanceToPlayer <= closeRangeThreshold && hasMeleeAttack && !isAttacking)
         {
+            // Ưu tiên melee khi gần
             TryUseMeleeAttack();
         }
         else if (!isAttacking)
         {
-            TryUseSkill();
+            // Ưu tiên chiêu tầm xa khi xa
+            TryUseSkill(distanceToPlayer);
         }
     }
 
@@ -180,28 +158,18 @@ public class DarkKing : MonoBehaviour
     void TryUseMeleeAttack()
     {
         if (meleeAttackTimer > 0 || isAttacking) return;
-
-        float randomValue = Random.Range(0f, 100f);
-        if (randomValue < meleeAttackChance)
-        {
-            UseMeleeAttack();
-            meleeAttackTimer = meleeAttackCooldown;
-        }
+        UseMeleeAttack();
+        meleeAttackTimer = meleeAttackCooldown;
     }
 
     void UseMeleeAttack()
     {
         isAttacking = true;
-
         if (animator != null)
             animator.SetTrigger("Attack");
 
-        // Phát âm thanh tấn công
         if (attackAudioSource != null && meleeAttackSFX != null)
-        {
-            Debug.Log("🎵 DarkKing: Play melee attack sound!");
             attackAudioSource.PlayOneShot(meleeAttackSFX, meleeVolume);
-        }
 
         StartCoroutine(MeleeAttackCoroutine());
     }
@@ -212,12 +180,10 @@ public class DarkKing : MonoBehaviour
             StopCoroutine(moveCoroutine);
 
         yield return new WaitForSeconds(0.3f);
-
         DealMeleeDamageToPlayer();
-
         yield return new WaitForSeconds(0.3f);
-        isAttacking = false;
 
+        isAttacking = false;
         if (path != null)
             MoveToTarget();
     }
@@ -242,22 +208,34 @@ public class DarkKing : MonoBehaviour
         }
     }
 
-    void TryUseSkill()
+    void TryUseSkill(float distanceToPlayer)
     {
-        float randomValue = Random.Range(0f, 100f);
-
-        if (ultimateTimer <= 0 && randomValue < ultimateChance)
+        // Ưu tiên Ultimate khi đủ điều kiện
+        if (ultimateTimer <= 0)
         {
-            UseUltimateSkill();
-            ultimateTimer = ultimateCooldown;
-            return;
+            float randomValue = Random.Range(0f, 100f);
+            if (randomValue < ultimateChance)
+            {
+                UseUltimateSkill();
+                ultimateTimer = ultimateCooldown;
+                return;
+            }
         }
 
-        if (waveAttackTimer <= 0 && randomValue < (ultimateChance + waveAttackChance))
+        // Nếu player ở xa, tăng xác suất dùng Wave Attack
+        if (waveAttackTimer <= 0)
         {
-            UseWaveSkill();
-            waveAttackTimer = waveAttackCooldown;
-            return;
+            float adjustedChance = waveAttackChance;
+            if (distanceToPlayer > closeRangeThreshold)
+                adjustedChance += 20f; // tăng thêm 20% khi player ở xa
+
+            float randomValue = Random.Range(0f, 100f);
+            if (randomValue < adjustedChance)
+            {
+                UseWaveSkill();
+                waveAttackTimer = waveAttackCooldown;
+                return;
+            }
         }
     }
 
@@ -399,9 +377,7 @@ public class DarkKing : MonoBehaviour
         while (currentWP < path.vectorPath.Count)
         {
             while (isAttacking)
-            {
                 yield return null;
-            }
 
             while (freezeDuration > 0)
             {
@@ -428,5 +404,8 @@ public class DarkKing : MonoBehaviour
 
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, meleeAttackRange);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, closeRangeThreshold);
     }
 }

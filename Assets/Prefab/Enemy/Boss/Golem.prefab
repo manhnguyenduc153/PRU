@@ -264,6 +264,10 @@ MonoBehaviour:
   dialogueText: {fileID: 487197633232971730}
   speakerNameText: {fileID: 6617061096117458822}
   continueIndicator: {fileID: 335837367668034830}
+  leftPortrait: {fileID: 4413721248558357171}
+  rightPortrait: {fileID: 0}
+  playerPortrait: {fileID: 21300000, guid: 9e391134fa821f942b67783c4b23b70e, type: 3}
+  bossPortrait: {fileID: 21300000, guid: 9e391134fa821f942b67783c4b23b70e, type: 3}
   barAnimationDuration: 0.8
   textTypeSpeed: 0.05
   continueKey: 32
@@ -286,6 +290,7 @@ GameObject:
   - component: {fileID: 1252056132900967374}
   - component: {fileID: 7964337629014961265}
   - component: {fileID: 6355691731462237837}
+  - component: {fileID: 8268902590337592691}
   m_Layer: 0
   m_Name: Golem
   m_TagString: Enemy
@@ -626,6 +631,20 @@ MonoBehaviour:
   maxDropCount: 2
   dropRadius: 0.5
   allowDuplicateDrops: 0
+--- !u!114 &8268902590337592691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3372005201994356536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ffc92d60e52e0d4fa5c10fe53e4898c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyAI: {fileID: 7964337629014961265}
+  delay: 2
 --- !u!1 &3594831616784567348
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,6 +822,81 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1 &4631812948180385515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2828027868286162691}
+  - component: {fileID: 2642329197888093695}
+  - component: {fileID: 4413721248558357171}
+  m_Layer: 5
+  m_Name: LeftPortrait
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2828027868286162691
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4631812948180385515}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2164945381146649299}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 166.4, y: 290.7}
+  m_SizeDelta: {x: 220, y: 160}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &2642329197888093695
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4631812948180385515}
+  m_CullTransparentMesh: 1
+--- !u!114 &4413721248558357171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4631812948180385515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &4782853100426023125
 GameObject:
   m_ObjectHideFlags: 0
@@ -968,7 +1062,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 264.90002, y: 222.60004}
+  m_AnchoredPosition: {x: 356.4, y: 222.60004}
   m_SizeDelta: {x: 500, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7616258138309727940
@@ -1103,6 +1197,7 @@ RectTransform:
   - {fileID: 7953568584228009873}
   - {fileID: 7387547215664768259}
   - {fileID: 427762368193322951}
+  - {fileID: 2828027868286162691}
   m_Father: {fileID: 5571241732001164016}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

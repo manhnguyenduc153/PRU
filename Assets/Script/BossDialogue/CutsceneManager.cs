@@ -14,6 +14,12 @@ public class CutsceneManager : MonoBehaviour
     public TextMeshProUGUI speakerNameText;
     public GameObject continueIndicator;
 
+    [Header("Portraits")]
+    public Image leftPortrait;   // Player
+    public Image rightPortrait;  // Boss
+    public Sprite playerPortrait;
+    public Sprite bossPortrait;
+
     [Header("Animation Settings")]
     public float barAnimationDuration = 0.8f;
     public float textTypeSpeed = 0.05f;
@@ -39,6 +45,10 @@ public class CutsceneManager : MonoBehaviour
     {
         if (cutscenePanel != null)
             cutscenePanel.SetActive(false);
+
+        // Ẩn portrait ban đầu
+        if (leftPortrait != null) leftPortrait.enabled = false;
+        if (rightPortrait != null) rightPortrait.enabled = false;
     }
 
     private void Update()
@@ -101,6 +111,10 @@ public class CutsceneManager : MonoBehaviour
         // Hiện UI
         cutscenePanel.SetActive(true);
 
+        // Đảm bảo ảnh portrait hiển thị
+        //if (leftPortrait != null) leftPortrait.enabled = true;
+        //if (rightPortrait != null) rightPortrait.enabled = true;
+
         StartCoroutine(PlayCutscene());
     }
 
@@ -129,11 +143,35 @@ public class CutsceneManager : MonoBehaviour
 
         currentDialogueIndex = index;
 
-        if (currentSpeakers != null && index < currentSpeakers.Length)
-            speakerNameText.text = currentSpeakers[index];
+        string speaker = currentSpeakers != null && index < currentSpeakers.Length
+            ? currentSpeakers[index]
+            : "";
+
+        speakerNameText.text = speaker;
+
+        // Hiển thị ảnh portrait phù hợp
+        UpdatePortrait(speaker);
 
         ShowContinueIndicator(false);
         typingCoroutine = StartCoroutine(TypeText(currentDialogues[index]));
+    }
+
+    private void UpdatePortrait(string speaker)
+    {
+        // Luôn bật cả 2 portrait
+        if (leftPortrait != null)
+        {
+            leftPortrait.enabled = true;
+            if (playerPortrait != null)
+                leftPortrait.sprite = playerPortrait;
+        }
+
+        if (rightPortrait != null)
+        {
+            rightPortrait.enabled = true;
+            if (bossPortrait != null)
+                rightPortrait.sprite = bossPortrait;
+        }
     }
 
     private IEnumerator TypeText(string text)
