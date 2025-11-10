@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4865611553568442272}
   - component: {fileID: 1388817313225147829}
   - component: {fileID: 520330379038102585}
+  - component: {fileID: -966437893770493808}
   m_Layer: 0
   m_Name: HighCoin
   m_TagString: Untagged
@@ -165,5 +166,20 @@ MonoBehaviour:
   maxValue: 20
   floatSpeed: 1
   floatAmount: 0.3
+  pickupRadius: 3
+  moveSpeedToPlayer: 6
   pickupSound: {fileID: 8300000, guid: ebe134541a1975b4fa05ed63ed95eca2, type: 3}
   soundVolume: 2
+--- !u!114 &-966437893770493808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3418777474631325476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba393a9c1e8560e4f864fc3c993e6a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyAfter: 30
