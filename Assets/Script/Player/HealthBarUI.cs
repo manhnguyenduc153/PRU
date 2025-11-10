@@ -77,4 +77,17 @@ public class HealthBarUI : MonoBehaviour
     {
         UpdateHealthBar();
     }
+
+    public void SetHealthImmediate(float current, float max)
+    {
+        targetFillAmount = Mathf.Clamp01(current / max);
+        currentFillAmount = targetFillAmount;
+
+        if (healthBarFill != null)
+            healthBarFill.fillAmount = currentFillAmount;
+
+        if (healthText != null)
+            healthText.text = $"{(int)current}/{(int)max}";
+    }
+
 }

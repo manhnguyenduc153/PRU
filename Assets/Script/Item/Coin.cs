@@ -7,12 +7,12 @@ public class Coin : MonoBehaviour
     [SerializeField] private int maxValue = 5;
 
     [Header("Animation")]
-    [SerializeField] private float floatSpeed = 1f;
+    [SerializeField] private float floatSpeed = 2f;
     [SerializeField] private float floatAmount = 0.3f;
 
     [Header("Pickup Settings")]
-    [SerializeField] private float pickupRadius = 3f;    // Phạm vi bắt đầu hút coin
-    [SerializeField] private float moveSpeedToPlayer = 6f; // Tốc độ bay về player
+    [SerializeField] private float pickupRadius = 3f;
+    [SerializeField] private float moveSpeedToPlayer = 15f; // tăng tốc cơ bản
 
     [Header("Sound Effect")]
     [SerializeField] private AudioClip pickupSound;
@@ -21,13 +21,13 @@ public class Coin : MonoBehaviour
     private int coinValue;
     private Vector3 startPos;
     private Transform player;
+    private bool isAttracting = false;
 
     void Start()
     {
         coinValue = Random.Range(minValue, maxValue + 1);
         startPos = transform.position;
 
-        // Lưu player để không phải tìm mỗi frame
         var playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             player = playerObj.transform;
@@ -35,20 +35,26 @@ public class Coin : MonoBehaviour
 
     void Update()
     {
-        // Animation lơ lửng
+        // Float animation
         float newY = startPos.y + Mathf.Sin(Time.time * floatSpeed) * floatAmount;
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
 
-        // Nếu player tồn tại và ở gần => coin tự bay tới
-        if (player != null)
+        if (player == null) return;
+
+        float distance = Vector2.Distance(transform.position, player.position);
+
+        if (distance < pickupRadius)
+            isAttracting = true;
+
+        if (isAttracting)
         {
-            float distance = Vector2.Distance(transform.position, player.position);
-            if (distance < pickupRadius)
-            {
-                // Tăng tốc khi lại gần player
-                float step = moveSpeedToPlayer * Time.deltaTime * (1f + (pickupRadius - distance));
-                transform.position = Vector2.MoveTowards(transform.position, player.position, step);
-            }
+            // Bay thẳng về player với lực tăng theo khoảng cách
+            Vector3 dir = (player.position - transform.position).normalized;
+
+            // Nhân thêm hệ số (distance / pickupRadius) để coin càng xa càng bay nhanh
+            float speedMultiplier = 1f + (pickupRadius - distance);
+
+            transform.position += dir * moveSpeedToPlayer * speedMultiplier * Time.deltaTime;
         }
     }
 
@@ -67,7 +73,6 @@ public class Coin : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        // Vẽ phạm vi hút coin trong editor
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, pickupRadius);
     }
