@@ -16,7 +16,7 @@ public class AreaMusicZone : MonoBehaviour
 
         if (AudioManager.Instance != null && areaMusic != null)
         {
-            AudioManager.Instance.PlayTemporaryMusic(areaMusic);
+            AudioManager.Instance.PlayTemporaryMusic(areaMusic, 1f);
         }
     }
 

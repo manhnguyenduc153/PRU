@@ -15,6 +15,8 @@ TagManager:
   - BossItem
   - Enemy
   - NPC
+  - SceneTransitionManager
+  - BossItemInventory
   layers:
   - Default
   - TransparentFX

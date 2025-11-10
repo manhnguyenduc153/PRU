@@ -39,7 +39,7 @@ public class SceneTransitionManager : MonoBehaviour
 
             Canvas canvas = canvasObj.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 32767; // Luôn trên cùng
+            canvas.sortingOrder = 3; // Luôn trên cùng
 
             CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
@@ -77,7 +77,7 @@ public class SceneTransitionManager : MonoBehaviour
         Canvas fadeCanvas = fadeImage.GetComponentInParent<Canvas>();
         if (fadeCanvas != null)
         {
-            fadeCanvas.sortingOrder = 32767;
+            fadeCanvas.sortingOrder = 5;
             fadeCanvas.overrideSorting = true;
         }
 
@@ -127,7 +127,7 @@ public class SceneTransitionManager : MonoBehaviour
         Canvas fadeCanvas = fadeImage.GetComponentInParent<Canvas>();
         if (fadeCanvas != null)
         {
-            fadeCanvas.sortingOrder = 32767;
+            fadeCanvas.sortingOrder = 5;
         }
 
         // 1. Fade out

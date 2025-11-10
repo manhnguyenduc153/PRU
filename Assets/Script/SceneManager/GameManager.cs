@@ -18,7 +18,9 @@ public class GameManager : MonoBehaviour
         "CoinManager",
         "MainCanvas",
         "BuffManager",
-        "AstarPath"
+        "AstarPath",
+        "BossItemInventory",
+        "SceneTransitionManager"
     };
 
     // --- SpawnPoint management ---
@@ -83,6 +85,11 @@ public class GameManager : MonoBehaviour
     // --- Scene loaded ---
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (scene.name == "GameOver")
+        {
+            CleanupForGameOver();
+        }
+
         StartCoroutine(HandleSceneLoadedDelayed(scene));
     }
 
@@ -334,4 +341,79 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    public void DestroyAllPersistentObjectsExcept(List<string> keepTags = null)
+    {
+        if (keepTags == null) keepTags = new List<string>();
+
+        foreach (string tag in persistentObjectTags)
+        {
+            // Nếu tag này nằm trong danh sách giữ lại thì skip
+            if (keepTags.Contains(tag))
+                continue;
+
+            GameObject[] objs = GameObject.FindGameObjectsWithTag(tag);
+            foreach (GameObject obj in objs)
+            {
+                Destroy(obj);
+            }
+        }
+
+        // Xóa luôn trong dictionary quản lý SpawnParents
+        persistentSpawnParents.Clear();
+        spawnZoneStates.Clear();
+        spawnedEnemiesByZone.Clear();
+    }
+
+    private void CleanupForGameOver()
+    {
+        // 1. Hủy object theo tag (persistentObjectTags)
+        DestroyAllPersistentObjectsExcept(new List<string>()); // không giữ gì cả
+
+        // 2. Hủy tất cả object còn lại trong scene DontDestroyOnLoad
+        Scene ddolScene = SceneManager.GetSceneByName("DontDestroyOnLoad");
+        if (ddolScene.IsValid())
+        {
+            GameObject[] rootObjects = ddolScene.GetRootGameObjects();
+            foreach (GameObject obj in rootObjects)
+            {
+                // Nếu muốn giữ GameManager, kiểm tra:
+                if (obj != this.gameObject)
+                    Destroy(obj);
+            }
+        }
+
+        // 3. Xóa dictionary quản lý spawn
+        persistentSpawnParents.Clear();
+        spawnZoneStates.Clear();
+        spawnedEnemiesByZone.Clear();
+    }
+
 }
+
+public static class DontDestroyOnLoadHelper
+{
+    public static void DestroyAllDontDestroyOnLoad()
+    {
+        // Lấy Scene nội bộ chứa tất cả object DontDestroyOnLoad
+        var currentAssembly = typeof(SceneManager).Assembly;
+        var sceneManagerType = typeof(SceneManager);
+
+        Scene ddolScene = SceneManager.GetSceneByName("DontDestroyOnLoad");
+
+        if (ddolScene.IsValid())
+        {
+            GameObject[] rootObjects = ddolScene.GetRootGameObjects();
+            foreach (GameObject obj in rootObjects)
+            {
+                // Có thể thêm điều kiện giữ lại object cần thiết
+                Object.Destroy(obj);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("DontDestroyOnLoad scene không hợp lệ!");
+        }
+    }
+}
+

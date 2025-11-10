@@ -13,14 +13,14 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip combatMusic;
 
     [Header("Settings")]
-    [SerializeField, Range(0f, 1f)] private float volume = 1f; // 👈 Có thể chỉnh trong Inspector
+    [SerializeField, Range(0f, 1f)] private float volume = 1f;
     [SerializeField] private float fadeDuration = 1f;
 
+    [HideInInspector] public bool isCutscenePlaying = false;
     private bool isInCombat = false;
 
     void Awake()
     {
-        // Singleton pattern để giữ AudioManager xuyên suốt game
         if (Instance == null)
         {
             Instance = this;
@@ -40,14 +40,11 @@ public class AudioManager : MonoBehaviour
 
         musicSource.loop = true;
         musicSource.volume = volume;
-
-        // Bắt đầu với nhạc thường
         PlayNormalMusic();
     }
 
     void Update()
     {
-        // Nếu bạn chỉnh volume trong lúc game đang chạy (Inspector), nó sẽ cập nhật ngay
         if (musicSource.volume != volume)
         {
             musicSource.volume = volume;
@@ -56,6 +53,9 @@ public class AudioManager : MonoBehaviour
 
     public void PlayNormalMusic()
     {
+        // ✅ CHẶN nếu đang cutscene
+        if (isCutscenePlaying) return;
+
         if (!isInCombat && musicSource.clip != normalMusic)
         {
             SwitchMusic(normalMusic);
@@ -64,7 +64,10 @@ public class AudioManager : MonoBehaviour
 
     public void PlayCombatMusic()
     {
-        if (!isInCombat && musicSource.clip != combatMusic)
+        // ✅ CHẶN nếu đang cutscene
+        if (isCutscenePlaying) return;
+
+        if (!isInCombat)
         {
             isInCombat = true;
             SwitchMusic(combatMusic);
@@ -73,6 +76,9 @@ public class AudioManager : MonoBehaviour
 
     public void StopCombatMusic()
     {
+        // ✅ CHẶN nếu đang cutscene
+        if (isCutscenePlaying) return;
+
         if (isInCombat)
         {
             isInCombat = false;
@@ -85,19 +91,19 @@ public class AudioManager : MonoBehaviour
         if (newClip == null) return;
 
         StopAllCoroutines();
-        StartCoroutine(FadeAndSwitch(newClip));
+        StartCoroutine(FadeAndSwitch(newClip, fadeDuration));
     }
 
-    private IEnumerator FadeAndSwitch(AudioClip newClip)
+    private IEnumerator FadeAndSwitch(AudioClip newClip, float duration)
     {
-        // Fade out
         float startVolume = musicSource.volume;
         float elapsed = 0f;
 
-        while (elapsed < fadeDuration / 2)
+        // Fade out
+        while (elapsed < duration / 2)
         {
-            elapsed += Time.deltaTime;
-            musicSource.volume = Mathf.Lerp(startVolume, 0f, elapsed / (fadeDuration / 2));
+            elapsed += Time.unscaledDeltaTime; // ✅ Dùng unscaledDeltaTime để hoạt động khi Time.timeScale = 0
+            musicSource.volume = Mathf.Lerp(startVolume, 0f, elapsed / (duration / 2));
             yield return null;
         }
 
@@ -107,17 +113,56 @@ public class AudioManager : MonoBehaviour
 
         // Fade in
         elapsed = 0f;
-        while (elapsed < fadeDuration / 2)
+        while (elapsed < duration / 2)
         {
-            elapsed += Time.deltaTime;
-            musicSource.volume = Mathf.Lerp(0f, volume, elapsed / (fadeDuration / 2));
+            elapsed += Time.unscaledDeltaTime;
+            musicSource.volume = Mathf.Lerp(0f, volume, elapsed / (duration / 2));
             yield return null;
         }
 
         musicSource.volume = volume;
     }
 
-    // 👉 Nếu muốn chỉnh bằng code cũng vẫn có thể
+    // ✅ Phương thức cho cutscene music (ưu tiên cao nhất)
+    public void PlayCutsceneMusic(AudioClip cutsceneClip, float duration)
+    {
+        if (cutsceneClip == null) return;
+
+        // Đánh dấu cutscene đang chạy
+        isCutscenePlaying = true;
+
+        // Dừng mọi coroutine đang chạy
+        StopAllCoroutines();
+
+        // Chuyển sang nhạc cutscene
+        StartCoroutine(FadeAndSwitch(cutsceneClip, duration));
+    }
+
+    // ✅ Phương thức tạm thời (dùng cho area music, event music...)
+    // Phương thức này KHÔNG set isCutscenePlaying, nên vẫn có thể bị ghi đè bởi combat
+    public void PlayTemporaryMusic(AudioClip tempClip, float duration)
+    {
+        if (tempClip == null) return;
+
+        // ✅ CHẶN nếu đang cutscene
+        if (isCutscenePlaying) return;
+
+        StopAllCoroutines();
+        StartCoroutine(FadeAndSwitch(tempClip, duration));
+    }
+
+    public void ResumeAfterCutscene()
+    {
+        // ✅ Tắt cờ cutscene
+        isCutscenePlaying = false;
+
+        // Reset trạng thái combat về false vì boss đã chết
+        isInCombat = false;
+
+        // Phát nhạc bình thường
+        PlayNormalMusic();
+    }
+
     public void SetVolume(float newVolume)
     {
         volume = Mathf.Clamp01(newVolume);
@@ -128,16 +173,6 @@ public class AudioManager : MonoBehaviour
     {
         normalMusic = normal;
         combatMusic = combat;
-
-        // Khi vừa load scene mới, bắt đầu phát nhạc bình thường
         PlayNormalMusic();
-    }
-
-    public void PlayTemporaryMusic(AudioClip tempClip)
-    {
-        if (tempClip == null) return;
-
-        StopAllCoroutines();
-        StartCoroutine(FadeAndSwitch(tempClip));
     }
 }
