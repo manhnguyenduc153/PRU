@@ -17,24 +17,42 @@ public class PauseMenuController : MonoBehaviour
 
     void Start()
     {
-        // Đảm bảo pause menu ẩn khi bắt đầu
-        if (pauseMenuPanel != null)
+        Debug.Log("[PauseMenu] PauseMenuController Start() called");
+
+        // Kiểm tra và log các field
+        if (pauseMenuPanel == null)
         {
+            Debug.LogError("[PauseMenu] pauseMenuPanel is NULL! Please assign it in Inspector!");
+        }
+        else
+        {
+            Debug.Log("[PauseMenu] pauseMenuPanel found: " + pauseMenuPanel.name);
             pauseMenuPanel.SetActive(false);
         }
 
-        // Thêm listeners cho các nút
-        if (resumeButton != null)
+        if (resumeButton == null)
+        {
+            Debug.LogWarning("[PauseMenu] resumeButton is NULL!");
+        }
+        else
         {
             resumeButton.onClick.AddListener(ResumeGame);
         }
 
-        if (closeButton != null)
+        if (closeButton == null)
+        {
+            Debug.LogWarning("[PauseMenu] closeButton is NULL!");
+        }
+        else
         {
             closeButton.onClick.AddListener(ResumeGame);
         }
 
-        if (quitButton != null)
+        if (quitButton == null)
+        {
+            Debug.LogWarning("[PauseMenu] quitButton is NULL!");
+        }
+        else
         {
             quitButton.onClick.AddListener(QuitGame);
         }
@@ -45,6 +63,8 @@ public class PauseMenuController : MonoBehaviour
         // Kiểm tra nếu bấm phím Pause (mặc định là ESC)
         if (Input.GetKeyDown(pauseKey))
         {
+            Debug.Log($"[PauseMenu] Pause key ({pauseKey}) pressed! isPaused: {isPaused}");
+
             if (isPaused)
             {
                 ResumeGame();
@@ -58,23 +78,43 @@ public class PauseMenuController : MonoBehaviour
 
     public void PauseGame()
     {
+        Debug.Log("[PauseMenu] PauseGame() called!");
+
         isPaused = true;
 
         // Hiển thị pause menu
         if (pauseMenuPanel != null)
         {
+            Debug.Log("[PauseMenu] Setting pauseMenuPanel active to TRUE");
             pauseMenuPanel.SetActive(true);
+            Debug.Log("[PauseMenu] pauseMenuPanel.activeSelf = " + pauseMenuPanel.activeSelf);
+        }
+        else
+        {
+            Debug.LogError("[PauseMenu] Cannot show pause menu - pauseMenuPanel is NULL!");
+        }
+
+        // Phát âm thanh mở panel
+        if (UISoundManager.Instance != null)
+        {
+            UISoundManager.Instance.PlayPanelOpenSound();
         }
 
         // Dừng thời gian trong game
         Time.timeScale = 0f;
 
-        Debug.Log("Game Paused");
+        Debug.Log("[PauseMenu] Game Paused - Time.timeScale = " + Time.timeScale);
     }
 
     public void ResumeGame()
     {
         Debug.Log("ResumeGame() called!");
+
+        // Phát âm thanh click/đóng panel
+        if (UISoundManager.Instance != null)
+        {
+            UISoundManager.Instance.PlayPanelCloseSound();
+        }
 
         isPaused = false;
 
@@ -93,6 +133,12 @@ public class PauseMenuController : MonoBehaviour
     public void QuitGame()
     {
         Debug.Log("QuitGame() called - Saving game and returning to Start Menu!");
+
+        // Phát âm thanh click
+        if (UISoundManager.Instance != null)
+        {
+            UISoundManager.Instance.PlayClickSound();
+        }
 
         // LƯU GAME TRƯỚC KHI THOÁT
         if (SaveSystem.Instance != null)

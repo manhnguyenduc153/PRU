@@ -9,7 +9,7 @@ public class MainMenuController : MonoBehaviour
 
     [Header("Resume Game")]
     public Button resumeButton; // Nút Resume (BẮT BUỘC)
-    public GameObject noSaveText; // Text hiển thị "No save file" (TÙY CHỌN - có thể để trống)
+    public TMPro.TextMeshProUGUI resumeButtonText; // Text của nút Resume (TÙY CHỌN - để hiển thị "Continue" hoặc "New Game")
 
     void Start()
     {
@@ -19,6 +19,19 @@ public class MainMenuController : MonoBehaviour
             GameObject saveSystemObj = new GameObject("SaveSystem");
             saveSystemObj.AddComponent<SaveSystem>();
             Debug.Log("SaveSystem created in MainMenu");
+        }
+
+        // Khởi tạo instruction panel ở trạng thái ẩn
+        if (instructionPanel != null)
+        {
+            instructionPanel.SetActive(true); // Panel phải active để CanvasGroup hoạt động
+        }
+
+        if (instructionGroup != null)
+        {
+            instructionGroup.alpha = 0;
+            instructionGroup.interactable = false;
+            instructionGroup.blocksRaycasts = false;
         }
 
         // Kiểm tra có save file không để enable/disable nút Resume
@@ -36,20 +49,25 @@ public class MainMenuController : MonoBehaviour
         bool hasSave = SaveSystem.Instance.HasSaveFile();
 
         Debug.Log($"[MainMenu] Checking save file... Has save: {hasSave}");
-        Debug.Log($"[MainMenu] SaveSystem path: {SaveSystem.Instance != null}");
 
         if (resumeButton != null)
         {
-            resumeButton.interactable = hasSave;
-            resumeButton.gameObject.SetActive(true); // Đảm bảo button được hiển thị
+            // NÚT LUÔN ĐƯỢC ENABLE
+            resumeButton.interactable = true;
+            resumeButton.gameObject.SetActive(true);
 
-            // Có thể làm mờ nút nếu không có save
+            // Thay đổi text nút tùy theo có save hay không
+            if (resumeButtonText != null)
+            {
+                resumeButtonText.text = hasSave ? "Continue" : "New Game";
+                Debug.Log($"[MainMenu] Resume button text set to: {resumeButtonText.text}");
+            }
+
+            // Màu sắc bình thường, không làm mờ
             var buttonImage = resumeButton.GetComponent<Image>();
             if (buttonImage != null)
             {
-                Color targetColor = hasSave ? Color.white : new Color(0.5f, 0.5f, 0.5f, 0.5f);
-                buttonImage.color = targetColor;
-                Debug.Log($"[MainMenu] Resume button color set to: {targetColor}");
+                buttonImage.color = Color.white;
             }
         }
         else
@@ -57,16 +75,17 @@ public class MainMenuController : MonoBehaviour
             Debug.LogError("[MainMenu] Resume button is NULL!");
         }
 
-        if (noSaveText != null)
-        {
-            noSaveText.SetActive(!hasSave);
-        }
-
-        Debug.Log($"Resume button state: {(hasSave ? "Enabled" : "Disabled")}");
+        Debug.Log($"Resume button state: Always Enabled (Save: {hasSave})");
     }
 
     public void StartGame()
     {
+        // Phát âm thanh click
+        if (UISoundManager.Instance != null)
+        {
+            UISoundManager.Instance.PlayClickSound();
+        }
+
         // Xóa save cũ nếu bắt đầu game mới
         if (SaveSystem.Instance != null)
         {
@@ -83,14 +102,23 @@ public class MainMenuController : MonoBehaviour
     }
     public void ResumeGame()
     {
+        // Phát âm thanh click
+        if (UISoundManager.Instance != null)
+        {
+            UISoundManager.Instance.PlayClickSound();
+        }
+
         if (SaveSystem.Instance != null && SaveSystem.Instance.HasSaveFile())
         {
-            Debug.Log("Resuming game from save...");
+            // Có save file → Load game
+            Debug.Log("Save file found! Resuming game from save...");
             SaveSystem.Instance.LoadGame();
         }
         else
         {
-            Debug.LogWarning("No save file found!");
+            // Không có save file → Bắt đầu game mới
+            Debug.Log("No save file found! Starting new game...");
+            StartGame();
         }
     }
 
@@ -112,6 +140,12 @@ public class MainMenuController : MonoBehaviour
 
     public void ShowInstructions()
     {
+        // Phát âm thanh mở panel
+        if (UISoundManager.Instance != null)
+        {
+            UISoundManager.Instance.PlayPanelOpenSound();
+        }
+
         instructionGroup.alpha = 1;
         instructionGroup.interactable = true;
         instructionGroup.blocksRaycasts = true;
@@ -119,6 +153,12 @@ public class MainMenuController : MonoBehaviour
 
     public void HideInstructions()
     {
+        // Phát âm thanh đóng panel
+        if (UISoundManager.Instance != null)
+        {
+            UISoundManager.Instance.PlayPanelCloseSound();
+        }
+
         instructionGroup.alpha = 0;
         instructionGroup.interactable = false;
         instructionGroup.blocksRaycasts = false;

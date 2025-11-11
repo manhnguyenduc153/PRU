@@ -628,7 +628,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 37, y: -249}
+  m_AnchoredPosition: {x: 45, y: -274}
   m_SizeDelta: {x: 432.73, y: 96.7069}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &356234991
@@ -700,14 +700,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.5854396, g: 0.8679245, b: 0.6773373, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1190513309, guid: 5169a4940e34cd54a93cea4946d9ab95, type: 3}
+  m_Sprite: {fileID: 1906648529, guid: db3e797c0e6041a4ea52e77b0d169233, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -836,7 +836,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 42, y: 43}
+  m_AnchoredPosition: {x: 47, y: -2}
   m_SizeDelta: {x: 432.7283, y: 103.917}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &460493251
@@ -860,7 +860,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.50537854, g: 0.8584906, b: 0.45759168, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -908,14 +908,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.25, g: 0.90238744, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1190513309, guid: 5169a4940e34cd54a93cea4946d9ab95, type: 3}
+  m_Sprite: {fileID: 359309837, guid: f121c4c8570d45d44a6ee32e1ae74081, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1176,7 +1176,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 40, y: -394}
+  m_AnchoredPosition: {x: 43, y: -399}
   m_SizeDelta: {x: 432.73, y: 103.9171}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &611758245
@@ -1248,14 +1248,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.6650944, b: 0.6650944, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1190513309, guid: 5169a4940e34cd54a93cea4946d9ab95, type: 3}
+  m_Sprite: {fileID: 1906648529, guid: db3e797c0e6041a4ea52e77b0d169233, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1680,6 +1680,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1031173168}
   m_CullTransparentMesh: 1
+--- !u!1 &1225667496
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1225667497}
+  - component: {fileID: 1225667498}
+  m_Layer: 0
+  m_Name: UISoundManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1225667497
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1225667496}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -11.429215, y: 11.247119, z: 0.31855774}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1225667498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1225667496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce3f574ca343da84c8b5bb134e1db153, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonClickSound: {fileID: 8300000, guid: 8c670ae241777b34eb900d2df123af43, type: 3}
+  buttonHoverSound: {fileID: 0}
+  panelOpenSound: {fileID: 8300000, guid: 95fa9c2ea7cc92444a433c77bd93285c, type: 3}
+  panelCloseSound: {fileID: 8300000, guid: 95fa9c2ea7cc92444a433c77bd93285c, type: 3}
+  clickVolume: 1
+  hoverVolume: 0.3
+  panelVolume: 0.7
 --- !u!1 &1427971130
 GameObject:
   m_ObjectHideFlags: 0
@@ -1716,7 +1767,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 40, y: -99}
+  m_AnchoredPosition: {x: 46, y: -138}
   m_SizeDelta: {x: 432.7283, y: 103.917}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1427971132
@@ -1740,7 +1791,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.14070843, g: 0.9622642, b: 0.4535359, a: 1}
+    m_NormalColor: {r: 0.9245283, g: 0.64907455, b: 0.5189569, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1795,7 +1846,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1190513309, guid: 5169a4940e34cd54a93cea4946d9ab95, type: 3}
+  m_Sprite: {fileID: 359309837, guid: f121c4c8570d45d44a6ee32e1ae74081, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2161,7 +2212,7 @@ MonoBehaviour:
   instructionPanel: {fileID: 561747310}
   instructionGroup: {fileID: 561747314}
   resumeButton: {fileID: 1427971132}
-  noSaveText: {fileID: 0}
+  resumeButtonText: {fileID: 0}
 --- !u!4 &2125775658
 Transform:
   m_ObjectHideFlags: 0
@@ -2319,3 +2370,4 @@ SceneRoots:
   - {fileID: 349043178}
   - {fileID: 2125775658}
   - {fileID: 1448332066}
+  - {fileID: 1225667497}
