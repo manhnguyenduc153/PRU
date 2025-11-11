@@ -220,5 +220,30 @@ public class BuffManager : MonoBehaviour
     public int GetAttackLevel() => attackLevel;
     public int GetManaLevel() => manaLevel;
     public int GetHpLevel() => hpLevel;
+
+    // Phương thức cho SaveSystem - Set tất cả buff levels
+    public void SetBuffLevels(int slash, int lightning, int tripleShot, int attack, int mana, int hp)
+    {
+        slashLevel = Mathf.Clamp(slash, 0, MAX_BUFF_LEVEL);
+        lightningLevel = Mathf.Clamp(lightning, 0, MAX_BUFF_LEVEL);
+        tripleShotLevel = Mathf.Clamp(tripleShot, 0, MAX_BUFF_LEVEL);
+        attackLevel = Mathf.Clamp(attack, 0, MAX_BUFF_LEVEL);
+        manaLevel = Mathf.Clamp(mana, 0, MAX_BUFF_LEVEL);
+        hpLevel = Mathf.Clamp(hp, 0, MAX_BUFF_LEVEL);
+
+        Debug.Log($"[BuffManager] Buff levels set: Slash={slashLevel}, Lightning={lightningLevel}, TripleShot={tripleShotLevel}, Atk={attackLevel}, Mana={manaLevel}, HP={hpLevel}");
+    }
+
+    // Reset tất cả buffs (cho new game)
+    public void ResetAllBuffs()
+    {
+        slashLevel = 0;
+        lightningLevel = 0;
+        tripleShotLevel = 0;
+        attackLevel = 0;
+        manaLevel = 0;
+        hpLevel = 0;
+        Debug.Log("[BuffManager] All buffs reset!");
+    }
     #endregion
 }

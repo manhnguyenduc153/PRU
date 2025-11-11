@@ -59,6 +59,14 @@ public class CoinManager : MonoBehaviour
         return currentCoins;
     }
 
+    // Phương thức cho SaveSystem
+    public void SetCoins(int amount)
+    {
+        currentCoins = amount;
+        UpdateCoinUI();
+        Debug.Log($"Coins loaded: {currentCoins}");
+    }
+
     void UpdateCoinUI()
     {
         if (coinText != null)

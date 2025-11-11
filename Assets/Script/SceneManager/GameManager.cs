@@ -105,50 +105,62 @@ public class GameManager : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            SceneSpawnPoint[] spawnPoints = FindObjectsOfType<SceneSpawnPoint>();
-            Vector3 spawnPosition = player.transform.position;
-            bool foundSpawn = false;
+            // Kiểm tra nếu đang load từ save game
+            bool isLoadingFromSave = PlayerPrefs.GetInt("IsLoadingFromSave", 0) == 1;
 
-            // Check previous scene
-            if (!isFirstLoad && !string.IsNullOrEmpty(previousScene))
+            if (isLoadingFromSave)
             {
-                foreach (SceneSpawnPoint sp in spawnPoints)
+                Debug.Log("[GameManager] Loading from save - skipping spawn point logic");
+                // KHÔNG di chuyển player, để SaveSystem xử lý
+            }
+            else
+            {
+                // Logic spawn point bình thường
+                SceneSpawnPoint[] spawnPoints = FindObjectsOfType<SceneSpawnPoint>();
+                Vector3 spawnPosition = player.transform.position;
+                bool foundSpawn = false;
+
+                // Check previous scene
+                if (!isFirstLoad && !string.IsNullOrEmpty(previousScene))
                 {
-                    if (!string.IsNullOrEmpty(sp.fromScene) && sp.fromScene.Equals(previousScene, System.StringComparison.OrdinalIgnoreCase))
+                    foreach (SceneSpawnPoint sp in spawnPoints)
                     {
-                        spawnPosition = sp.transform.position;
-                        foundSpawn = true;
-                        break;
+                        if (!string.IsNullOrEmpty(sp.fromScene) && sp.fromScene.Equals(previousScene, System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            spawnPosition = sp.transform.position;
+                            foundSpawn = true;
+                            break;
+                        }
                     }
                 }
-            }
 
-            // Default spawn
-            if (!foundSpawn)
-            {
-                foreach (SceneSpawnPoint sp in spawnPoints)
+                // Default spawn
+                if (!foundSpawn)
                 {
-                    if (sp.isDefaultSpawn)
+                    foreach (SceneSpawnPoint sp in spawnPoints)
                     {
-                        spawnPosition = sp.transform.position;
-                        foundSpawn = true;
-                        break;
+                        if (sp.isDefaultSpawn)
+                        {
+                            spawnPosition = sp.transform.position;
+                            foundSpawn = true;
+                            break;
+                        }
                     }
                 }
-            }
 
-            // Fallback to first spawn
-            if (!foundSpawn && spawnPoints.Length > 0)
-                spawnPosition = spawnPoints[0].transform.position;
+                // Fallback to first spawn
+                if (!foundSpawn && spawnPoints.Length > 0)
+                    spawnPosition = spawnPoints[0].transform.position;
 
-            // Move player
-            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                rb.velocity = Vector2.zero;
-                rb.angularVelocity = 0f;
+                // Move player
+                Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.velocity = Vector2.zero;
+                    rb.angularVelocity = 0f;
+                }
+                player.transform.position = spawnPosition;
             }
-            player.transform.position = spawnPosition;
 
             // --- Cinemachine camera ---
             CinemachineStateDrivenCamera sdc = FindObjectOfType<CinemachineStateDrivenCamera>();

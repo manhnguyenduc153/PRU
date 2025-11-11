@@ -133,4 +133,21 @@ public class BossItemInventory : MonoBehaviour
         }
         Debug.Log("Boss item inventory reset!");
     }
+
+    // Set trạng thái của một boss item (dùng cho SaveSystem)
+    public void SetBossItem(BossItemType itemType, bool collected)
+    {
+        if (!collectedItems.ContainsKey(itemType))
+        {
+            collectedItems[itemType] = false;
+        }
+        collectedItems[itemType] = collected;
+        Debug.Log($"[BossItemInventory] Set {itemType} to {collected}");
+    }
+
+    // Lấy dictionary để lưu (cho SaveSystem)
+    public Dictionary<BossItemType, bool> GetAllItems()
+    {
+        return new Dictionary<BossItemType, bool>(collectedItems);
+    }
 }

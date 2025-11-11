@@ -134,6 +134,18 @@ public class PlayerHealth : MonoBehaviour
     public bool IsInvincible() => isInvincible;
     public bool IsDead() => isDead;
 
+    // Phương thức cho SaveSystem
+    public void SetHealth(int health, int max)
+    {
+        currentHealth = health;
+        maxHealth = max;
+        if (healthBarUI != null)
+        {
+            healthBarUI.SetHealthImmediate(currentHealth, maxHealth);
+        }
+        Debug.Log($"Health loaded: {currentHealth}/{maxHealth}");
+    }
+
     [ContextMenu("Test Death")]
     void TestDeath()
     {

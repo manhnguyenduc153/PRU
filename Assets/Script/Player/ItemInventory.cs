@@ -107,4 +107,12 @@ public class ItemInventory : MonoBehaviour
     {
         return manaPotionCount;
     }
+
+    // Phương thức cho SaveSystem
+    public void SetPotions(int healthPotions, int manaPotions)
+    {
+        healthPotionCount = healthPotions;
+        manaPotionCount = manaPotions;
+        Debug.Log($"[ItemInventory] Potions set to HP={healthPotionCount}, MP={manaPotionCount}");
+    }
 }

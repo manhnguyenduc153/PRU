@@ -52,7 +52,7 @@ public class PlayerMana : MonoBehaviour
         {
             currentMana = maxMana;
         }
-       // Debug.Log($"Mana regenerated {amount}! Current Mana: {currentMana}/{maxMana}");
+        // Debug.Log($"Mana regenerated {amount}! Current Mana: {currentMana}/{maxMana}");
     }
 
     public int GetCurrentMana()
@@ -68,5 +68,13 @@ public class PlayerMana : MonoBehaviour
     public bool HasEnoughMana(int amount)
     {
         return currentMana >= amount;
+    }
+
+    // Phương thức cho SaveSystem
+    public void SetMana(int mana, int max)
+    {
+        currentMana = mana;
+        maxMana = max;
+        Debug.Log($"Mana loaded: {currentMana}/{maxMana}");
     }
 }
