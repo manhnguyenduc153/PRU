@@ -1319,6 +1319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 300
+  experienceReward: 10
   isBoss: 1
   bossName: Dark King
   deathVFXPrefab: {fileID: 224097407149449950, guid: 6c2f6a174938e8c49890f4719d8a2ce8, type: 3}
@@ -1854,6 +1855,10 @@ PrefabInstance:
     - target: {fileID: 1156569837002226294, guid: 2a3b35ca0cf39774fae8763a91d0bd53, type: 3}
       propertyPath: m_Name
       value: BackStoryManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 1156569837002226294, guid: 2a3b35ca0cf39774fae8763a91d0bd53, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3944918008226561677, guid: 2a3b35ca0cf39774fae8763a91d0bd53, type: 3}
       propertyPath: m_LocalPosition.x

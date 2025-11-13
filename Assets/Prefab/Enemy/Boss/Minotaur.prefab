@@ -602,10 +602,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 30
+  experienceReward: 10
   isBoss: 1
   bossName: Minotaur
   deathVFXPrefab: {fileID: 224097407149449950, guid: 0ccbfcfa7f623804d998e24c3476deb6, type: 3}
   cutsceneManagerGO: {fileID: 7489130514858123521}
+  isFinalBoss: 0
+  finalPortalTag: FinalPortal
 --- !u!114 &5054580362669308744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1893,6 +1896,10 @@ PrefabInstance:
     - target: {fileID: 1156569837002226294, guid: 2a3b35ca0cf39774fae8763a91d0bd53, type: 3}
       propertyPath: m_Name
       value: BackStoryManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 1156569837002226294, guid: 2a3b35ca0cf39774fae8763a91d0bd53, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3944918008226561677, guid: 2a3b35ca0cf39774fae8763a91d0bd53, type: 3}
       propertyPath: m_LocalPosition.x

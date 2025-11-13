@@ -581,8 +581,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4285595647
-  m_fontColor: {r: 1, g: 1, b: 0.43867922, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -599,15 +599,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 16
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1087,7 +1087,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.5924529, g: 0.5924529, b: 0.5924529, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1308,17 +1308,114 @@ MonoBehaviour:
   audioSource: {fileID: 716443844}
   typingSound: {fileID: 8300000, guid: eba50b361b24bac428dd3640754c47cf, type: 3}
   storyLines:
-  - 11
-  - 11
-  - 11
-  - 11
-  - 11
+  - "Kael defeated the final great evil \u2014 the Chaos Manifestation. The world
+    began to heal from darkness. Though celebrated as a hero, Kael felt spiritually
+    exhausted and empty. He decided to leave behind fame and war, seeking true peace
+    away from the ruins and glory."
+  - Kael journeyed to a peaceful valley, choosing a small, broken-down cottage and
+    an overgrown field as his new home. Hanging his sword above the fireplace, he
+    began a new life as a farmer. Working under the sun and tilling the soil gave
+    him a quiet sense of fulfillment and renewal.
+  - "Over time, Kael\u2019s hard work transformed his barren land into a thriving
+    farm full of crops and animals. His hands, once used for battle, now nurtured
+    life. The satisfaction of harvesting the fruits of his labor brought him deeper
+    joy than any treasure ever had.\r"
+  - "At dusk, Kael would rest by the fire in his cozy cottage. His old sword hung
+    quietly on the wall, only reflecting the warm glow of the flames. He enjoyed
+    simple evenings \u2014 reading, cooking, or gazing at the stars. The solitude
+    that once felt empty now brought him peace."
+  - Sometimes Kael visited the nearby village of Oakhaven. He was no longer seen
+    as a hero, but as a kind and helpful neighbor. He traded his produce, helped
+    others, and befriended Elara, a gentle baker. Kael realized true strength came
+    from compassion and community, not from battle.
+  - "Years passed. Kael grew older, his hair streaked with gray. His heroic past
+    was known only to a few. One afternoon, he watched children play with sticks
+    as pretend swords, fighting imaginary monsters. Smiling, Kael felt at peace \u2014
+    he had protected their future, and now he was living in it. The hero had finally
+    found his home."
   backgroundImages:
-  - {fileID: 21300000, guid: e369c40d2a3c71f46a1bf70662a5ed68, type: 3}
-  - {fileID: 21300000, guid: dcbdb24175108774295720bc1a76570d, type: 3}
-  - {fileID: 21300000, guid: dd84ff321267bb446b5cc43c4af904db, type: 3}
-  - {fileID: 21300000, guid: 588549f262ca0dd44808ee1536420742, type: 3}
-  backgroundImageUI: {fileID: 0}
+  - {fileID: 21300000, guid: ed6304fa18d539b4d8a3276938db0871, type: 3}
+  - {fileID: 21300000, guid: 468e3962f6e5c6b42ac753f441ee57ed, type: 3}
+  - {fileID: 21300000, guid: d4d46df36a0b0ec49bcae13210212f3d, type: 3}
+  - {fileID: 21300000, guid: c92082881de686740937ff0bd86d4657, type: 3}
+  - {fileID: 21300000, guid: d546a38557fe4964cb0cc314f0763f29, type: 3}
+  - {fileID: 21300000, guid: fe42654e3e80dce4aaa749a5ea712c4c, type: 3}
+  backgroundImageUI: {fileID: 662669851}
+--- !u!1 &883949796
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 883949797}
+  - component: {fileID: 883949799}
+  - component: {fileID: 883949798}
+  m_Layer: 5
+  m_Name: Back
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &883949797
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883949796}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1595249629}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 2000, y: 1500}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &883949798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883949796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &883949799
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883949796}
+  m_CullTransparentMesh: 1
 --- !u!1 &1585152393
 GameObject:
   m_ObjectHideFlags: 0
@@ -1484,6 +1581,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 883949797}
   - {fileID: 662669850}
   - {fileID: 716443840}
   - {fileID: 1856551116}

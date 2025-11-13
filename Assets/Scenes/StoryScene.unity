@@ -581,8 +581,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4285595647
-  m_fontColor: {r: 1, g: 1, b: 0.43867922, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -599,15 +599,15 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 16
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1087,7 +1087,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.4716981, g: 0.4716981, b: 0.4716981, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1212,15 +1212,71 @@ MonoBehaviour:
   audioSource: {fileID: 716443844}
   typingSound: {fileID: 8300000, guid: eba50b361b24bac428dd3640754c47cf, type: 3}
   storyLines:
-  - 'Line 0: "In a galaxy far away, heroes rise against the darkness..."'
-  - 'Line 1: "You are the last pilot of the Star Guardian fleet."'
-  - 'Line 2: "Your mission: defeat the cosmic overlord and restore peace!"'
-  - "Line3: hehe b\u1EAFt \u0111\u1EA7u th\xF4i"
+  - Kaelen, a scholar obsessed with mastering forbidden Void Magic, performed a ritual
+    with the essence of a dying star, which backfired and destroyed his body. His
+    soul merged with shadow, giving birth to the Dark King, a twisted figure cloaked
+    in purple shadows. Wielding the cursed Shard of Starlight, he began his solitary
+    reign over the forsaken realms.
+  - "The Dark King, seeking only solitude, became a living curse, corrupting the
+    lands around his fortress, Oblivion's Keep. His presence twisted nature\u2014plants
+    blackened, animals became monstrous, and despair thickened the air. A spreading
+    Void-born blight consumed Aethel, claiming all who dared approach, turning them
+    into shadowy minions bound to his will."
+  - As the blight consumed Aethel, its kingdoms fell into despair, their armies powerless
+    against the shadow and its monstrous minions. Desperate rulers and elders turned
+    to ancient prophecies foretelling a "Champion of Light" who would rise when the
+    "Shadow swallowed the Star." With hope waning, they sent out a plea across the
+    free lands, seeking anyone brave enough to confront the darkness and save Aethel.
+  - From the hidden villages of the Sunken Forest, Elara, a young warrior attuned
+    to light magic, rose to defend her people. When the blight threatened her homeland,
+    she answered the call, wielding an ancient, glowing amulet. Braving corrupted
+    beasts, treacherous lands, and spreading despair, she journeyed toward Oblivion's
+    Keep, carrying the last flicker of hope against the encroaching darkness.
+  - Elara reached the foreboding gates of Oblivion's Keep, where the air trembled
+    with the agony of countless lost souls and the ground was slick with ancient
+    blood. Inside, the Keep twisted into a nightmarish labyrinth, its halls littered
+    with the bones and rusted armor of those who had failed the Dark King. Through
+    shadow minions and the blight itself, he toyed with Elara, feeding on her fear
+    and the fading light of hope she carried.
+  - Deeper in the Keep, Elara entered a vast chamber paved with centuries of bones,
+    polished by despair. At its center, the Dark King sat on a grotesque throne of
+    petrified victims, his malevolent purple eyes fixed on her. Around him writhed
+    the twisted husks of fallen heroes, once noble knights and mages, now silent
+    puppets of his will, their suffering a crushing weight that pressed upon Elara.
+  - "The Dark King\u2019s silent, soul-piercing laugh greeted Elara as he rose, the
+    Shard of Starlight gleaming ominously against her amulet\u2019s glow. \u201CAnother
+    fool,\u201D his voice whispered in her mind, \u201Canother soul for my collection.\u201D
+    Moving with terrifying speed, he struck with pure malice, each blow carrying
+    centuries of despair, aiming to crush her spirit long before her body, reveling
+    in the slow extinguishing of defiance."
+  - "The battle raged like a cruel dance of predator and prey. Elara struck with
+    desperate bursts of light magic, yet the Dark King absorbed her attacks, each
+    blow only fueling his power. His Shard of Starlight tore not just at her body,
+    but at her spirit, flooding her mind with visions of fallen comrades, blighted
+    lands, and hope turned to ash. Exhausted and faltering, her amulet\u2019s light
+    flickered, as he waged war not merely against her, but against hope itself."
+  - "With a final, desperate roar, Elara summoned all her light magic into a blinding
+    nova. Though it could not destroy the Dark King, it briefly shattered his shadow,
+    revealing the tormented scholar Kaelen beneath\u2014a soul trapped by his own
+    ambition. Enraged, the Dark King struck with lethal force, the Shard of Starlight
+    piercing Elara as her light faded, extinguishing the last hope of Aethel."
+  - "With Elara\u2019s death, Aethel\u2019s final hope was extinguished. The blight
+    devoured every tree and stream, twisting life into grotesque parodies, while
+    the kingdoms fell into complete ruin. The Dark King returned to his throne, Elara\u2019s
+    lifeless body joining his macabre collection, as he reigned supreme over a dead
+    world\u2014an eternal monument to despair, ambition unchecked, and a night that
+    would never end."
   backgroundImages:
-  - {fileID: 21300000, guid: e369c40d2a3c71f46a1bf70662a5ed68, type: 3}
-  - {fileID: 21300000, guid: dcbdb24175108774295720bc1a76570d, type: 3}
-  - {fileID: 21300000, guid: dd84ff321267bb446b5cc43c4af904db, type: 3}
-  - {fileID: 21300000, guid: 588549f262ca0dd44808ee1536420742, type: 3}
+  - {fileID: 21300000, guid: 640cd32e4c32a7640b2b73bdf6eeaf52, type: 3}
+  - {fileID: 21300000, guid: 01be1df04f7c89441bac7d30a87906b7, type: 3}
+  - {fileID: 21300000, guid: a0aea06a155dfcc4c8e399cb9d68abb7, type: 3}
+  - {fileID: 21300000, guid: dc3b81a5f4fe1c64dbb5743b529b159c, type: 3}
+  - {fileID: 21300000, guid: 6c8ba39008dba7149bd9e557c1ce4775, type: 3}
+  - {fileID: 21300000, guid: 3a36efe8db4251843b59541242767bbb, type: 3}
+  - {fileID: 21300000, guid: 2bb62464ecdfce841aeb9aff2ef9ab9a, type: 3}
+  - {fileID: 21300000, guid: f9cbbdbed80b60240902ba8126f2280b, type: 3}
+  - {fileID: 21300000, guid: ec5984c235ad71c479c0148540cf4842, type: 3}
+  - {fileID: 21300000, guid: c3d1fa23ad66ec84ab7407d52dd3ab1b, type: 3}
   backgroundImageUI: {fileID: 662669851}
 --- !u!82 &716443844
 AudioSource:
@@ -1318,6 +1374,81 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &1518923719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1518923720}
+  - component: {fileID: 1518923722}
+  - component: {fileID: 1518923721}
+  m_Layer: 5
+  m_Name: Back
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1518923720
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518923719}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1595249629}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 2000, y: 1500}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1518923721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518923719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1518923722
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1518923719}
+  m_CullTransparentMesh: 1
 --- !u!1 &1585152393
 GameObject:
   m_ObjectHideFlags: 0
@@ -1483,6 +1614,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1518923720}
   - {fileID: 662669850}
   - {fileID: 716443840}
   - {fileID: 1856551116}
