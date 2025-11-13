@@ -22,4 +22,7 @@ public class SkillData : ScriptableObject
     public GameObject skillPrefab;       // Prefab của skill effect
     public float skillSpeed = 5f;        // Tốc độ di chuyển của skill
     public float animationSpeed = 1f;    // Tốc độ animation
+
+    [Header("Level Requirement")]
+    public int requiredLevel = 1;
 }
