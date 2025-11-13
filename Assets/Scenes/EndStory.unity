@@ -1123,8 +1123,8 @@ GameObject:
   - component: {fileID: 716443840}
   - component: {fileID: 716443842}
   - component: {fileID: 716443841}
-  - component: {fileID: 716443843}
   - component: {fileID: 716443844}
+  - component: {fileID: 716443845}
   m_Layer: 5
   m_Name: StoryPanel
   m_TagString: Untagged
@@ -1193,35 +1193,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 716443839}
   m_CullTransparentMesh: 1
---- !u!114 &716443843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 716443839}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9773422e06297d74eb8aabaa486dd9a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  storyText: {fileID: 570073574}
-  nextButton: {fileID: 596577239}
-  previousButton: {fileID: 606786146}
-  skipButton: {fileID: 566575110}
-  audioSource: {fileID: 716443844}
-  typingSound: {fileID: 8300000, guid: eba50b361b24bac428dd3640754c47cf, type: 3}
-  storyLines:
-  - 'Line 0: "In a galaxy far away, heroes rise against the darkness..."'
-  - 'Line 1: "You are the last pilot of the Star Guardian fleet."'
-  - 'Line 2: "Your mission: defeat the cosmic overlord and restore peace!"'
-  - "Line3: hehe b\u1EAFt \u0111\u1EA7u th\xF4i"
-  backgroundImages:
-  - {fileID: 21300000, guid: e369c40d2a3c71f46a1bf70662a5ed68, type: 3}
-  - {fileID: 21300000, guid: dcbdb24175108774295720bc1a76570d, type: 3}
-  - {fileID: 21300000, guid: dd84ff321267bb446b5cc43c4af904db, type: 3}
-  - {fileID: 21300000, guid: 588549f262ca0dd44808ee1536420742, type: 3}
-  backgroundImageUI: {fileID: 662669851}
 --- !u!82 &716443844
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1318,6 +1289,36 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &716443845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 716443839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9466dba9710bc574497b436e28cb880c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storyText: {fileID: 570073574}
+  nextButton: {fileID: 596577239}
+  previousButton: {fileID: 606786146}
+  skipButton: {fileID: 566575110}
+  audioSource: {fileID: 716443844}
+  typingSound: {fileID: 8300000, guid: eba50b361b24bac428dd3640754c47cf, type: 3}
+  storyLines:
+  - 11
+  - 11
+  - 11
+  - 11
+  - 11
+  backgroundImages:
+  - {fileID: 21300000, guid: e369c40d2a3c71f46a1bf70662a5ed68, type: 3}
+  - {fileID: 21300000, guid: dcbdb24175108774295720bc1a76570d, type: 3}
+  - {fileID: 21300000, guid: dd84ff321267bb446b5cc43c4af904db, type: 3}
+  - {fileID: 21300000, guid: 588549f262ca0dd44808ee1536420742, type: 3}
+  backgroundImageUI: {fileID: 0}
 --- !u!1 &1585152393
 GameObject:
   m_ObjectHideFlags: 0
