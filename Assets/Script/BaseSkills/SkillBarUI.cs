@@ -79,10 +79,22 @@ public class SkillBarUI : MonoBehaviour
 
     void UpdateSlotUI(SkillSlotUI slotUI, SkillData skill, float remainingCooldown, bool isReady)
     {
-        // Cập nhật overlay (fill image)
+        // Kiểm tra level trước tiên
+        bool isLocked = false;
+        int playerLevel = PlayerExperience.Instance != null ? PlayerExperience.Instance.GetCurrentLevel() : 0;
+        if (playerLevel < skill.requiredLevel)
+        {
+            isLocked = true;
+        }
+
+        // Cập nhật overlay cooldown
         if (slotUI.cooldownOverlay != null)
         {
-            if (isReady)
+            if (isLocked)
+            {
+                slotUI.cooldownOverlay.fillAmount = 1f; // overlay full = hiển thị bị khóa
+            }
+            else if (isReady)
             {
                 slotUI.cooldownOverlay.fillAmount = 0f; // Skill sẵn sàng
             }
@@ -93,10 +105,14 @@ public class SkillBarUI : MonoBehaviour
             }
         }
 
-        // Cập nhật text cooldown
+        // Cập nhật text
         if (slotUI.cooldownText != null)
         {
-            if (isReady)
+            if (isLocked)
+            {
+                slotUI.cooldownText.text = $"Lvl {skill.requiredLevel}"; // hiển thị level cần
+            }
+            else if (isReady)
             {
                 slotUI.cooldownText.text = "";
             }
@@ -106,11 +122,11 @@ public class SkillBarUI : MonoBehaviour
             }
         }
 
-        // Làm mờ icon khi cooldown (optional)
+        // Làm mờ icon khi cooldown hoặc lock
         if (slotUI.skillIcon != null)
         {
             Color iconColor = slotUI.skillIcon.color;
-            iconColor.a = isReady ? 1f : 0.5f;
+            iconColor.a = isLocked ? 0.3f : (isReady ? 1f : 0.5f);
             slotUI.skillIcon.color = iconColor;
         }
     }

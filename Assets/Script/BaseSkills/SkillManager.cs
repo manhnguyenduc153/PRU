@@ -25,22 +25,60 @@ public class SkillManager : MonoBehaviour
     private bool isCasting = false;
     private float castTimeRemaining = 0f;
 
+    //void Start()
+    //{
+    //    if (player == null)
+    //    {
+    //        player = transform;
+    //    }
+
+    //    // THÊM: Tự động lấy PlayerMana nếu chưa được gán
+    //    if (playerMana == null)
+    //    {
+    //        playerMana = GetComponent<PlayerMana>();
+    //    }
+
+    //    foreach (var skill in skills)
+    //    {
+    //        cooldowns[skill.keyBinding] = 0f;
+    //    }
+    //}
+
     void Start()
     {
         if (player == null)
-        {
             player = transform;
-        }
 
-        // THÊM: Tự động lấy PlayerMana nếu chưa được gán
         if (playerMana == null)
-        {
             playerMana = GetComponent<PlayerMana>();
-        }
 
+        // Khởi tạo cooldowns
         foreach (var skill in skills)
         {
             cooldowns[skill.keyBinding] = 0f;
+
+            // Gán requiredLevel dựa theo skillName
+            switch (skill.skillName)
+            {
+                case "Molten_Spear":
+                    skill.requiredLevel = 3;
+                    break;
+                case "Water_Geyser":
+                    skill.requiredLevel = 5;
+                    break;
+                case "Portal":
+                    skill.requiredLevel = 10;
+                    break;
+                case "Tornado":
+                    skill.requiredLevel = 15;
+                    break;
+                case "Earth_Spike":
+                    skill.requiredLevel = 20;
+                    break;
+                default:
+                    skill.requiredLevel = 1;
+                    break;
+            }
         }
     }
 
@@ -83,6 +121,13 @@ public class SkillManager : MonoBehaviour
 
     void TryCastSkill(SkillData skill)
     {
+        if (PlayerExperience.Instance != null &&
+        PlayerExperience.Instance.GetCurrentLevel() < skill.requiredLevel)
+        {
+            Debug.Log($"❌ {skill.skillName} cần Level {skill.requiredLevel} mới dùng được! Hiện tại: Level {PlayerExperience.Instance.GetCurrentLevel()}");
+            return;
+        }
+
         // Kiểm tra đang cast
         if (isCasting)
         {
