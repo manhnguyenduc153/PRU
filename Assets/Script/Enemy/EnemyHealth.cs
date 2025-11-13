@@ -19,6 +19,10 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private GameObject cutsceneManagerGO;
     private CutsceneBackstory cutsceneBackstory;
 
+    [Header("Final Boss Settings")]
+    [SerializeField] private bool isFinalBoss = false;
+    [SerializeField] private string finalPortalTag = "FinalPortal";
+
     private int currentHealth;
     private EnemyKnockback knockbackScript;
     private Animator animator;
@@ -134,6 +138,12 @@ public class EnemyHealth : MonoBehaviour
             if (deathVFXPrefab != null)
                 Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
 
+            if (isFinalBoss)
+            {
+                HandleFinalBossDeath(); // Chỉ active portal
+            }
+
+
             if (isBoss)
             {
                 // ✅ NGAY LẬP TỨC tắt hoạt động của boss
@@ -204,5 +214,26 @@ public class EnemyHealth : MonoBehaviour
         }
         yield return new WaitForSeconds(1f);
         Destroy(gameObject);
+    }
+
+    private void HandleFinalBossDeath()
+    {
+        // Tìm parent object bằng tag
+        GameObject portalParent = GameObject.FindWithTag("FinalPortal");
+
+        if (portalParent != null)
+        {
+            // Active tất cả child (hoặc portal chính)
+            foreach (Transform child in portalParent.transform)
+            {
+                child.gameObject.SetActive(true);
+            }
+
+            Debug.Log("[EnemyHealth] Final portal activated.");
+        }
+        else
+        {
+            Debug.LogWarning("[EnemyHealth] No GameObject found with tag 'FinalPortal'");
+        }
     }
 }

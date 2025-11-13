@@ -20,7 +20,9 @@ public class GameManager : MonoBehaviour
         "BuffManager",
         "AstarPath",
         "BossItemInventory",
-        "SceneTransitionManager"
+        "SceneTransitionManager",
+        "MiniMap",
+        "SkillBar"
     };
 
     // --- SpawnPoint management ---
@@ -86,6 +88,11 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "GameOver")
+        {
+            CleanupForGameOver();
+        }
+
+        if (scene.name == "EndStory")
         {
             CleanupForGameOver();
         }

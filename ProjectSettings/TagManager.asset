@@ -17,6 +17,10 @@ TagManager:
   - NPC
   - SceneTransitionManager
   - BossItemInventory
+  - SkillBar
+  - MiniMap
+  - FinalPortal
+  - Audio
   layers:
   - Default
   - TransparentFX
