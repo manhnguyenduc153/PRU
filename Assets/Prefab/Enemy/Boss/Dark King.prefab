@@ -1323,6 +1323,8 @@ MonoBehaviour:
   bossName: Dark King
   deathVFXPrefab: {fileID: 224097407149449950, guid: 6c2f6a174938e8c49890f4719d8a2ce8, type: 3}
   cutsceneManagerGO: {fileID: 2329001148353130098}
+  isFinalBoss: 1
+  finalPortalTag: FinalPortal
 --- !u!114 &5382631666415785611
 MonoBehaviour:
   m_ObjectHideFlags: 0
