@@ -8,6 +8,9 @@ public class EnemyHealth : MonoBehaviour
     [Header("Health Settings")]
     [SerializeField] private int startingHealth = 3;
 
+    [Header("Experience Reward")]
+    [SerializeField] private int experienceReward = 10; // XP khi giết enemy này
+
     [Header("Boss Settings (Optional)")]
     [SerializeField] private bool isBoss = false;
     [SerializeField] private string bossName = "Boss Name";
@@ -125,6 +128,14 @@ public class EnemyHealth : MonoBehaviour
             // Ẩn UI nếu là boss
             if (isBoss && healthUI != null)
                 healthUI.HideBossUI();
+
+            // ✨ Thưởng XP cho player
+            if (PlayerExperience.Instance != null)
+            {
+                int xpToGive = isBoss ? experienceReward * 5 : experienceReward; // Boss cho nhiều XP hơn
+                PlayerExperience.Instance.AddExperience(xpToGive);
+                Debug.Log($"Player gained {xpToGive} XP from killing {(isBoss ? bossName : gameObject.name)}");
+            }
 
             // Drop loot
             if (lootDropper != null)

@@ -259,4 +259,15 @@ public class PlayerController : MonoBehaviour
     {
         return canDash && playerMana != null && playerMana.HasEnoughMana(dashManaCost);
     }
+
+    public float GetMoveSpeed()
+    {
+        return moveSpeed;
+    }
+
+    public void SetMoveSpeed(float newSpeed)
+    {
+        moveSpeed = newSpeed;
+        Debug.Log($"Move speed set to: {moveSpeed}");
+    }
 }

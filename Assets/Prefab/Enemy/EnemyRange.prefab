@@ -228,9 +228,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingHealth: 3
+  experienceReward: 100
   isBoss: 0
   bossName: Boss Name
   deathVFXPrefab: {fileID: 224097407149449950, guid: fa4fe58d7df683745a67c5703835b0f9, type: 3}
+  cutsceneManagerGO: {fileID: 0}
 --- !u!114 &4834150882999761861
 MonoBehaviour:
   m_ObjectHideFlags: 0
