@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 1f;
-    [SerializeField] private int dashManaCost = 50;
+    [SerializeField] private int dashManaCost = 10;
     [SerializeField] private TrailRenderer trailRenderer; // Optional: hiệu ứng trail khi dash
 
     private PlayerControls playerControl;
