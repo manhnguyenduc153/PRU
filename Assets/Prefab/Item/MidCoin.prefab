@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 603107219720897030}
   - component: {fileID: 8103921995838795976}
   - component: {fileID: 8123090754524265374}
+  - component: {fileID: -309126389001886616}
   m_Layer: 0
   m_Name: MidCoin
   m_TagString: Untagged
@@ -162,3 +163,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destroyAfter: 30
+--- !u!114 &-309126389001886616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2890304010296273847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f16f483cc9e402d438f3ae59bf71b0c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minValue: 7
+  maxValue: 9
+  floatSpeed: 2
+  floatAmount: 0.3
+  pickupRadius: 3
+  moveSpeedToPlayer: 15
+  pickupSound: {fileID: 0}
+  soundVolume: 1
