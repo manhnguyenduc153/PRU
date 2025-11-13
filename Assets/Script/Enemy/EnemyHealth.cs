@@ -154,23 +154,25 @@ public class EnemyHealth : MonoBehaviour
                 HandleFinalBossDeath(); // Chỉ active portal
             }
 
+            Destroy(gameObject);
 
-            if (isBoss)
-            {
-                // ✅ NGAY LẬP TỨC tắt hoạt động của boss
-                DisableBossActivity();
 
-                // Delay 1 giây rồi chạy cutscene
-                if (cutsceneBackstory != null)
-                    StartCoroutine(DelayedCutscene());
-                else
-                    Destroy(gameObject); // Nếu không có cutscene thì destroy luôn
-            }
-            else
-            {
-                // Enemy thường thì destroy ngay
-                Destroy(gameObject);
-            }
+            //if (isBoss)
+            //{
+            //    // ✅ NGAY LẬP TỨC tắt hoạt động của boss
+            //    DisableBossActivity();
+
+            //    // Delay 1 giây rồi chạy cutscene
+            //    if (cutsceneBackstory != null)
+            //        StartCoroutine(DelayedCutscene());
+            //    else
+            //        Destroy(gameObject); // Nếu không có cutscene thì destroy luôn
+            //}
+            //else
+            //{
+            //    // Enemy thường thì destroy ngay
+            //    Destroy(gameObject);
+            //}
         }
     }
 
