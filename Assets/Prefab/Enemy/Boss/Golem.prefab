@@ -758,8 +758,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 30
-  experienceReward: 10
+  startingHealth: 450
+  experienceReward: 600
   isBoss: 1
   bossName: Ancient Golem
   deathVFXPrefab: {fileID: 224097407149449950, guid: 6c2f6a174938e8c49890f4719d8a2ce8, type: 3}
@@ -1264,12 +1264,10 @@ MonoBehaviour:
   triggerOnce: 1
   bossHealth: {fileID: 5981454799304211362}
   dialogueLines:
-  - 1
-  - 2
-  - 3
+  - "Intruder\u2026 why do you disturb my eternal slumber\u2026?"
+  - "Prepare\u2026 for the earth itself shall rise\u2026 against you\u2026"
   speakerNames:
-  - A
-  - B
+  - Golem
   cutsceneVCam: {fileID: 0}
 --- !u!1 &6079933675698253982
 GameObject:

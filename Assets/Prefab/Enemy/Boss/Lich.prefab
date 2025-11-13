@@ -1184,12 +1184,11 @@ MonoBehaviour:
   triggerOnce: 1
   bossHealth: {fileID: 1468169202883323622}
   dialogueLines:
-  - 432324324
-  - 234234234
-  - 234234234
+  - "So\u2026 you dare stand before me? Your presence alone is an insult to my throne."
+  - "Fool\u2026 your life is but a spark. I will extinguish it\u2026 and claim your
+    soul forever."
   speakerNames:
-  - A
-  - B
+  - Lich King
   cutsceneVCam: {fileID: 0}
 --- !u!1 &7134887720207093695
 GameObject:
@@ -1622,8 +1621,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 30
-  experienceReward: 10
+  startingHealth: 550
+  experienceReward: 800
   isBoss: 1
   bossName: Lich King
   deathVFXPrefab: {fileID: 224097407149449950, guid: 7f8174866ff8d1e40a27dd1db90d7c6d, type: 3}

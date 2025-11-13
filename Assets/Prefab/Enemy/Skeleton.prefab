@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 2839573398967578713}
   - component: {fileID: 8302041192562104998}
   - component: {fileID: 5314325476182861068}
+  - component: {fileID: -1873396479373423272}
   m_Layer: 10
   m_Name: Skeleton
   m_TagString: Enemy
@@ -291,12 +292,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 3
+  startingHealth: 24
   experienceReward: 50
   isBoss: 0
   bossName: Boss Name
   deathVFXPrefab: {fileID: 224097407149449950, guid: ee9fd44b34de8d5469580d953ec2ef1d, type: 3}
   cutsceneManagerGO: {fileID: 0}
+  isFinalBoss: 0
+  finalPortalTag: FinalPortal
 --- !u!114 &8618392525144792360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -423,3 +426,16 @@ MonoBehaviour:
   maxDropCount: 2
   dropRadius: 0.5
   allowDuplicateDrops: 1
+--- !u!114 &-1873396479373423272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5472773179426766410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba393a9c1e8560e4f864fc3c993e6a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyAfter: 90

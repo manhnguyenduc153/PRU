@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 5141284974939822927}
   - component: {fileID: 3147875640421414533}
   - component: {fileID: -1476862332116629088}
+  - component: {fileID: -2560510234574269376}
   m_Layer: 10
   m_Name: Slime
   m_TagString: Enemy
@@ -241,10 +242,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 3
+  startingHealth: 6
+  experienceReward: 10
   isBoss: 0
   bossName: Boss Name
   deathVFXPrefab: {fileID: 224097407149449950, guid: b86c46440294c014e86682b7a0322078, type: 3}
+  cutsceneManagerGO: {fileID: 0}
+  isFinalBoss: 0
+  finalPortalTag: FinalPortal
 --- !u!114 &5141284974939822927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,3 +321,16 @@ MonoBehaviour:
   maxDropCount: 3
   dropRadius: 0.5
   allowDuplicateDrops: 0
+--- !u!114 &-2560510234574269376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3423815466151019796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba393a9c1e8560e4f864fc3c993e6a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyAfter: 90

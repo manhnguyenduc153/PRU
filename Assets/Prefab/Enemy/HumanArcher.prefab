@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 7618963749721296560}
   - component: {fileID: 5622211744924393222}
   - component: {fileID: -5086075383174531491}
+  - component: {fileID: -9103497178332611522}
   m_Layer: 10
   m_Name: HumanArcher
   m_TagString: Enemy
@@ -266,12 +267,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 3
+  startingHealth: 18
   experienceReward: 150
   isBoss: 0
   bossName: Boss Name
   deathVFXPrefab: {fileID: 224097407149449950, guid: 28a998774bc55424ba936959026a08cb, type: 3}
   cutsceneManagerGO: {fileID: 0}
+  isFinalBoss: 0
+  finalPortalTag: FinalPortal
 --- !u!114 &8599652320221471653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -352,7 +355,7 @@ MonoBehaviour:
   attackAudioSource: {fileID: 0}
   moveClip: {fileID: 8300000, guid: 8bbce6dfd04069b4f86ab3ea82f269cc, type: 3}
   attackClip: {fileID: 8300000, guid: 356f109dd7dc37342a354ba9277a901c, type: 3}
-  moveVolume: 0.5
+  moveVolume: 0.141
   attackVolume: 0.7
   fadeSmoothness: 0.2
   freezeDurationTime: 0
@@ -426,3 +429,16 @@ MonoBehaviour:
   maxDropCount: 1
   dropRadius: 0.5
   allowDuplicateDrops: 0
+--- !u!114 &-9103497178332611522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6818501668743698285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba393a9c1e8560e4f864fc3c993e6a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyAfter: 90

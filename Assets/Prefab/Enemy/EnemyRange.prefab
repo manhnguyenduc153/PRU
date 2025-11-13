@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 9132670296133761957}
   - component: {fileID: 7670115443915595893}
   - component: {fileID: 7712387201251956373}
+  - component: {fileID: 2264578894744995315}
   m_Layer: 10
   m_Name: EnemyRange
   m_TagString: Enemy
@@ -233,6 +234,8 @@ MonoBehaviour:
   bossName: Boss Name
   deathVFXPrefab: {fileID: 224097407149449950, guid: fa4fe58d7df683745a67c5703835b0f9, type: 3}
   cutsceneManagerGO: {fileID: 0}
+  isFinalBoss: 0
+  finalPortalTag: FinalPortal
 --- !u!114 &4834150882999761861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -357,3 +360,16 @@ MonoBehaviour:
   maxDropCount: 8
   dropRadius: 0.5
   allowDuplicateDrops: 0
+--- !u!114 &2264578894744995315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8128274762940960121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba393a9c1e8560e4f864fc3c993e6a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyAfter: 1.5

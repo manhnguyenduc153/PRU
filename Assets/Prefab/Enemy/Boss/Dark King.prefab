@@ -1050,12 +1050,11 @@ MonoBehaviour:
   triggerOnce: 1
   bossHealth: {fileID: 3213444689982414319}
   dialogueLines:
-  - ghghghg
-  - ghghgh
-  - hghghgh
+  - "Human\u2026 you\u2019ve wandered far into my labyrinth. Few enter and live to
+    tell the tale."
+  - "Foolish mortal. Then come\u2014let me show you the true weight of despair."
   speakerNames:
-  - A
-  - B
+  - Dark King
   cutsceneVCam: {fileID: 0}
 --- !u!1 &6702689922867955545
 GameObject:
@@ -1318,7 +1317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 300
+  startingHealth: 700
   experienceReward: 10
   isBoss: 1
   bossName: Dark King

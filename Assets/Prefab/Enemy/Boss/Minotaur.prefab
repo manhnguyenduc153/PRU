@@ -601,8 +601,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 30
-  experienceReward: 10
+  startingHealth: 500
+  experienceReward: 700
   isBoss: 1
   bossName: Minotaur
   deathVFXPrefab: {fileID: 224097407149449950, guid: 0ccbfcfa7f623804d998e24c3476deb6, type: 3}
@@ -1242,12 +1242,10 @@ MonoBehaviour:
   triggerOnce: 1
   bossHealth: {fileID: 5648901856321946851}
   dialogueLines:
-  - 432324324
-  - 234234234
-  - 234234234
+  - "Mortal\u2026 you dare enter my domain of eternal decay? Your soul trembles already."
+  - Then face me! Let the roar of battle echo through these halls once more!
   speakerNames:
-  - A
-  - B
+  - Minotaur
   cutsceneVCam: {fileID: 0}
 --- !u!1 &4390204580175690434
 GameObject:

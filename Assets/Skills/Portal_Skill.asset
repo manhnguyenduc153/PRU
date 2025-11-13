@@ -14,9 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: Portal
   skillIcon: {fileID: 21300000, guid: 7566dd4ff3ecfe54c9be43a2c6673b3d, type: 3}
-  cooldownTime: 5
-  skillPrefab: {fileID: 6414326527980195610, guid: 3ccecafc19c22ac48bc8e5d60e0a078e, type: 3}
   damage: 10
   range: 5
   manaCost: 20
   keyBinding: 116
+  cooldownTime: 10
+  castTime: 0.5
+  castDelay: 0.2
+  skillPrefab: {fileID: 6414326527980195610, guid: 3ccecafc19c22ac48bc8e5d60e0a078e, type: 3}
+  skillSpeed: 5
+  animationSpeed: 1
+  requiredLevel: 10

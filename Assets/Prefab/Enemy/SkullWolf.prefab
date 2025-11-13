@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 531430254297260946}
   - component: {fileID: -6410462604548682759}
   - component: {fileID: -7662226378018946781}
+  - component: {fileID: -6396541326356514580}
   m_Layer: 10
   m_Name: SkullWolf
   m_TagString: Enemy
@@ -272,6 +273,8 @@ MonoBehaviour:
   bossName: Boss Name
   deathVFXPrefab: {fileID: 224097407149449950, guid: 76f34a6ec7497334eae5e7f37092cf04, type: 3}
   cutsceneManagerGO: {fileID: 0}
+  isFinalBoss: 0
+  finalPortalTag: FinalPortal
 --- !u!114 &6693999859757435869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -352,7 +355,7 @@ MonoBehaviour:
   attackAudioSource: {fileID: 0}
   moveClip: {fileID: 8300000, guid: bc312561f3815634fa57b2872f021bc0, type: 3}
   attackClip: {fileID: 8300000, guid: 356f109dd7dc37342a354ba9277a901c, type: 3}
-  moveVolume: 0.5
+  moveVolume: 0.173
   attackVolume: 0.7
   fadeSmoothness: 0.2
   freezeDurationTime: 0
@@ -432,3 +435,16 @@ MonoBehaviour:
   maxDropCount: 4
   dropRadius: 0.5
   allowDuplicateDrops: 0
+--- !u!114 &-6396541326356514580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5347106408702384144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba393a9c1e8560e4f864fc3c993e6a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyAfter: 90

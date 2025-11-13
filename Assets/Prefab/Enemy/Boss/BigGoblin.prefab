@@ -918,8 +918,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 30
-  experienceReward: 10
+  startingHealth: 300
+  experienceReward: 500
   isBoss: 1
   bossName: Goblin King
   deathVFXPrefab: {fileID: 224097407149449950, guid: 0ccbfcfa7f623804d998e24c3476deb6, type: 3}
@@ -1687,12 +1687,10 @@ MonoBehaviour:
   triggerOnce: 1
   bossHealth: {fileID: 6352146204150531430}
   dialogueLines:
-  - 1
-  - 2
-  - 3
+  - "Heh heh\u2026 who dares step into my lair? You look weaker than I expected!"
+  - "let\u2019s see how long you last against my axes!"
   speakerNames:
-  - A
-  - B
+  - Goblin King
   cutsceneVCam: {fileID: 0}
 --- !u!1 &8583343650835237469
 GameObject:

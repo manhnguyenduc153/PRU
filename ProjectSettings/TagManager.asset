@@ -21,6 +21,7 @@ TagManager:
   - MiniMap
   - FinalPortal
   - Audio
+  - Exp
   layers:
   - Default
   - TransparentFX

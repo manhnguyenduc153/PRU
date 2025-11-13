@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 2001127910005003026}
   - component: {fileID: 4460684751685348324}
   - component: {fileID: 193487574194877536}
+  - component: {fileID: 35029359201004606}
   m_Layer: 10
   m_Name: GoblinMelee
   m_TagString: Enemy
@@ -291,12 +292,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 3
+  startingHealth: 12
   experienceReward: 50
   isBoss: 0
   bossName: Boss Name
   deathVFXPrefab: {fileID: 5141438737619195724, guid: c73ccb3ff319e7a4580895c5a61f9198, type: 3}
   cutsceneManagerGO: {fileID: 0}
+  isFinalBoss: 0
+  finalPortalTag: FinalPortal
 --- !u!114 &525264478318476719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -422,3 +425,16 @@ MonoBehaviour:
   maxDropCount: 3
   dropRadius: 0.5
   allowDuplicateDrops: 0
+--- !u!114 &35029359201004606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4684683759205662031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba393a9c1e8560e4f864fc3c993e6a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyAfter: 90

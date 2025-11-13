@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 5456285203041226809}
   - component: {fileID: -6142153065342708404}
   - component: {fileID: -6053839794060926761}
+  - component: {fileID: -4451172953666198720}
   m_Layer: 10
   m_Name: Warrior
   m_TagString: Enemy
@@ -207,12 +208,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c068edb566d3aaa4d97c5d99b40c6296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHealth: 3
+  startingHealth: 30
   experienceReward: 150
   isBoss: 0
   bossName: Boss Name
   deathVFXPrefab: {fileID: 5141438737619195724, guid: c73ccb3ff319e7a4580895c5a61f9198, type: 3}
   cutsceneManagerGO: {fileID: 0}
+  isFinalBoss: 0
+  finalPortalTag: FinalPortal
 --- !u!114 &7837136550222706079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,6 +340,19 @@ MonoBehaviour:
   maxDropCount: 1
   dropRadius: 0.5
   allowDuplicateDrops: 0
+--- !u!114 &-4451172953666198720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 238415236137065301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba393a9c1e8560e4f864fc3c993e6a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyAfter: 90
 --- !u!1 &4330309309789925006
 GameObject:
   m_ObjectHideFlags: 0

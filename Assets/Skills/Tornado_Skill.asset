@@ -14,9 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: Tornado
   skillIcon: {fileID: 21300000, guid: d79b386a3832c474588fcf08d4092c01, type: 3}
-  cooldownTime: 5
-  skillPrefab: {fileID: 6602433979713157756, guid: c7c555e9265a478478df5cd73ee69982, type: 3}
   damage: 10
   range: 5
   manaCost: 20
   keyBinding: 121
+  cooldownTime: 10
+  castTime: 0.5
+  castDelay: 0.2
+  skillPrefab: {fileID: 6602433979713157756, guid: c7c555e9265a478478df5cd73ee69982, type: 3}
+  skillSpeed: 5
+  animationSpeed: 1
+  requiredLevel: 15
