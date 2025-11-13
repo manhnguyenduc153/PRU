@@ -15,6 +15,10 @@ public class SaveData
     public int playerMaxMana;
     public int coins;
 
+    // Experience & Level
+    public int playerLevel = 1;
+    public int playerExperience = 0;
+
     // Boss Items (ngọc)
     public bool hasBoss1Item;
     public bool hasBoss2Item;
@@ -87,6 +91,15 @@ public class SaveSystem : MonoBehaviour
             {
                 data.playerMana = playerMana.GetCurrentMana();
                 data.playerMaxMana = playerMana.GetMaxMana();
+            }
+
+            // Lưu level & experience
+            PlayerExperience playerExp = player.GetComponent<PlayerExperience>();
+            if (playerExp != null)
+            {
+                data.playerLevel = playerExp.GetCurrentLevel();
+                data.playerExperience = playerExp.GetCurrentExperience();
+                Debug.Log($"[SaveSystem] Saved Level: {data.playerLevel}, XP: {data.playerExperience}");
             }
         }
 
@@ -197,6 +210,14 @@ public class SaveSystem : MonoBehaviour
             {
                 playerMana.SetMana(data.playerMana, data.playerMaxMana);
                 Debug.Log($"[SaveSystem] Mana set to {data.playerMana}/{data.playerMaxMana}");
+            }
+
+            // Set level & experience
+            PlayerExperience playerExp = player.GetComponent<PlayerExperience>();
+            if (playerExp != null)
+            {
+                playerExp.SetLevelAndExperience(data.playerLevel, data.playerExperience);
+                Debug.Log($"[SaveSystem] Level & XP set to Level {data.playerLevel}, XP {data.playerExperience}");
             }
         }
         else
