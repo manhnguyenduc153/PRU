@@ -1,222 +1,247 @@
-﻿//using UnityEngine;
-//using System.Collections;
-//using System.Collections.Generic;
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
-//public class SkillManager : MonoBehaviour
-//{
-//    [Header("Skill Settings")]
-//    public List<SkillData> skills = new List<SkillData>();
+public class SkillManager : MonoBehaviour
+{
+    [Header("Skill Settings")]
+    public List<SkillData> skills = new List<SkillData>();
 
-//    [Header("Range Settings")]
-//    public float maxSkillRange = 5f;
-//    public Color inRangeColor = Color.green;
-//    public Color outRangeColor = Color.red;
-//    public float indicatorSize = 0.5f;
+    [Header("Range Settings")]
+    public float maxSkillRange = 5f;
+    public Color inRangeColor = Color.green;
+    public Color outRangeColor = Color.red;
+    public float indicatorSize = 0.5f;
 
-//    [Header("Spawn Settings")]
-//    public float spawnDistance = 1.5f;
+    [Header("Player Reference")]
+    public Transform player;
+    public PlayerMana playerMana; // THÊM: Tham chiếu đến PlayerMana
 
-//    [Header("Player Reference")]
-//    public Transform player;
+    private Dictionary<KeyCode, float> cooldowns = new Dictionary<KeyCode, float>();
+    private Vector2 mouseWorldPos;
+    private bool isInRange;
 
-//    private Dictionary<KeyCode, float> cooldowns = new Dictionary<KeyCode, float>();
-//    private Vector2 mouseWorldPos;
-//    private bool isInRange;
-//    private Camera mainCamera;
-//    private bool isAnyCasting = false;
-//    private PlayerMana playerMana;
+    // THÊM: Biến kiểm soát cast time
+    private bool isCasting = false;
+    private float castTimeRemaining = 0f;
 
-//    void Start()
-//    {
-//        if (player == null)
-//        {
-//            player = transform;
-//        }
+    void Start()
+    {
+        if (player == null)
+        {
+            player = transform;
+        }
 
-//        mainCamera = Camera.main;
-//        playerMana = FindObjectOfType<PlayerMana>();
+        // THÊM: Tự động lấy PlayerMana nếu chưa được gán
+        if (playerMana == null)
+        {
+            playerMana = GetComponent<PlayerMana>();
+        }
 
-//        foreach (var skill in skills)
-//        {
-//            cooldowns[skill.keyBinding] = 0f;
-//        }
-//    }
+        foreach (var skill in skills)
+        {
+            cooldowns[skill.keyBinding] = 0f;
+        }
+    }
 
-//    void Update()
-//    {
-//        UpdateMousePosition();
-//        UpdateCooldowns();
-//        CheckSkillInput();
-//    }
+    void Update()
+    {
+        UpdateMousePosition();
+        UpdateCooldowns();
+        UpdateCastTime();
+        CheckSkillInput();
+    }
 
-//    void UpdateMousePosition()
-//    {
-//        Vector3 screenPos = Input.mousePosition;
-//        screenPos.z = 10f;
+    void UpdateMousePosition()
+    {
+        mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        float distance = Vector2.Distance(player.position, mouseWorldPos);
+        isInRange = distance <= maxSkillRange;
+    }
 
-//        mouseWorldPos = mainCamera.ScreenToWorldPoint(screenPos);
+    void CheckSkillInput()
+    {
+        // Không cho nhấn skill khi đang cast
+        if (isCasting)
+        {
+            return;
+        }
 
-//        float distance = Vector2.Distance((Vector2)player.position, mouseWorldPos);
-//        isInRange = distance <= maxSkillRange;
-//    }
+        foreach (var skill in skills)
+        {
+            if (Input.GetKeyDown(skill.keyBinding))
+            {
+                TryCastSkill(skill);
+            }
+        }
 
-//    void CheckSkillInput()
-//    {
-//        // Check từng skill bằng key binding
-//        foreach (var skill in skills)
-//        {
-//            if (Input.GetKeyDown(skill.keyBinding) && !isAnyCasting)
-//            {
-//                TryCastSkill(skill);
-//            }
-//        }
+        if (Input.GetMouseButtonDown(1) && skills.Count > 0)
+        {
+            TryCastSkill(skills[0]);
+        }
+    }
 
-//        // Right click để cast skill đầu tiên
-//        if (Input.GetMouseButtonDown(1) && skills.Count > 0 && !isAnyCasting)
-//        {
-//            TryCastSkill(skills[0]);
-//        }
-//    }
+    void TryCastSkill(SkillData skill)
+    {
+        // Kiểm tra đang cast
+        if (isCasting)
+        {
+            Debug.Log("⏳ Đang cast skill khác!");
+            return;
+        }
 
-//    void TryCastSkill(SkillData skill)
-//    {
-//        // Check cooldown
-//        if (cooldowns[skill.keyBinding] > 0)
-//        {
-//            Debug.Log($"❌ {skill.skillName} đang cooldown! Còn {cooldowns[skill.keyBinding]:F1}s");
-//            return;
-//        }
+        // Kiểm tra cooldown
+        if (cooldowns[skill.keyBinding] > 0)
+        {
+            Debug.Log($"{skill.skillName} đang cooldown! Còn {cooldowns[skill.keyBinding]:F1}s");
+            return;
+        }
 
-//        // Check range
-//        if (!isInRange)
-//        {
-//            float dist = Vector2.Distance((Vector2)player.position, mouseWorldPos);
-//            Debug.Log($"❌ {skill.skillName} ngoài tầm! Khoảng cách: {dist:F1}m (Max: {maxSkillRange}m)");
-//            return;
-//        }
+        // THÊM: Kiểm tra mana
+        if (playerMana != null && !playerMana.HasEnoughMana(skill.manaCost))
+        {
+            Debug.Log($"❌ Không đủ mana! Cần {skill.manaCost}, hiện có {playerMana.GetCurrentMana()}");
+            return;
+        }
 
-//        // Check mana
-//        if (playerMana != null && !playerMana.HasEnoughMana(skill.manaCost))
-//        {
-//            Debug.Log($"❌ Không đủ mana! Cần {skill.manaCost}, hiện có {playerMana.currentMana}");
-//            return;
-//        }
+        // Kiểm tra trong tầm
+        if (!isInRange)
+        {
+            Debug.Log($"{skill.skillName} ngoài tầm! Khoảng cách tối đa: {maxSkillRange}m");
+            ShowOutOfRangeEffect();
+            return;
+        }
 
-//        // Start casting
-//        StartCoroutine(CastSkillCoroutine(skill));
-//    }
+        // Bắt đầu cast skill
+        StartCoroutine(CastSkillWithDelay(skill));
+    }
 
-//    IEnumerator CastSkillCoroutine(SkillData skill)
-//    {
-//        isAnyCasting = true;
+    IEnumerator CastSkillWithDelay(SkillData skill)
+    {
+        // Khóa cast (không thể dùng skill khác)
+        isCasting = true;
+        castTimeRemaining = skill.castTime;
 
-//        Debug.Log($"🔷 Bắt đầu cast {skill.skillName}...");
+        Debug.Log($"⏳ Bắt đầu cast {skill.skillName}...");
 
-//        // Trừ mana ngay khi bắt đầu cast
-//        if (playerMana != null)
-//        {
-//            playerMana.UseMana(skill.manaCost);
-//        }
+        // Chờ castDelay trước khi spawn skill
+        yield return new WaitForSeconds(skill.castDelay);
 
-//        // Delay trước khi skill spawn
-//        yield return new WaitForSeconds(skill.castDelay);
+        // Spawn skill
+        CastSkill(skill);
 
-//        // Spawn skill
-//        SpawnSkill(skill);
+        // Chờ hết castTime
+        yield return new WaitForSeconds(skill.castTime - skill.castDelay);
 
-//        // Start cooldown
-//        cooldowns[skill.keyBinding] = skill.cooldownTime;
+        // Mở khóa
+        isCasting = false;
+        castTimeRemaining = 0f;
 
-//        Debug.Log($"✅ {skill.skillName} được bắn! Cooldown: {skill.cooldownTime}s");
+        Debug.Log($"✅ Hoàn thành cast {skill.skillName}!");
+    }
 
-//        // Cho phép dùng skill khác sau cast time
-//        yield return new WaitForSeconds(skill.castTime - skill.castDelay);
-//        isAnyCasting = false;
-//    }
+    void CastSkill(SkillData skill)
+    {
+        // THÊM: Trừ mana khi cast skill
+        if (playerMana != null)
+        {
+            playerMana.UseMana(skill.manaCost);
+        }
 
-//    void SpawnSkill(SkillData skill)
-//    {
-//        // Tính hướng từ player tới chuột
-//        Vector2 direction = (mouseWorldPos - (Vector2)player.position).normalized;
+        GameObject skillObj = Instantiate(skill.skillPrefab, mouseWorldPos, Quaternion.identity);
+        Vector2 direction = (mouseWorldPos - (Vector2)player.position).normalized;
 
-//        // Tính vị trí spawn (cách xa player theo hướng)
-//        Vector3 spawnPos = (Vector2)player.position + direction * spawnDistance;
+        SkillEffect skillEffect = skillObj.GetComponent<SkillEffect>();
+        if (skillEffect != null)
+        {
+            skillEffect.SetDirection(direction);
+            skillEffect.damage = skill.damage;
+            skillEffect.SetSpeed(skill.skillSpeed);
+            skillEffect.SetAnimationSpeed(skill.animationSpeed);
+        }
 
-//        // Spawn skill prefab
-//        GameObject skillObj = Instantiate(skill.skillPrefab, spawnPos, Quaternion.identity);
+        // Bắt đầu cooldown
+        cooldowns[skill.keyBinding] = skill.cooldownTime;
 
-//        // Set thông tin cho SkillEffect
-//        SkillEffect skillEffect = skillObj.GetComponent<SkillEffect>();
-//        if (skillEffect != null)
-//        {
-//            skillEffect.SetDirection(direction);
-//            skillEffect.damage = skill.damage;
-//            skillEffect.SetSpeed(skill.skillSpeed);
-//            skillEffect.SetAnimationSpeed(skill.animationSpeed);
-//        }
-//        else
-//        {
-//            Debug.LogWarning($"⚠️ {skill.skillPrefab.name} không có SkillEffect component!");
-//        }
-//    }
+        Debug.Log($"🔥 Cast {skill.skillName} tại vị trí chuột!");
+    }
 
-//    void UpdateCooldowns()
-//    {
-//        List<KeyCode> keys = new List<KeyCode>(cooldowns.Keys);
-//        foreach (var key in keys)
-//        {
-//            if (cooldowns[key] > 0)
-//            {
-//                cooldowns[key] -= Time.deltaTime;
-//                if (cooldowns[key] < 0) cooldowns[key] = 0;
-//            }
-//        }
-//    }
+    void UpdateCooldowns()
+    {
+        List<KeyCode> keys = new List<KeyCode>(cooldowns.Keys);
+        foreach (var key in keys)
+        {
+            if (cooldowns[key] > 0)
+            {
+                cooldowns[key] -= Time.deltaTime;
+                if (cooldowns[key] < 0) cooldowns[key] = 0;
+            }
+        }
+    }
 
-//    void OnDrawGizmos()
-//    {
-//        if (player == null) return;
+    void UpdateCastTime()
+    {
+        if (castTimeRemaining > 0)
+        {
+            castTimeRemaining -= Time.deltaTime;
+            if (castTimeRemaining < 0) castTimeRemaining = 0;
+        }
+    }
 
-//        // Vẽ vòng tròn phạm vi
-//        Gizmos.color = Color.cyan;
-//        DrawCircle(player.position, maxSkillRange, 50);
+    void ShowOutOfRangeEffect()
+    {
+        Debug.Log("⚠️ Ngoài tầm cast skill!");
+    }
 
-//        if (Application.isPlaying)
-//        {
-//            // Vẽ indicator tại vị trí chuột
-//            Gizmos.color = isInRange ? inRangeColor : outRangeColor;
-//            Gizmos.DrawWireSphere(mouseWorldPos, indicatorSize);
-//            Gizmos.DrawLine(player.position, mouseWorldPos);
+    void OnDrawGizmos()
+    {
+        if (player == null) return;
 
-//            // Vẽ vị trí spawn
-//            Vector2 direction = (mouseWorldPos - (Vector2)player.position).normalized;
-//            Vector3 spawnPos = (Vector2)player.position + direction * spawnDistance;
-//            Gizmos.color = Color.yellow;
-//            Gizmos.DrawWireSphere(spawnPos, 0.3f);
-//        }
-//    }
+        // Vẽ vòng tròn phạm vi
+        Gizmos.color = Color.cyan;
+        DrawCircle(player.position, maxSkillRange, 50);
 
-//    void DrawCircle(Vector3 center, float radius, int segments)
-//    {
-//        float angle = 0f;
-//        Vector3 lastPoint = center + new Vector3(radius, 0, 0);
+        if (Application.isPlaying)
+        {
+            // Vẽ màu đỏ khi ngoài tầm
+            Gizmos.color = isInRange ? inRangeColor : outRangeColor;
+            Gizmos.DrawWireSphere(mouseWorldPos, indicatorSize);
+            Gizmos.DrawLine(player.position, mouseWorldPos);
+        }
+    }
 
-//        for (int i = 0; i <= segments; i++)
-//        {
-//            angle = (2 * Mathf.PI / segments) * i;
-//            Vector3 newPoint = center + new Vector3(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius, 0);
-//            Gizmos.DrawLine(lastPoint, newPoint);
-//            lastPoint = newPoint;
-//        }
-//    }
+    void DrawCircle(Vector3 center, float radius, int segments)
+    {
+        float angle = 0f;
+        Vector3 lastPoint = center + new Vector3(radius, 0, 0);
 
-//    public float GetCooldown(KeyCode key)
-//    {
-//        return cooldowns.ContainsKey(key) ? cooldowns[key] : 0f;
-//    }
+        for (int i = 0; i <= segments; i++)
+        {
+            angle += 2 * Mathf.PI / segments;
+            Vector3 newPoint = center + new Vector3(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius, 0);
+            Gizmos.DrawLine(lastPoint, newPoint);
+            lastPoint = newPoint;
+        }
+    }
 
-//    public bool IsSkillReady(KeyCode key)
-//    {
-//        return cooldowns.ContainsKey(key) && cooldowns[key] <= 0;
-//    }
-//}
+    // API cho UI
+    public float GetCooldown(KeyCode key)
+    {
+        return cooldowns.ContainsKey(key) ? cooldowns[key] : 0f;
+    }
+
+    public bool IsSkillReady(KeyCode key)
+    {
+        return cooldowns.ContainsKey(key) && cooldowns[key] <= 0 && !isCasting;
+    }
+
+    public bool IsCasting()
+    {
+        return isCasting;
+    }
+
+    public float GetCastTimeRemaining()
+    {
+        return castTimeRemaining;
+    }
+}
