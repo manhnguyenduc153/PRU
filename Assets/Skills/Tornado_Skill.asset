@@ -18,7 +18,7 @@ MonoBehaviour:
   range: 5
   manaCost: 20
   keyBinding: 121
-  cooldownTime: 10
+  cooldownTime: 15
   castTime: 0.5
   castDelay: 0.2
   skillPrefab: {fileID: 6602433979713157756, guid: c7c555e9265a478478df5cd73ee69982, type: 3}

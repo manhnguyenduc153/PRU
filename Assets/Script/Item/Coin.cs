@@ -12,21 +12,23 @@ public class Coin : MonoBehaviour
 
     [Header("Pickup Settings")]
     [SerializeField] private float pickupRadius = 3f;
-    [SerializeField] private float moveSpeedToPlayer = 15f; // tăng tốc cơ bản
+    [SerializeField] private float moveSpeedToPlayer = 15f; // base speed
 
     [Header("Sound Effect")]
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private float soundVolume = 1f;
 
     private int coinValue;
-    private Vector3 startPos;
     private Transform player;
     private bool isAttracting = false;
+
+    // basePos là vị trí "không có float offset", dùng để MoveTowards
+    private Vector3 basePos;
 
     void Start()
     {
         coinValue = Random.Range(minValue, maxValue + 1);
-        startPos = transform.position;
+        basePos = transform.position;
 
         var playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -35,27 +37,43 @@ public class Coin : MonoBehaviour
 
     void Update()
     {
-        // Float animation
-        float newY = startPos.y + Mathf.Sin(Time.time * floatSpeed) * floatAmount;
-        transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+        // Tính offset vertical (float) độc lập
+        float floatOffset = Mathf.Sin(Time.time * floatSpeed) * floatAmount;
 
-        if (player == null) return;
+        if (player == null)
+        {
+            // Nếu không có player, chỉ giữ basePos và hiển thị float
+            transform.position = basePos + Vector3.up * floatOffset;
+            return;
+        }
 
-        float distance = Vector2.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(basePos, player.position);
 
         if (distance < pickupRadius)
             isAttracting = true;
 
         if (isAttracting)
         {
-            // Bay thẳng về player với lực tăng theo khoảng cách
-            Vector3 dir = (player.position - transform.position).normalized;
+            // Nếu coin ở cùng vị trí với player (gần cực nhỏ), tránh vector zero
+            if (distance > 0.001f)
+            {
+                // Muốn coin càng "xa" càng bay nhanh: multiplier dựa trên distance / pickupRadius
+                float speedMultiplier = 1f + (distance / Mathf.Max(0.0001f, pickupRadius));
+                // Giới hạn multiplier để không quá lớn (tuỳ bạn có muốn)
+                speedMultiplier = Mathf.Clamp(speedMultiplier, 1f, 10f);
 
-            // Nhân thêm hệ số (distance / pickupRadius) để coin càng xa càng bay nhanh
-            float speedMultiplier = 1f + (pickupRadius - distance);
-
-            transform.position += dir * moveSpeedToPlayer * speedMultiplier * Time.deltaTime;
+                float step = moveSpeedToPlayer * speedMultiplier * Time.deltaTime;
+                // Move base position (không đụng chạm trực tiếp tới y float offset)
+                basePos = Vector3.MoveTowards(basePos, player.position, step);
+            }
+            else
+            {
+                basePos = player.position;
+            }
         }
+
+        // Cuối cùng đặt transform dựa trên basePos + float offset
+        transform.position = basePos + Vector3.up * floatOffset;
     }
 
     void OnTriggerEnter2D(Collider2D other)
